@@ -99,14 +99,14 @@ const PriceCardsList = () => {
                     </div>
                 </div>
                 <div className="card-footer card-footer-black">
-                    <div className="card-footer-caption">
+                    <div className="card-footer-caption bulk-deals-color">
                         <span><FontAwesomeIcon className="icon" icon={faTag}/> FREE BEATS</span>
                         <p>BUY 2, GET 1 FREE</p>
                     </div>
 
                     <Accordion activeKey={activeKey} onSelect={e => setActiveKey(e)}>
                         <Accordion.Collapse className="card-footer-content" eventKey="1">
-                            <div>
+                            <div className="bulk-deals-color">
                                 <p>
                                     BUY 3, GET 2 FREE
                                 </p>
@@ -157,14 +157,14 @@ const PriceCardsList = () => {
                     </div>
                 </div>
                 <div className="card-footer card-footer-black">
-                    <div className="card-footer-caption">
+                    <div className="card-footer-caption bulk-deals-color">
                         <span><FontAwesomeIcon className="icon" icon={faTag}/> FREE BEATS</span>
                         <p>BUY 2, GET 1 FREE</p>
                     </div>
 
                     <Accordion activeKey={activeKey} onSelect={e => setActiveKey(e)}>
                         <Accordion.Collapse className="card-footer-content" eventKey="2">
-                            <div>
+                            <div className="bulk-deals-color">
                                 <p>
                                     BUY 3, GET 2 FREE
                                 </p>
@@ -215,14 +215,14 @@ const PriceCardsList = () => {
                     </div>
                 </div>
                 <div className="card-footer card-footer-black">
-                    <div className="card-footer-caption">
+                    <div className="card-footer-caption bulk-deals-color">
                         <span><FontAwesomeIcon className="icon" icon={faTag}/> FREE BEATS</span>
                         <p>BUY 2, GET 1 FREE</p>
                     </div>
 
                     <Accordion activeKey={activeKey} onSelect={e => setActiveKey(e)}>
                         <Accordion.Collapse className="card-footer-content" eventKey="3">
-                            <div>
+                            <div className="bulk-deals-color">
                                 <p>
                                     BUY 3, GET 2 FREE
                                 </p>
@@ -273,14 +273,14 @@ const PriceCardsList = () => {
                     </div>
                 </div>
                 <div className="card-footer card-footer-black">
-                    <div className="card-footer-caption">
+                    <div className="card-footer-caption bulk-deals-color">
                         <span><FontAwesomeIcon className="icon" icon={faTag}/> FREE BEATS</span>
                         <p>BUY 2, GET 1 FREE</p>
                     </div>
 
                     <Accordion activeKey={activeKey} onSelect={e => setActiveKey(e)}>
                         <Accordion.Collapse className="card-footer-content" eventKey="4">
-                            <div>
+                            <div className="bulk-deals-color">
                                 <p>
                                     BUY 3, GET 2 FREE
                                 </p>

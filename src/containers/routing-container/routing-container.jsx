@@ -5,6 +5,8 @@ import PageNotFound from "../../components/page-not-found";
 import ErrorIndicator from "../../components/error-indicator";
 import Footer from "../../components/footer/footer";
 import MainPage from "../../pages/main-page";
+import ContactPage from "../../pages/contact-page";
+import CheckoutPage from "../../pages/checkout-page";
 
 import {
     Switch,
@@ -15,6 +17,7 @@ import {
 import ReactJkMusicPlayer from "react-jinke-music-player";
 import 'react-jinke-music-player/assets/index.css';
 import 'react-jinke-music-player/lib/styles/index.less'
+import MusicPlayer from "../../components/MusicPlayer";
 
 // import MainPage from "../../pages/main-page";
 // import ContactPage from "../../pages/contact-page";
@@ -35,20 +38,12 @@ const RoutingContainer = () => {
     return (
         <Router>
             <Header/>
-            {/*<ReactJkMusicPlayer*/}
-            {/*    onAudioPause={() => {*/}
-            {/*        setSelectedTrack(null);*/}
-            {/*    }}*/}
-            {/*    mode={"full"}*/}
-            {/*    autoPlay={false}*/}
-            {/*    audioLists={beats}*/}
-            {/*    getAudioInstance={(instance) => {*/}
-            {/*        setAudioInstance(instance);*/}
-            {/*    }}/>*/}
+            <MusicPlayer/>
             <Switch>
 
                 <Route exact path="/" component={MainPage}/>
-                {/*<Route exact path="/contact" component={ContactPage}/>*/}
+                <Route exact path="/contact" component={ContactPage}/>
+                <Route exact path="/checkout" component={CheckoutPage}/>
                 {/*<Route exact path="/login" component={LoginPage}/>*/}
                 {/*<Route exact path="/register" component={RegisterPage}/>*/}
                 {/*<Route exact path="/checkout"*/}

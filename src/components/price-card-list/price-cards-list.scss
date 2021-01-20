@@ -1,6 +1,6 @@
 .head {
     background-color: black;
-    color: white;
+    color: #00FFF9;
     text-align: center;
     padding: 10px;
     p {
@@ -118,6 +118,12 @@
     border-radius: 2px;
     transition: 0.3s;
     background-size: 30px !important;
+}
+
+.bulk-deals-color {
+    p {
+        color: #00FFF9!important;
+    }
 }
 
 .card-footer-content {

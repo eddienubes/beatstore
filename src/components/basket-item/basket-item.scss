@@ -1,0 +1,125 @@
+$heightForLarge: 60px;
+$heightForNotLarge: 50px;
+
+.main-row {
+    transition: .15s ease-in-out;
+
+    .row-item {
+        //margin-top: 10px!important;
+
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        border: none !important;
+        min-height: 40px !important;
+        font-weight: 400;
+    }
+    .button {
+        border-radius: 0 !important;
+        margin: 0 !important;
+        background: white;
+        color: #000000 !important;
+        padding: 10px;
+        letter-spacing: 1px;
+        border: 1px solid black;
+        &:hover {
+            background-color: black;
+            border-radius: 0 !important;
+            transition: 0.45s;
+            background-size: 30px !important;
+            color: white !important;
+        }
+    }
+    &:hover {
+        background: #e0e0e0!important;
+
+    }
+    .img-container {
+        height: $heightForNotLarge !important;
+        width: $heightForNotLarge !important;
+        padding: 5px!important;
+        position: relative;
+        .img-cart {
+            height: 100%;
+            object-fit: cover;
+            text-align: center;
+        }
+        .play-button-cart {
+            background: none;
+            font-size: 1.6rem;
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: .2s ease-in-out;
+            &:hover {
+                transform: scale(1.2) translate(-40%, -40%);
+            }
+        }
+    }
+    .button-license {
+        text-align: center;
+        justify-content: right!important;
+        padding: 0!important;
+        margin: 0!important;
+
+        .button {
+        }
+    }
+    .remove-from-cart-button-container {
+        padding: 0!important;
+        .remove-from-cart-button {
+            background: none;
+            transition: .18s ease-in-out;
+            padding: 0!important;
+            &:hover {
+                transform: rotate(90deg) scale(1.5);
+            }
+            &:active {
+                animation: remove .2s ease-in-out;
+            }
+        }
+    }
+    .basket__remove-item {
+        cursor: pointer;
+    }
+    .main-row-animation {
+        animation: close-row-animation .5s ease-in-out;
+    }
+
+}
+
+@keyframes close-row-animation {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+
+    }
+    100% {
+        transform: scale(0);
+
+    }
+}
+
+@media screen and (min-width: 1920px) {
+    .img-container {
+        width: $heightForLarge !important;
+        height: $heightForLarge !important;
+    }
+}
+@keyframes remove {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.7);
+    }
+    100% {
+        transform: scale(1);
+    }
+
+}
+

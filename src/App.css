@@ -6,8 +6,19 @@
     background-color: black!important;
     color: white!important;
 }
-
-
+/*Player background color fix*/
+.progress-bar {
+    background: none!important;
+}
+.music-player-panel {
+    transition: 1.5s ease-in-out!important;
+}
+.rc-slider-handle {
+    background: #FF00C1!important;
+}
+.rc-slider-track {
+    background: #FF00C1!important;
+}
 /* Invert button*/
 .invert-button{
     transition: .2s;

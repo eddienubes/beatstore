@@ -64,7 +64,7 @@ const LicenseTypeModal = (props) => {
                                     <span className="license__green">Track name:</span> {props.track.name}
                                 </div>
                                 <div className="license__author-name">
-                                    <span className="license__green">Author:</span> Cherries
+                                    <span className="license__green">Producer:</span> Cherries
                                 </div>
                                 <div className="license__tags-container">
                                     <span>Tags:</span> {props.track.tags.map((tag, i) => <span key={i}

@@ -38,11 +38,18 @@
 
         .selected_tr {
             transition: .25s ease-in-out;
-            background: rgba(0, 0, 0, 1);
             color: #ffffff;
-
+            animation: gradient 4.45s ease-in-out infinite alternate;
         }
+        @keyframes gradient {
+            0% {
+                background: linear-gradient(90deg, var(--c1, #000000) 51%, var(--c2, #ff00c1), var(--c1, #00fff9)) 0%/ 200%;;
+            }
+            100% {
+                background: linear-gradient(90deg, var(--c1, #000000) 51%, var(--c2, #ff00c1), var(--c1, #00fff9)) 100%/ 200%;;
 
+            }
+        }
         .table-head {
             letter-spacing: 1.5px;
 
