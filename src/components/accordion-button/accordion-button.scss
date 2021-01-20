@@ -1,0 +1,18 @@
+.accordion-button__button {
+    background: none !important;
+    text-align: center;
+    margin: 10px auto;
+
+    span {
+        color: white;
+    }
+
+    padding: 10px;
+}
+
+.accordion-button__button:hover {
+    background-color: rgba(199, 199, 199, 0.4) !important;
+    border-radius: 2px;
+    transition: 0.3s;
+    background-size: 30px !important;
+}

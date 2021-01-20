@@ -1,0 +1,267 @@
+.head {
+    background-color: black;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    p {
+        margin-top: 25px!important;
+        font-size: 10px;
+        font-weight: lighter;
+        letter-spacing: 6px !important;
+    }
+}
+
+.license-type {
+    margin-top: 55px;
+    font-size: 25px;
+}
+
+.price {
+    margin-top: 22px;
+    font-size: 2.8em;
+    font-weight: bold;
+}
+
+.per-unit {
+    font-size: 12px;
+    margin-top: 22px;
+    font-weight: bold;
+    margin-bottom: 35px;
+}
+
+.description {
+    color: black;
+    font-size: 14px;
+    font-family: "Roboto", sans-serif;
+    background-color: #ffffff;
+    padding: 10px 7px !important;
+
+    ul {
+        padding-left: 25px !important;
+    }
+
+    p {
+        text-align: left;
+    }
+
+    li {
+        list-style: none;
+        position: relative;
+        margin: 17px 7px;
+    }
+
+    li::before {
+
+        content: "•";
+        font-size: 35px;
+        position: absolute;
+        left: -20px;
+    }
+}
+.card-footer-black {
+    background-color: black!important;
+
+}
+.card-footer-white {
+    background-color: white!important;
+}
+.card-footer {
+    border-radius: 0 !important;
+
+    p {
+        color: white;
+        text-align: center;
+    }
+
+    .icon {
+        color: white;
+    }
+
+    .card-footer-caption {
+        span {
+            font-size: 0.75em;
+        }
+
+        color: white;
+        letter-spacing: 3px;
+        text-align: center;
+
+        p {
+            font-size: 1.2em;
+
+            letter-spacing: normal;
+            font-weight: 700;
+            margin: 5px 0 5px;
+        }
+    }
+
+    .button-container {
+        display: grid;
+
+    }
+}
+
+.card-footer-button {
+    background: none !important;
+    text-align: center;
+    margin: 10px auto;
+
+    span {
+        color: white;
+    }
+
+    padding: 10px;
+}
+
+.card-footer-button:hover {
+    background-color: rgba(199, 199, 199, 0.4) !important;
+    border-radius: 2px;
+    transition: 0.3s;
+    background-size: 30px !important;
+}
+
+.card-footer-content {
+    letter-spacing: normal;
+    font-weight: 700;
+
+    div {
+        p {
+            font-size: 1.2em;
+        }
+    }
+}
+
+.collapsible-trigger {
+    padding: 0;
+    text-align: center;
+    background-color: red;
+}
+
+.popular-card {
+    transform: translateY(-50px) scale(1.01);
+    perspective: 700px;
+    transform-style: preserve-3d;
+    background-color: purple;
+    //filter: invert(1);
+    .head, .card-footer {
+        background-color: white;
+        color: black;
+
+        button {
+            color: black;
+        }
+
+        span, p {
+            color: black;
+        }
+
+        .icon {
+            color: black;
+        }
+    }
+
+    .description {
+        background-color: black;
+        color: white;
+    }
+}
+
+.popular-card:hover {
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 0 25px 4px white !important;
+}
+
+.card {
+    border: none !important;
+    outline: none !important;
+    margin: 50px 10px !important;
+    min-width: 200px !important;
+    height: 100% !important;
+    transition: 0.2s ease-in-out;
+    border-radius: 0 !important;
+    font-weight: 100 !important;
+}
+
+.card:hover {
+    transform: translateY(-15px) scale(1.02);
+    box-shadow: 0 0 25px 4px black;
+}
+
+.card-container {
+    position: relative;
+    background-image: linear-gradient(white, black);
+    margin: 0 !important;
+    padding: 20px;
+}
+
+.license-button-container {
+    display: grid;
+    padding: 10px 40px;
+    font-weight: 100 !important;
+}
+
+.license-button {
+    border-radius: 0 !important;
+    margin: 0 !important;
+    background: none;
+    color: black !important;
+    padding: 15px 0 !important;
+    letter-spacing: 1px;
+    border: 1px solid black;
+
+}
+
+.license-button-popular {
+    border-radius: 0 !important;
+    margin: 0 !important;
+    background: none;
+    padding: 15px 0 !important;
+    letter-spacing: 1px;
+    border: 1px solid white;
+    color: white !important;
+    background-color: black !important;
+}
+
+.license-button-popular:hover {
+    border-radius: 2px !important;
+    transition: 0.45s;
+    background-size: 30px !important;
+    border: 1px solid black;
+    color: black !important;
+    background-color: white !important;
+}
+
+.license-button:hover {
+    background-color: black;
+    border-radius: 0 !important;
+    transition: 0.45s;
+    background-size: 30px !important;
+    color: white !important;
+}
+
+.license-close-button {
+    border-radius: 2px !important;
+    transition: 0.4s !important;
+    color: black;
+}
+
+.modal-pop {
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: 0 0 15px 1px white;
+}
+
+.modal-content {
+    border: lightgray 1px solid;
+    border-radius: 0 !important;
+    box-shadow: 0 0 15px 1px white;
+    margin: 10px!important;
+}
+
+.modal-header {
+
+    .modal-header-text {
+        width: 100%;
+        text-align: center!important;
+    }
+}

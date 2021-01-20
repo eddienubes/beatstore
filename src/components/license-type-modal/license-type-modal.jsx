@@ -53,7 +53,7 @@ const LicenseTypeModal = (props) => {
                 size='small'
                 centered
             >
-                <Modal.Content className="licenses-container">
+                <Modal.Content onClick={e => {e.stopPropagation()}} className="licenses-container">
                     <div className="licenses-container">
                         <Row className="track-description-container">
                             <Col xl={1} md={2} sm={2} className="license__img-container">

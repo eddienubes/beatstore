@@ -3,14 +3,13 @@ import "./tracks-table.scss";
 import Track from "../track";
 import {withSearch} from '../hoc';
 import BeatstoreService from "../beatstore-service-context";
+import Spinner from "../spinner";
 
 const TracksTable = ({filter, search}) => {
-
+    const [selectedId, setSelected] = useState(null);
     const {getBeats} = useContext(BeatstoreService);
+    console.log(selectedId);
     const beatList = getBeats();
-
-    useEffect(() => console.log('mounted'), []);
-
     // const tracks = beatList.map((beat) => {
     //         return filter(beat, search.query) ? <Track key={beat.id}
     //                                                    track={beat}
@@ -20,6 +19,8 @@ const TracksTable = ({filter, search}) => {
     const tracks = beatList.map((beat) => {
             return <Track key={beat.id}
                           track={beat}
+                          onSelected={(id) => setSelected(id)}
+                          selectedId={selectedId}
             />;
         }
     );
@@ -47,6 +48,7 @@ const TracksTable = ({filter, search}) => {
                 {tracks}
                 </tbody>
             </table>
+
         </div>
     );
 };

@@ -1,27 +1,38 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import "./track.scss";
 import {faShoppingCart} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import LicenseTypeModal from "../license-type-modal";
 import {withPlayables} from '../hoc';
 
-const Track = ({track, setSelectedTrack, setPreviousTrack, playBack, audio}) => {
+const Track = ({track, setSelectedTrack, setPreviousTrack, playBack, audio, onSelected, selectedId}) => {
+    // onSelected = temporary function
     // TODO Warning problem (look at the console)
     const [modalShow, setModalShow] = useState(false);
-    const [className, setClassName] = useState("");
+    const [isActive, setActive] = useState(false);
 
-    // if (track.id === audio.selectedTrack) {
-    //     setClassName("selected_tr")
-    // } else {
-    //     setClassName("");
-    // }
+    useEffect(() => {
+        if (track.id === selectedId) {
+            setActive(true);
+        }
+        else {
+            setActive(false);
+        }
+    }, [selectedId]);
 
+    const onClick = () => {
+        if (isActive) {
+            onSelected(null)
+        }
+        else {
+            onSelected(track.id);
+        }
+        playBack();
+    }
 
     return (
-        <tr className={className}
-            onClick={() => {
-                playBack();
-            }}>
+        <tr className={isActive ? "selected_tr" : null}
+            onClick={onClick}>
             <td className="track__td-img">
                 <img className="td-img-main" src={track.imgUrl} alt="beat image"/>
             </td>
