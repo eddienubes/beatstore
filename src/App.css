@@ -1,0 +1,60 @@
+* {
+    font-family: 'Poppins', sans-serif!important;
+}
+/* global classes */
+.bg-black{
+    background-color: black!important;
+    color: white!important;
+}
+
+
+/* Invert button*/
+.invert-button{
+    transition: .2s;
+    background-color: white;
+    color: black;
+    border: 1px solid white;
+}
+
+.invert-button:hover{
+    background-color: black;
+    color: white;
+    border: 1px solid white;
+}
+
+button {
+    border: 0;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    position: absolute;
+    background-color: #212121;
+    margin-right: 5px!important;
+    transition: .15s ease-in-out;
+
+}
+::-webkit-scrollbar-thumb {
+    background-color: gray;
+    /*border: 1px solid white;*/
+    box-shadow: 2px 2px 5px 1px black;
+    /*background-color: white;*/
+    border-radius: 50px;
+    transition: 5s;
+
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: darkgrey;
+}
+
+button:focus {
+    outline: none!important;
+}
+
+#root {
+    position: relative;
+    min-height: 100vh;
+}
