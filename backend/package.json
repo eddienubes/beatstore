@@ -1,0 +1,21 @@
+{
+  "name": "beatstore-backend",
+  "version": "1.0.0",
+  "description": "backend of my store :)",
+  "main": "index.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  },
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "express-validator": "^6.9.2",
+    "uuid": "^8.3.2"
+  }
+}
