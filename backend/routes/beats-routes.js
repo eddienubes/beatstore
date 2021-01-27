@@ -9,6 +9,8 @@ const router = Router();
 
 router.get('/:bid', beatsControllers.getBeatById);
 
+router.get('/', beatsControllers.getAllBeats);
+
 router.post(
     '/',
     [

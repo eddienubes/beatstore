@@ -2,6 +2,8 @@ const HttpError = require('../models/http-error');
 const {v4: uuid} = require('uuid');
 const {validationResult} = require('express-validator');
 
+const Beat = require('../models/beat');
+
 let DUMMY_BEATS = [
     {
         "id": "1",
@@ -35,84 +37,155 @@ let DUMMY_BEATS = [
     }
 ];
 
-const getBeatById = (req, res, next) => {
+const getBeatById = async (req, res, next) => {
     const beatId = req.params.bid;
-    const beat = DUMMY_BEATS.find(b => b.id === beatId);
+
+    let beat;
+
+    try {
+        beat = await Beat.findById(beatId);
+    }
+    catch (e) {
+        return next(new HttpError('Couldn\'t find a beat in database with such id..'), 500);
+    }
 
     if (!beat) {
         return next(
-            new HttpError('Couldn\'nt find a beat for specified id!', 404)
+            new HttpError('Couldn\'nt find a beat by specified id!', 404)
         );
     }
 
-    res.json(beat);
+    res.json({message: 'Successfully found a beat', beat: beat.toObject({getters: true})});
 };
 
-const createBeat = (req, res, next) => {
+const createBeat = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        console.log(errors);
-        throw new HttpError('Invalid inputs passed, please check your data', 422);
+        return next(new HttpError('Invalid inputs passed, please check your data', 422));
     }
 
-    const {audioUrl, imgUrl, bpm, title, scale, tags} = req.body;
-    const addedBeat = {
-        id: uuid(),
+    const {title, audioUrl, imgUrl, bpm, scale, tags} = req.body;
+
+    const loadTime = new Date();
+    const duration = "3:00" // DUMMY logic // TODO
+
+    const addedBeat = new Beat({
+        title,
         audioUrl,
         imgUrl,
         bpm,
-        title,
+        duration,
         scale,
+        loadTime,
         tags
-    };
+    });
 
-    DUMMY_BEATS.push(addedBeat);
-
-    res.status(201);
-    res.json(addedBeat);
-};
-
-const updateBeatById = (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        throw new HttpError('Invalid inputs passed, please, check your data');
+    try {
+        await addedBeat.save();
+    }
+    catch (e) {
+        const err = new HttpError('Creating new beat has been failed', 500);
+        return next(err);
     }
 
-    const {audioUrl, imgUrl, bpm, title, scale, tags} = req.body;
+    res.status(201);
+    res.json({message: 'Successfully added new beat!', beat: addedBeat.toObject({getters: true})});
+};
+
+const updateBeatById = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return next(new HttpError('Invalid inputs passed, please, check your data'));
+    }
+
+    const {title, audioUrl, imgUrl, bpm, scale, tags} = req.body;
     const beatId = req.params.bid;
 
-    const updatedBeat = {...DUMMY_BEATS.find(b => b.id === beatId)};
-    const beatIndex = DUMMY_BEATS.findIndex(b => b.id === beatId);
+    const duration = "3:00"; // Again DUMMY duration logic // TODO
 
+    let updatedBeat;
+    try {
+        updatedBeat = await Beat.findById(beatId);
+    }
+    catch (e) {
+        return next(
+            new HttpError('Something went wrong while trying to find a beat..'),
+            500
+        );
+    }
+
+    updatedBeat.title = title;
     updatedBeat.audioUrl = audioUrl;
     updatedBeat.imgUrl = imgUrl;
     updatedBeat.bpm = bpm;
-    updatedBeat.title = title;
     updatedBeat.scale = scale;
     updatedBeat.tags = tags;
 
-    DUMMY_BEATS[beatIndex] = updatedBeat;
-
-    res.status(200);
-    res.json(updatedBeat);
-};
-
-const deleteBeat = (req, res, next) => {
-    const beatId = req.params.bid;
-
-    if (!DUMMY_BEATS.find(b => b.id === beatId)) {
-        throw new HttpError('Couldn\'t find a beat with this id..');
+    try {
+        await updatedBeat.save();
+    }
+    catch (e) {
+        return next(
+            new HttpError('Something went wrong while saving updated beat to database..'),
+            500
+        );
     }
 
-    DUMMY_BEATS = DUMMY_BEATS.filter(b => b.id !== beatId);
+    res.status(200);
+    res.json({message: 'Successfully updated a beat..', updatedBeat: updatedBeat.toObject({getters: true})});
+};
+
+const deleteBeat = async (req, res, next) => {
+    const beatId = req.params.bid;
+
+    let beat;
+    try {
+        beat = await Beat.findById(beatId);
+    }
+    catch (e) {
+        return next(
+            new HttpError('Couldn\'t find a beat with this id..'),
+            500
+        );
+    }
+    
+    try {
+        await beat.remove()
+    }
+    catch (e) {
+        return next(
+            new HttpError('Couldn\'t delete a beat from database..'),
+            500
+        );
+    }
 
     res.status(200);
-    res.json({message: 'Deleted beat'});
+    res.json({message: 'Deleted a beat successfully'});
+};
+
+const getAllBeats = async (req, res, next) => {
+    let beats;
+
+    try {
+        beats = await Beat.find({});
+    }
+    catch (e) {
+        return next(
+            new HttpError(
+                'Something went wrong while getting beats',
+                500
+            )
+        );
+    }
+
+    res.status(200);
+    res.json({message: 'Beats are fetched successfully', beats});
 };
 
 module.exports = {
     getBeatById,
     createBeat,
     updateBeatById,
-    deleteBeat
+    deleteBeat,
+    getAllBeats
 };
