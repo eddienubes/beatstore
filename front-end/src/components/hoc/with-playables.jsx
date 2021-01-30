@@ -1,9 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 const withPlayables = (Wrapped) => {
-    const audio = {};
-    const setSelectedTrack = () => {};
-    const setPreviousTrack = () => {};
+    let audioInstance = null;
+    const setInstance = (instance) => audioInstance = instance;
 
     //const audio = useSelector(state => state.audio);
     // const setSelectedTrack = useCallback((payload) =>
@@ -32,10 +31,9 @@ const withPlayables = (Wrapped) => {
 
         return (
             <Wrapped {...props}
-                     setSelectedTrack={setSelectedTrack}
-                     setPreviousTrack={setPreviousTrack}
                      playBack={playBack}
-                     audio={audio}
+                     audio={audioInstance}
+                     setAudio={setInstance}
             />
         );
     };

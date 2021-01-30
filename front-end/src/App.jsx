@@ -1,21 +1,25 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ErrorBoundary from "./components/error-boundary";
 import RoutingContainer from "./containers/routing-container/routing-container";
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'semantic-ui-css/semantic.min.css';
-import BeatstoreService from "./components/beatstore-service-context";
-import {withBeatstoreService} from './components/hoc';
+import {Provider} from 'react-redux';
+import store from "./redux/store";
+import AudioInstanceContext from "./components/audio-instance-context";
 
-const App = ({beatstoreService}) => {
+const App = () => {
+    const [audioInstance, setAudioInstance] = useState(null);
 
     return (
         <ErrorBoundary>
-            <BeatstoreService.Provider value={beatstoreService}>
-                <RoutingContainer/>
-            </BeatstoreService.Provider>
+            <AudioInstanceContext.Provider value={{state: audioInstance, updateValue: setAudioInstance}}>
+                <Provider store={store}>
+                    <RoutingContainer/>
+                </Provider>
+            </AudioInstanceContext.Provider>
         </ErrorBoundary>
     );
 };
 
-export default withBeatstoreService(App);
+export default App;

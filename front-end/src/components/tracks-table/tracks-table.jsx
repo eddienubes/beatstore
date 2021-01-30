@@ -2,14 +2,24 @@ import React, {useState, useContext, useEffect} from "react";
 import "./tracks-table.scss";
 import Track from "../track";
 import {withSearch} from '../hoc';
-import BeatstoreService from "../beatstore-service-context";
 import Spinner from "../spinner";
+import {useSelector, useDispatch} from "react-redux";
+import ErrorIndicator from "../error-indicator";
 
 const TracksTable = ({filter, search}) => {
     const [selectedId, setSelected] = useState(null);
-    const {getBeats} = useContext(BeatstoreService);
-    console.log(selectedId);
-    const beatList = getBeats();
+    const {beatList, isLoading, error} = useSelector(state => state.beatsReducer);
+    const dispatch = useDispatch;
+
+
+    if (error) {
+        return <ErrorIndicator/>
+    }
+
+    if (isLoading) {
+        return <Spinner/>
+    }
+
     // const tracks = beatList.map((beat) => {
     //         return filter(beat, search.query) ? <Track key={beat.id}
     //                                                    track={beat}
