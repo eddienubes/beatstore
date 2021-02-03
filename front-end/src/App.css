@@ -50,7 +50,6 @@ button {
 ::-webkit-scrollbar-thumb {
     background-color: gray;
     /*border: 1px solid white;*/
-    box-shadow: 2px 2px 5px 1px black;
     /*background-color: white;*/
     border-radius: 50px;
     transition: 5s;

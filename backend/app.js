@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const beatsRoutes = require('./routes/beats-routes');
 const usersRoutes = require('./routes/users-routes');
 const ordersRoutes = require('./routes/order-routes');
-const pricesRoutes = require('./routes/prices-routes');
+const licensesRoutes = require('./routes/licenses-routes');
 
 const HttpError = require('./models/http-error');
 
@@ -18,7 +18,7 @@ app.use(bodyParser.json());
 app.use('/api/beats', beatsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/orders', ordersRoutes);
-app.use('/api/prices', pricesRoutes);
+app.use('/api/licenses', licensesRoutes);
 
 // router in case none of above haven't been reached
 app.use((req, res) => {

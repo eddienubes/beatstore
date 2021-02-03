@@ -2,6 +2,7 @@ const HttpError = require('../models/http-error');
 const {v4: uuid} = require('uuid');
 const {validationResult} = require('express-validator');
 
+const Order = require('../models/order');
 const User = require('../models/user');
 
 const DUMMY_USERS = [
@@ -65,10 +66,12 @@ const getAllUsers = async (req, res, next) => {
 
 const signup = async (req, res, next) => {
     const errors = validationResult(req);
+
     if (!errors.isEmpty()) {
         return next(new HttpError('Invalid inputs passed, please, check your data'));
     }
-    const {userName, email, password} = req.body;
+
+    const {username, email, password} = req.body;
 
     let existingUser;
     try {
@@ -79,28 +82,47 @@ const signup = async (req, res, next) => {
         );
     }
 
-    if (existingUser) {
+    if (existingUser && existingUser.password) {
         return next(
             new HttpError('User with such email or userName already exists')
         );
     }
 
-    const newUser = new User({
-        userName,
-        email,
-        password,
-    });
+    if (!existingUser) {
+        const newUser = new User({
+            username,
+            email,
+            password,
+        });
 
-    try {
-        await newUser.save();
-    } catch (e) {
-        return next(
-            new HttpError('Something went wrong while saving new user to a database..')
-        );
+        try {
+            await newUser.save();
+        } catch (e) {
+            return next(
+                new HttpError('Something went wrong while saving new user to a database..')
+            );
+        }
+        res.status(201);
+        res.json({
+            message: 'New user has been successfully created!',
+            newUser: newUser.toObject({getters: true})
+        });
+    } else {
+        existingUser.password = password;
+        existingUser.username = username;
+        try {
+            await existingUser.save();
+        } catch (e) {
+            return next(
+                new HttpError('Something went wrong while trying to save existing user..')
+            );
+        }
+        res.status(201);
+        res.json({
+            message: 'New registered user has been successfully created!',
+            newUser: existingUser.toObject({getters: true})
+        });
     }
-
-    res.status(201);
-    res.json({message: 'New user has been successfully created!', newUser: newUser.toObject({getters: true})});
 };
 
 const login = async (req, res, next) => {

@@ -1,50 +1,27 @@
-import React, {useContext, useEffect} from 'react';
-import {useSelector} from "react-redux";
+import React, {Component, createRef, useContext, useState} from 'react';
+import {connect, useSelector} from "react-redux";
 import AudioSpectrum from "../../components/audio-spectrum";
-import AudioInstanceContext from "../../components/audio-instance-context";
+import {withAudioInstance} from '../../components/hoc';
 
 import './audio-spectrum-container.scss';
+import AudioInstanceContext from "../../components/audio-instance-context";
 
-const AudioSpectrumContainer = (props) => {
-    let analyser = null;
-    let source = null;
-    const frequencyBandArray = [...Array(25).keys()];
+const AudioSpectrumContainer = () => {
+    const {audioInstance, sourceSet} = useContext(AudioInstanceContext).state;
+    const {setSource} = useContext(AudioInstanceContext).updateValue;
+    const {isPlaying} = useSelector(state => state.audioReducer);
 
-    const {id, isPlaying} = useSelector(state => state.audioReducer);
-    const audio = useContext(AudioInstanceContext);
+    if (audioInstance) {
+        console.log('asdasdasd');
+        return (
+            <AudioSpectrum instance={audioInstance}
+                           isPlaying={isPlaying}
+                           sourceSet={sourceSet}
+                           setSource={(bool) => setSource(bool)}/>
+        )
+    }
+    return null;
 
-
-    const initializeAudioAnalyser = () => {
-
-        const audioFile = audio.state;
-        const audioContext = new AudioContext();
-        source = audioContext.createMediaElementSource(audioFile);
-        source.disconnect(audioFile);
-        analyser = audioContext.createAnalyser();
-        analyser.fftSize = 64;
-        source.connect(audioContext.destination);
-        source.connect(analyser);
-        // audioContext.close();
-        // create class sound with all fields but source will be defined when constructing // TODO
-    };
-
-    const getFrequencyData = (styleAdjuster) => {
-        const bufferLength = analyser.frequencyBinCount;
-        const amplitudeArray = new Uint8Array(bufferLength);
-        analyser.getByteFrequencyData(amplitudeArray)
-        styleAdjuster(amplitudeArray)
-    };
-
-    return (
-        <div>
-            <AudioSpectrum
-                initializeAudioAnalyser={initializeAudioAnalyser}
-                frequencyBandArray={frequencyBandArray}
-                getFrequencyData={getFrequencyData}
-                isPlaying={isPlaying}
-            />
-        </div>
-    );
 };
 
 export default AudioSpectrumContainer;

@@ -13,6 +13,6 @@ export {
 
     AUDIO_PLAYED,
     AUDIO_STOPPED,
-    SET_AUDIO_INSTANCE
+    SET_AUDIO_INSTANCE,
 };
 

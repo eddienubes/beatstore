@@ -4,8 +4,9 @@ import 'react-jinke-music-player/assets/index.css';
 import 'react-jinke-music-player/lib/styles/index.less'
 import BeatstoreService from "../../services";
 import {useDispatch, useSelector} from "react-redux";
-import {audioPlayed, audioStopped, beatsLoaded, setAudioInstance} from '../../redux/actions';
+import {audioPlayed, audioStopped, beatsLoaded} from '../../redux/actions';
 import AudioInstanceContext from "../audio-instance-context";
+
 
 const MusicPlayer = () => {
     const beatstoreService = new BeatstoreService();
@@ -20,7 +21,9 @@ const MusicPlayer = () => {
 
     return (
         <ReactJkMusicPlayer
-            onAudioPlay={({id}) => dispatch(audioPlayed(id))}
+            onAudioPlay={({id}) => {
+                dispatch(audioPlayed(id));
+            }}
             onAudioPause={() => dispatch(audioStopped())}
             // onAudioPlay={dispatch(audioPlayed())}
             // onAudioPause={() => {
@@ -36,12 +39,12 @@ const MusicPlayer = () => {
                         name: track.name,
                         musicSrc: track.audioUrl,
                         cover: track.imgUrl
-                    })
+                    });
                 })}
             getAudioInstance={instance => {
-                // instance
-                audio.updateValue(instance);
-            }}/>
+                audio.updateValue.setAudioInstance(instance);
+            }}
+        />
     );
 };
 

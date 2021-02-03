@@ -1,14 +1,14 @@
 const mongoose = require('mongoose');
-const Price = require('../models/price')
+const License = require('../models/license')
 const HttpError = require('../models/http-error');
 
-const updatePrice = async (req, res, next) => {
-    const {amount, type, label} = req.body;
+const updateLicense = async (req, res, next) => {
+    const {type, price, label} = req.body;
 
-    let price;
+    let license;
 
     try {
-        price = await Price.findOne({type});
+        license = await License.findOne({type});
     } catch (e) {
         return next(
             new HttpError(
@@ -18,7 +18,7 @@ const updatePrice = async (req, res, next) => {
         );
     }
     
-    if (!price) {
+    if (!license) {
         return next(
             new HttpError(
                 'Price with such type does not exist',
@@ -27,12 +27,12 @@ const updatePrice = async (req, res, next) => {
         );
     }
 
-    price.type = type;
-    price.amount = amount;
-    price.label = label;
+    license.type = type;
+    license.price = price;
+    license.label = label;
 
     try {
-        await price.save();
+        await license.save();
     }
     catch (e) {
         return next(
@@ -44,14 +44,14 @@ const updatePrice = async (req, res, next) => {
     }
 
     res.status(200);
-    res.json({message: 'Successfully changed the price', price: price.toObject({getters: true})});
+    res.json({message: 'Successfully changed the price', license: license.toObject({getters: true})});
 };
 
-const getAllPrices = async (req, res, next) => {
-    let prices;
+const getAllLicenses = async (req, res, next) => {
+    let licenses;
 
     try {
-        prices = await Price.find({});
+        licenses = await License.find({});
     }
     catch (e) {
         return next(
@@ -63,36 +63,37 @@ const getAllPrices = async (req, res, next) => {
     }
 
     res.status(200);
-    res.json({message: 'Prices are fetched successfully', prices});
+    res.json({message: 'Prices are fetched successfully', licenses});
 };
 
-const createPrice = async (req, res, next) => {
-    const {type, amount, label} = req.body;
+const creatLicense = async (req, res, next) => {
+    const {type, price, label} = req.body;
 
-    const price = new Price({
+    const license = new License({
         type,
-        amount,
+        price,
         label
     });
 
     try {
-        await price.save();
+        await license.save();
     }
     catch (e) {
+
         return next(
             new HttpError(
-                'Something went wrong while saving price..',
+                'Something went wrong while saving license..',
                 500
             )
         );
     }
 
     res.status(200);
-    res.json({message: 'Price added successfully!', price});
+    res.json({message: 'Price added successfully!', license});
 };
 
 module.exports = {
-    updatePrice,
-    getAllPrices,
-    createPrice
+    updateLicense,
+    getAllLicenses,
+    creatLicense
 };

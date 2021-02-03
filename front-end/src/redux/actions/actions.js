@@ -38,7 +38,10 @@ const setAudioInstance = (payload) => {
         type: actions.SET_AUDIO_INSTANCE,
         payload: payload
     };
-}
+};
+
+
+
 export {
     beatsRequested,
     beatsLoaded,
@@ -46,5 +49,5 @@ export {
 
     audioPlayed,
     audioStopped,
-    setAudioInstance
+    setAudioInstance,
 };

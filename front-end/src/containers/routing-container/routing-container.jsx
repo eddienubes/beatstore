@@ -19,13 +19,11 @@ import 'react-jinke-music-player/assets/index.css';
 import 'react-jinke-music-player/lib/styles/index.less'
 import MusicPlayer from "../../components/music-player";
 import BeatsPage from "../../pages/beats-page";
+import LoginPage from "../../pages/auth-pages/login-page";
+import RegisterPage from "../../pages/auth-pages/register-page/";
+import AuthContainer from "../auth-container";
+import AccountPage from "../../pages/account-page";
 
-// import MainPage from "../../pages/main-page";
-// import ContactPage from "../../pages/contact-page";
-// import LoginPage from "../../pages/auth-pages/login-page";
-// import RegisterPage from "../../pages/auth-pages/register-page";
-// import CheckoutPage from "../../pages/checkout-page";
-//
 
 const RoutingContainer = () => {
     const beats = [].map((track) => {
@@ -45,12 +43,9 @@ const RoutingContainer = () => {
                 <Route exact path="/" component={MainPage}/>
                 <Route exact path="/contact" component={ContactPage}/>
                 <Route exact path="/checkout" component={CheckoutPage}/>
-                <Route exact path="/beats" component={BeatsPage}/>
-                {/*<Route exact path="/login" component={LoginPage}/>*/}
-                {/*<Route exact path="/register" component={RegisterPage}/>*/}
-                {/*<Route exact path="/checkout"*/}
-                {/*       component={() => <CheckoutPage/>}/>*/}
-                {/*       */}
+                {/*<Route exact path="/beats" component={BeatsPage}/>*/}
+                <Route path="/auth" component={AuthContainer}/>
+                <Route path="/account" component={AccountPage}/>
                 <Route component={PageNotFound}/>
             </Switch>
             <Footer/>

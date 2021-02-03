@@ -1,0 +1,15 @@
+.account-page {
+    margin: 0 auto;
+    width: 100%!important;
+    .account-page__tab {
+        font-size: 1.05rem;
+        color: black;
+    }
+}
+
+@media (max-width: 830px) {
+    .account-page {
+        margin: 0;
+        width: 100%!important;
+    }
+}

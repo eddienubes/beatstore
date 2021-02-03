@@ -7,5 +7,5 @@ export {
 
     audioPlayed,
     audioStopped,
-    setAudioInstance
+    setAudioInstance,
 };

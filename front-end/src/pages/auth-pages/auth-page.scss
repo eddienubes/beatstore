@@ -1,0 +1,204 @@
+$button-opacity: .5;
+$button-point-events: none;
+
+@import "https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css";
+.input__error-msg {
+    margin-top: -25px!important;
+    margin-bottom: 9px!important;
+    color: red;
+}
+
+.auth-page {
+    width: 345px;
+    margin: 0 auto;
+    .confirm-pass-error-msg {
+        color: red;
+        margin-top: 5px!important;
+
+    }
+    // h2
+    h2 {
+        text-align: center;
+        margin: 30px auto;
+    }
+
+    // login form Login by email, top part
+    .email-login-form {
+        display: flex;
+        flex-direction: column;
+        // delete p margins
+        p {
+            margin: 0;
+        }
+
+        // inputs styles
+        input {
+            width: 100%;
+            border: 1px solid #D8D8D8;
+            padding: 5px 12px;
+            height: 36px;
+            margin-bottom: 30px;
+            border-radius: 3px;
+            transition: .3s ease-in-out;
+            // change input focus
+            &:focus {
+                border-color: black;
+                outline: 1px;
+            }
+        }
+
+        label {
+            cursor: pointer;
+            color: #383A3F;
+            display: block;
+            font-size: 1rem;
+
+            .labeled-text:before {
+                content: "";
+                line-height: 1rem;
+                font-size: 1.4rem;
+                width: 1rem;
+                height: 1rem;
+                border: 1px solid #E1E3E9;
+                display: inline-block;
+                margin-right: 5px;
+            }
+
+            input[type="checkbox"] {
+                display: none;
+
+                + .labeled-text:hover:before {
+                    border-color: #FE2B0D;
+                }
+
+                &:checked + .labeled-text:before {
+                    content: "\2714";
+                    color: #ff0000;
+                    border-color: #FE2B0D;
+                    animation: tick 150ms ease-in;
+                }
+
+                &:disabled + .labeled-text:before {
+                    content: "";
+                }
+            }
+
+            a {
+                text-decoration: underline;
+
+                &:hover {
+                    text-decoration: underline;
+                    color: #707070;
+                }
+            }
+        }
+
+        // text block under password field  ||<text> <spaaaaaaaaaaaaaace> <text>||
+        .over-password {
+            display: flex;
+            justify-content: space-between;
+
+            p {
+                width: auto;
+            }
+
+            a {
+                color: #898989;
+
+                &:hover {
+                    text-decoration: underline;
+                    font-weight: 400;
+                }
+            }
+        }
+
+        // button styles
+        button,  {
+            width: 100%;
+            height: 36px;
+            padding: 8px 16px;
+            cursor: pointer;
+            background-color: #FE2B0D;
+            border: 1px solid #FE2B0D;
+            border-radius: 5px;
+            color: white;
+            transition: .25s ease-in-out;
+            &:hover {
+                color: white;
+                background-color: #EF1D01;
+            }
+        }
+        .sign-up-button {
+            pointer-events: all;
+            opacity: 1;
+        }
+        .unchecked-button {
+            pointer-events: none;
+            opacity: .5;
+        }
+    }
+
+    // divider styles text ("or")
+    .divider-h2 {
+        position: relative;
+        display: flex;
+        align-items: center;
+        // divider line
+        .line {
+            content: "";
+            background-color: #EDEDED;
+            width: 100%;
+            height: 2px;
+            z-index: 0;
+        }
+
+        // divider text ("or")
+        span {
+            padding: 0 5px;
+            color: #757575;
+            font-size: 13px;
+            background-color: white;
+            height: auto;
+            z-index: 1;
+            letter-spacing: .2px;
+            font-weight: 200;
+            display: block;
+        }
+
+    }
+
+    // oauth
+    .oauth {
+        width: 100%;
+        height: 40px;
+        background-color: white;
+        padding: 0;
+        border: 1px solid #D8D8D8;
+        border-radius: 3px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .04);
+        position: relative;
+
+        img {
+            position: absolute;
+            left: 12.5px;
+        }
+    }
+
+    > p {
+        text-align: center;
+        margin-top: 25px;
+    }
+}
+
+// checkbox
+@keyframes tick {
+    0% {
+        transform: scale(0)
+    }
+    90% {
+        transform: scale(1.3)
+    }
+    100% {
+        transform: scale(1)
+    }
+}

@@ -14,7 +14,7 @@ router.get('/:uid', usersControllers.getUserById);
 router.post(
     '/signup',
     [
-        check('userName')
+        check('username')
             .not()
             .isEmpty(),
         check('email')

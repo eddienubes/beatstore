@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = new mongoose.Schema({
-    userName: {type: String, required: true, unique: true},
+    username: {type: String, default: null, minlength: 1},
     email: {type: String, required: true, unique: true},
-    password: {type: String, required: true, minlength: 6},
+    password: {type: String, minlength: 6, default: null},
     cart: {
         type: [
             {
@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
     purchased: {
         type: [
             {
-                type: mongoose.Types.ObjectId, ref: 'Beat'
+                type: mongoose.Types.ObjectId, ref: 'Order'
             }
         ],
         default: []

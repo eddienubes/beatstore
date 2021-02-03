@@ -34,6 +34,12 @@
         }
     }
 }
+
+.input-if-default-value {
+    transform: translateY(-200%) translateX(-10px)!important;
+    font-size: 1rem;
+}
+
 .input-non-required {
     z-index: 1;
     background: none;

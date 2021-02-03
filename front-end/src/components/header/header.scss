@@ -1,10 +1,25 @@
 header {
+    .login-menu-toggle-button {
+        color: white;
+        border-radius: 2px;
+    }
+    white-space: nowrap;
+    .login-menu {
+        z-index: 5;
+        .paper-menu {
+            margin-top: 15px;
+            border-radius: 0;
+            hr {
+                margin: 5px;
+            }
+        }
+    }
     height: 65px;
 
     .nav__main-caption {
         transition: .2s ease-in-out;
         &:hover {
-            color: #07b007!important;
+            color: #ff00c1 !important;
 
         }
     }
