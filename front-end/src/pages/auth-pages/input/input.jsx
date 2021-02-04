@@ -1,4 +1,4 @@
-import React, {useReducer, useEffect} from 'react';
+import React, {useReducer, useEffect, cloneElement} from 'react';
 import {validate} from "../../../utils/validators";
 
 const inputReducer = (state, action) => {
@@ -21,8 +21,8 @@ const inputReducer = (state, action) => {
 
 const Input = (props) => {
     const [inputState, dispatch] = useReducer(inputReducer, {
-        value: props.value || '',
-        isValid: false,
+        value: props.initialValue || '',
+        isValid: props.initialValid || false,
         isTouched: false
     });
 
@@ -50,6 +50,31 @@ const Input = (props) => {
     };
 
     const errorMsg = !isValid && isTouched ? <p className={`input__error-msg`}>{props.errorText}</p> : null;
+
+
+    if (props.component) {
+        const clonedElement = cloneElement(
+            props.component,
+            {
+                id: props.id,
+                onChange: onChangeHandler,
+                onBlur: onBlurHandler,
+                name: props.name,
+                placeholder: props.placeholder,
+                type: props.type,
+                value: inputState.value
+            }
+        );
+
+        return (
+            <>
+                {
+                    clonedElement
+                }
+                {errorMsg}
+            </>
+        )
+    }
 
     return (
         <>

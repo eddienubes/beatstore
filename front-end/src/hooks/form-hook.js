@@ -52,6 +52,20 @@ const formReducer = (state, action) => {
                 },
                 isValid: formIsValid,
             }
+        case 'SET_DATA':
+            if (action.confirmed !== undefined) {
+                return {
+                    inputs: action.inputs,
+                    isValid: action.isValid,
+                    confirmed: action.confirmed
+                }
+            }
+            else {
+                return {
+                    inputs: action.inputs,
+                    isValid: action.isValid,
+                }
+            }
         default:
             return state;
     }
@@ -85,7 +99,24 @@ const useForm = (initialInputs, initialFormValidity, initialConfirmed) => {
         });
     }, []);
 
-    return [formState, onInputHandler];
+    const setFormData = useCallback((inputData, initialFormValidity, initialConfirmed) => {
+        if (initialConfirmed !== undefined) {
+            dispatch({
+                type: 'SET_DATA',
+                inputs: inputData,
+                isValid: initialFormValidity,
+                confirmed: initialConfirmed
+            });
+        } else {
+            dispatch({
+                type: 'SET_DATA',
+                inputs: inputData,
+                isValid: initialFormValidity,
+            });
+        }
+    }, []);
+
+    return [formState, onInputHandler, setFormData];
 }
 
 export default useForm;

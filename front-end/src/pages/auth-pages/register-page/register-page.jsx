@@ -40,7 +40,6 @@ const RegisterPage = ({loggedIn}) => {
     };
 
 
-
     const onUserSignupHandler = (e) => {
         e.preventDefault();
 
