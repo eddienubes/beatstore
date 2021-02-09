@@ -42,20 +42,7 @@ const Basket = () => {
                 </Table.Header>
 
                 <Table.Body>
-                    {
-                        <BasketItem
-                            show={true}
-                            key={1}
-                            id={1}
-                            amount={129}
-                            imgUrl={123}
-                            product={4124}
-                            licenseType={123}/>
-                    }
-                    {/*<basket-item amount={"100$"}*/}
-                    {/*           imgUrl="/covers/W6MT8iR.png"*/}
-                    {/*           licenseType="mp3Lease"*/}
-                    {/*           product="PATIENCE"> </basket-item>*/}
+
                 </Table.Body>
             </Table>
             <aside className="sidebar">

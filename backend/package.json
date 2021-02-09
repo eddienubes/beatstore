@@ -16,8 +16,12 @@
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "express-validator": "^6.9.2",
+    "get-audio-duration": "^2.0.3",
     "mongoose": "^5.11.13",
     "mongoose-unique-validator": "^2.0.3",
+    "multer": "^1.4.2",
+    "socket.io": "^3.1.1",
+    "socket.io-stream": "^0.9.1",
     "uuid": "^8.3.2"
   }
 }

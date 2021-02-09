@@ -20,7 +20,9 @@
     padding: 10px!important;
     .cart {
         background: none;
-        border: none;
+        border: none!important;
+        border-radius: 0px!important;
+        overflow: hidden;
     }
     .sidebar {
 
@@ -35,7 +37,7 @@
         background-color: #191919;
         display: flex;
         flex-direction: column;
-        margin: 20px;
+        margin: 0 20px 0;
         min-width: 330px;
         padding: 30px 25px 10px 25px!important;
         .label-style {

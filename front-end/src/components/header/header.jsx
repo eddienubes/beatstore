@@ -21,10 +21,14 @@ import Grow from '@material-ui/core/Grow';
 import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import {ClickAwayListener, MenuItem, MenuList} from "@material-ui/core";
+import {useDispatch, useSelector} from "react-redux";
+import {loggedOut} from "../../redux/actions/actions";
 
 const Header = () => {
     const [isOpenedBurger, setOpenBurger] = useState(false);
     const history = useHistory();
+    const dispatch = useDispatch();
+    const {loggedIn} = useSelector(state => state.userReducer);
     const [openLogDropdown, setOpenLogDropdown] = React.useState(false);
     const anchorRef = React.useRef(null);
 
@@ -88,6 +92,60 @@ const Header = () => {
         );
     }
 
+    const logDependentItem = loggedIn ? (
+        <>
+            <Button
+                className="login-menu-toggle-button"
+                ref={anchorRef}
+                aria-controls={openLogDropdown ? 'menu-list-grow' : undefined}
+                aria-haspopup="true"
+                onClick={handleToggle}
+            >
+                <FontAwesomeIcon icon={faUserCircle}/>&nbsp;Profile
+                &nbsp;
+                {
+                    openLogDropdown ?
+                        <FontAwesomeIcon icon={faAngleDown}/> :
+                        <FontAwesomeIcon icon={faAngleRight}/>
+                }
+            </Button>
+            <Popper
+                className="login-menu"
+                open={openLogDropdown}
+                anchorEl={anchorRef.current}
+                role={undefined}
+                transition
+                disablePortal>
+                {({TransitionProps, placement}) => (
+                    <Grow
+                        {...TransitionProps}
+                        style={{transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom'}}
+                    >
+                        <Paper className="paper-menu">
+                            <ClickAwayListener onClickAway={handleCloseDropdown()}>
+                                <MenuList autoFocusItem={openLogDropdown} id="menu-list-grow"
+                                          onKeyDown={handleListKeyDown}>
+                                    <MenuItem onClick={handleCloseDropdown('/account/profile')}>
+                                        <FontAwesomeIcon
+                                            icon={faFileInvoice}/> &nbsp; &nbsp; Account</MenuItem>
+                                    <MenuItem
+                                        onClick={handleCloseDropdown('/account/purchases')}><FontAwesomeIcon
+                                        icon={faStore}/> &nbsp; Purchases</MenuItem>
+                                    <hr/>
+                                    <MenuItem onClick={() => {
+                                        handleCloseDropdown('/logout');
+                                        dispatch(loggedOut());
+                                    }}><FontAwesomeIcon
+                                        icon={faSignOutAlt}/> &nbsp; Logout</MenuItem>
+                                </MenuList>
+                            </ClickAwayListener>
+                        </Paper>
+                    </Grow>
+                )}
+            </Popper>
+        </>) : (<Nav.Link className="invert login" to="/auth/login" as={Link}><FontAwesomeIcon
+        icon={faUser}/> Log In</Nav.Link>);
+
     return (
 
         <header>
@@ -102,55 +160,8 @@ const Header = () => {
                         <Nav.Link className="header__cart-button" to="/checkout" as={Link}>
                             <FontAwesomeIcon className="header__cart-icon" icon={faShoppingCart}/> Cart
                         </Nav.Link>
-                        <Button
-                            className="login-menu-toggle-button"
-                            ref={anchorRef}
-                            aria-controls={openLogDropdown ? 'menu-list-grow' : undefined}
-                            aria-haspopup="true"
-                            onClick={handleToggle}
-                        >
-                            <FontAwesomeIcon icon={faUserCircle}/>&nbsp;Profile
-                            &nbsp;
-                            {
-                                openLogDropdown ?
-                                    <FontAwesomeIcon icon={faAngleDown}/> :
-                                    <FontAwesomeIcon icon={faAngleRight}/>
-                            }
-                        </Button>
-                        <Popper
-                            className="login-menu"
-                            open={openLogDropdown}
-                            anchorEl={anchorRef.current}
-                            role={undefined}
-                            transition
-                            disablePortal>
-                            {({TransitionProps, placement}) => (
-                                <Grow
-                                    {...TransitionProps}
-                                    style={{transformOrigin: placement === 'bottom' ? 'center top' : 'center bottom'}}
-                                >
-                                    <Paper className="paper-menu">
-                                        <ClickAwayListener onClickAway={handleCloseDropdown()}>
-                                            <MenuList autoFocusItem={openLogDropdown} id="menu-list-grow"
-                                                      onKeyDown={handleListKeyDown}>
-                                                <MenuItem onClick={handleCloseDropdown('/account/profile')}>
-                                                    <FontAwesomeIcon
-                                                        icon={faFileInvoice}/> &nbsp; &nbsp; Account</MenuItem>
-                                                <MenuItem
-                                                    onClick={handleCloseDropdown('/account/purchases')}><FontAwesomeIcon
-                                                    icon={faStore}/> &nbsp; Purchases</MenuItem>
-                                                <hr/>
-                                                <MenuItem onClick={handleCloseDropdown('/logout')}><FontAwesomeIcon
-                                                    icon={faSignOutAlt}/> &nbsp; Logout</MenuItem>
-                                            </MenuList>
-                                        </ClickAwayListener>
-                                    </Paper>
-                                </Grow>
-                            )}
-                        </Popper>
-                        <Nav.Link className="invert login" to="/auth/login" as={Link}><FontAwesomeIcon
-                            icon={faUser}/> Log In</Nav.Link>
 
+                        {logDependentItem}
                         {/*{*/}
                         {/*    !customer.isLoggedIn*/}
                         {/*        ? <Nav.Link className="invert login" to="/login" as={Link}><FontAwesomeIcon icon={faUser}/>Log In</Nav.Link>*/}

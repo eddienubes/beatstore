@@ -1,11 +1,12 @@
-import {audioPlayed, audioStopped, beatsError, beatsLoaded, beatsRequested, setAudioInstance} from './actions';
+import {audioPlayed, audioStopped, fetchBeats, login, signup, loggedOut} from './actions';
 
 export {
-    beatsRequested,
-    beatsLoaded,
-    beatsError,
-
     audioPlayed,
     audioStopped,
-    setAudioInstance,
+
+    fetchBeats,
+
+    loggedOut,
+    login,
+    signup
 };

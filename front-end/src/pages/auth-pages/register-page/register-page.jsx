@@ -1,14 +1,21 @@
-import React, {useCallback, useState, useReducer} from 'react';
+import React, {useState} from 'react';
 import {Link, useHistory} from 'react-router-dom';
 import Input from "../input";
-import {VALIDATOR_CHECKBOX, VALIDATOR_EMAIL, VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE} from "../../../utils/validators";
+import {VALIDATOR_CHECKBOX, VALIDATOR_EMAIL, VALIDATOR_MINLENGTH} from "../../../utils/validators";
 import useForm from "../../../hooks/form-hook";
+import {withAuthService} from '../../../components/hoc';
+import {signup} from "../../../redux/actions/actions";
+import {useDispatch, useSelector} from "react-redux";
+import Spinner from "../../../components/spinner";
+import {Redirect} from 'react-router-dom';
 
-
-const RegisterPage = ({loggedIn}) => {
+const RegisterPage = ({authService}) => {
     const history = useHistory();
+    const dispatch = useDispatch();
+    const userState = useSelector(state => state.userReducer)
     const [checked, setChecked] = useState(false);
     const [touched, setTouched] = useState(false);
+
 
     const initialState = {
         inputs: {
@@ -39,16 +46,28 @@ const RegisterPage = ({loggedIn}) => {
         setChecked(!checked);
     };
 
-
-    const onUserSignupHandler = (e) => {
+    const onUserSignupHandler = async (e) => {
         e.preventDefault();
-
-        console.log(formState.inputs);
+        dispatch(signup(formState));
+        setChecked(false);
+        setTouched(false);
     }
 
     const canSignup = checked && formState.isValid && formState.confirmed;
     const confirmedMsg = !formState.confirmed && touched ?
-        <p className="confirm-pass-error-msg">Password and confirmed password should be identical</p> : null;
+        (<p className="confirm-pass-error-msg">Password and confirmed password should be identical</p>) : null;
+
+    const alreadyExistsError = userState.error && !formState.isValid ? (
+        <p className="confirm-pass-error-msg">{userState.error.message}</p>
+    ) : null
+
+    if (userState.processing) {
+        return <Spinner/>
+    }
+
+    if (userState.loggedIn) {
+        return <Redirect to="/"/>;
+    }
 
     return (
         <div className="auth-page">
@@ -109,6 +128,7 @@ const RegisterPage = ({loggedIn}) => {
                 </label>
                 <button className={canSignup ? "sign-up-button" : "unchecked-button"} type="submit">Sign up</button>
                 {confirmedMsg}
+                {alreadyExistsError}
             </form>
             <h2 className="divider-h2">
                 <div className="line"/>
@@ -125,10 +145,9 @@ const RegisterPage = ({loggedIn}) => {
                 Sign up with Google
             </button>
             <p>Already have an account? <Link to="/auth/login">Sign in</Link></p>
-
         </div>
     );
 };
 
 
-export default RegisterPage;
+export default withAuthService(RegisterPage);

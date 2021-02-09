@@ -1,6 +1,7 @@
 const express = require('express');
 const {Router} = require('express');
 const {check} = require('express-validator');
+const fileUpload = require('../middleware/file-upload');
 
 const beatsControllers = require('../controllers/beats-controller');
 
@@ -13,19 +14,35 @@ router.get('/', beatsControllers.getAllBeats);
 
 router.post(
     '/',
-    [
-        check('audioUrl')
-            .not()
-            .isEmpty(),
-        check('imgUrl')
-            .not()
-            .isEmpty(),
+    fileUpload.fields([
+        {
+            name: 'previewAudio', maxCount: 1
+        },
+        {
+            name: 'cover', maxCount: 1
+        },
+    ]),
+        [
         check('title')
             .isLength({min: 1}),
-        check('scale')
-            .not()
-            .isEmpty()
-    ],
+            check('mp3Url')
+                .not()
+                .isEmpty(),
+            check('wavUrl')
+                .not()
+                .isEmpty(),
+            check('stemsUrl')
+                .not()
+                .isEmpty(),
+            check('bpm')
+                .not()
+                .isEmpty(),
+            check('scale')
+                .not()
+                .isEmpty(),
+            check('tags')
+                .isArray()
+        ],
     beatsControllers.createBeat
 );
 

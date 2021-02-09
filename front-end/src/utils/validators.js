@@ -34,26 +34,23 @@ export const validate = (value, validators) => {
     for (const validator of validators) {
         if (validator.type === VALIDATOR_TYPE_REQUIRED) {
             isValid = isValid && value.trim().length > 0;
-        }
-        else if (validator.type === VALIDATOR_TYPE_MINLENGTH) {
+        } else if (validator.type === VALIDATOR_TYPE_MINLENGTH) {
             isValid = isValid && value.trim().length >= validator.payload;
-        }
-        else if (validator.type === VALIDATOR_TYPE_MAXLENGTH) {
+        } else if (validator.type === VALIDATOR_TYPE_MAXLENGTH) {
             isValid = isValid && value.trim().length <= validator.payload;
-        }
-        else if (validator.type === VALIDATOR_TYPE_MIN) {
+        } else if (validator.type === VALIDATOR_TYPE_MIN) {
             isValid = isValid && +value >= validator.payload;
-        }
-        else if (validator.type === VALIDATOR_TYPE_MAX) {
+        } else if (validator.type === VALIDATOR_TYPE_MAX) {
             isValid = isValid && +value <= validator.payload;
-        }
-        else if (validator.type === VALIDATOR_TYPE_EMAIL) {
-            isValid = isValid && /^\S+@\S+\.\S+$/.test(value);
-        }
-        else if (validator.type === VALIDATOR_TYPE_CHECKED) {
+        } else if (validator.type === VALIDATOR_TYPE_EMAIL) {
+
+            const regExp = /^(?=.{1,254}$)(?=.{1,64}@)[-!#$%&'*+0-9=?A-Z^_`a-z{|}~]+(\.[-!#$%&'*+0-9=?A-Z^_`a-z{|}~]+)*@[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?(\.[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*$/
+
+            isValid = isValid && regExp.test(value);
+
+        } else if (validator.type === VALIDATOR_TYPE_CHECKED) {
             isValid = value;
-        }
-        else if (validator.type === VALIDATOR_TYPE_NOT_REQUIRED_BUT_MIN_LENGTH) {
+        } else if (validator.type === VALIDATOR_TYPE_NOT_REQUIRED_BUT_MIN_LENGTH) {
             isValid = isValid && (value.trim().length >= validator.payload || value.trim().length === 0);
         }
     }

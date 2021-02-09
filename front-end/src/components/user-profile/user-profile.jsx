@@ -1,12 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import PlaceholderAnimatedButton from "../placeholder-animated-button";
 import Input from "../../pages/auth-pages/input";
+import Spinner from "../spinner";
 
 import useForm from "../../hooks/form-hook";
 import {VALIDATOR_EMAIL, VALIDATOR_NOT_REQUIRED_BUT_MIN_LENGTH, VALIDATOR_REQUIRE} from "../../utils/validators";
+import axios from "axios";
 
 import './user-profile.scss';
-import Spinner from "../spinner";
 
 const UserProfile = (props) => {
     const [isLoading, setLoading] = useState(true); // temporary solution
@@ -44,11 +45,11 @@ const UserProfile = (props) => {
         setFormData({
                 email: {
                     value: 'example@email.com',
-                    isValid: false
+                    isValid: true
                 },
                 username: {
                     value: 'example username',
-                    isValid: false
+                    isValid: true
                 },
                 password: {
                     value: '',
@@ -67,11 +68,12 @@ const UserProfile = (props) => {
         setLoading(false);
     }, []); // add user data and setFormData in dependencies TODO
 
-    const onSubmitHandler = (e) => {
+    const onSubmitHandler = async (e) => {
+
         e.preventDefault();
-        console.log(formState);
     }
     const {newPassword, newPasswordConfirmed} = formState.inputs;
+    console.log(formState.inputs, isLoading);
 
     const hasConfirmedError = newPassword.value !== newPasswordConfirmed.value;
     const errorMsg = hasConfirmedError ?
@@ -114,6 +116,7 @@ const UserProfile = (props) => {
                         validators={[VALIDATOR_EMAIL(), VALIDATOR_REQUIRE()]}
                         onInput={onInputHandler}
                         initialValue={formState.inputs.email.value}
+                        initialValid={formState.inputs.email.isValid}
                     />
                     <Input
                         component={<PlaceholderAnimatedButton text="Username"
@@ -126,6 +129,7 @@ const UserProfile = (props) => {
                         validators={[VALIDATOR_NOT_REQUIRED_BUT_MIN_LENGTH(1)]}
                         onInput={onInputHandler}
                         initialValue={formState.inputs.username.value}
+                        initialValid={formState.inputs.username.isValid}
                     />
                     <Input
                         component={<PlaceholderAnimatedButton text="Current password"

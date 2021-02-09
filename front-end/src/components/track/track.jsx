@@ -4,6 +4,8 @@ import {faShoppingCart} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import LicenseTypeModal from "../license-type-modal";
 import {withPlayables} from '../hoc';
+import {Table} from 'semantic-ui-react';
+
 
 const Track = ({track, setSelectedTrack, setPreviousTrack, playBack, audio, onSelected, selectedId}) => {
     // onSelected = temporary function
@@ -29,22 +31,29 @@ const Track = ({track, setSelectedTrack, setPreviousTrack, playBack, audio, onSe
         }
         playBack();
     }
-
+    const imageUrl = 'http://localhost:5000/api/' + track.imgUrl;
+    console.log(track);
     return (
+        // <Table.Row>
+        //     <Table.Cell>
+        //
+        //     </Table.Cell>
+        // </Table.Row>
         <tr className={isActive ? "selected_tr" : null}
             onClick={onClick}>
             <td className="track__td-img">
-                <img className="td-img-main" src={track.imgUrl} alt="beat image"/>
+                <img className="td-img-main" src={imageUrl} alt="beat image"/>
             </td>
             <td className="title">
-                {track.name}
+                {track.title}sadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasd
             </td>
             <td className="time">
-                {track.time}
+                {track.duration}
             </td>
             <td className="bpm">
                 {track.bpm}
             </td>
+
             <td className="track__tags">
                 {track.tags.map((tag, i) => <b key={i} className="track__tag">#{tag}</b>)}
             </td>

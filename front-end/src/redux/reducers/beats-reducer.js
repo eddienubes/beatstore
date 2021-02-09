@@ -20,7 +20,7 @@ const beatsReducer = (state = initialState, action) => {
                 isLoading: false,
                 error: null
             };
-        case actions.BEATS_ERROR:
+        case actions.BEATS_FAILURE:
             return {
                 beatList: [],
                 isLoading: false,

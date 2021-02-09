@@ -1,12 +1,14 @@
 
 footer {
-    height: 180px;
-    background-color: white;
+
+    height: auto;
+    min-height: 180px;
+    max-height: 190px;
+    background-color: black;
     //background-image: linear-gradient(white, black);
-    position: absolute;
-    bottom: 0;
     width: 100%;
-    margin-bottom: -180px;
+    flex: 1;
+    color: white;
     .footer__wrapper {
         min-width: 300px;
         display: flex;
@@ -25,13 +27,14 @@ footer {
                 &:last-child {
                     font-size: 0.7rem;
                     margin-top: 30px ;
-                    color: gray;
+                    color: #00FFF9;
                 }
                 display: block;
 
                 .footer__circle {
                     font-size: 0.33rem;
                     vertical-align: middle;
+                    color: white;
                 }
             }
 

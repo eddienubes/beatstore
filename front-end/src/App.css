@@ -1,33 +1,45 @@
 * {
-    font-family: 'Poppins', sans-serif!important;
+    font-family: 'Poppins', sans-serif !important;
+}
+html {
+    height: 100%;
+}
+body {
+    min-height: 100vh;
+    background: black!important;
 }
 /* global classes */
-.bg-black{
-    background-color: black!important;
-    color: white!important;
+.bg-black {
+    background-color: black !important;
+    color: white !important;
 }
+
 /*Player background color fix*/
 .progress-bar {
-    background: none!important;
+    background: none !important;
 }
+
 .music-player-panel {
-    transition: 1.5s ease-in-out!important;
+    transition: 1.5s ease-in-out !important;
 }
+
 .rc-slider-handle {
-    background: #FF00C1!important;
+    background: #FF00C1 !important;
 }
+
 .rc-slider-track {
-    background: #FF00C1!important;
+    background: #FF00C1 !important;
 }
+
 /* Invert button*/
-.invert-button{
+.invert-button {
     transition: .2s;
     background-color: white;
     color: black;
     border: 1px solid white;
 }
 
-.invert-button:hover{
+.invert-button:hover {
     background-color: black;
     color: white;
     border: 1px solid white;
@@ -40,13 +52,15 @@ button {
 ::-webkit-scrollbar {
     width: 10px;
 }
+
 ::-webkit-scrollbar-track {
     position: absolute;
     background-color: #212121;
-    margin-right: 5px!important;
+    margin-right: 5px !important;
     transition: .15s ease-in-out;
 
 }
+
 ::-webkit-scrollbar-thumb {
     background-color: gray;
     /*border: 1px solid white;*/
@@ -61,10 +75,15 @@ button {
 }
 
 button:focus {
-    outline: none!important;
+    outline: none !important;
 }
 
 #root {
-    position: relative;
+    display: flex;
     min-height: 100vh;
+    flex-direction: column;
+}
+main {
+    flex: 1;
+    height: 100%;
 }

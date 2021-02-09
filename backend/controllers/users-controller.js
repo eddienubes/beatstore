@@ -84,7 +84,7 @@ const signup = async (req, res, next) => {
 
     if (existingUser && existingUser.password) {
         return next(
-            new HttpError('User with such email or userName already exists')
+            new HttpError('User with such email or username already exists', 409)
         );
     }
 
@@ -139,7 +139,7 @@ const login = async (req, res, next) => {
 
     if (!existingUser || existingUser.password !== password) {
         return next(
-            new HttpError('Invalid credentials..', 500)
+            new HttpError('Invalid credentials..', 401)
         );
     }
 

@@ -1,10 +1,15 @@
 import React from 'react';
-import AudioSpectrumContainer from "../../containers/audio-spectrum-container";
+import TracksTable from "../../components/tracks-table/tracks-table";
+import Footer from "../../components/footer";
 
 const BeatsPage = () => {
 
     return (
-        <AudioSpectrumContainer/>
+        <>
+            <TracksTable hasMoreByDefault={true}/>
+        </>
+        // <AudioSpectrumContainer/>
+
     );
 };
 

@@ -1,41 +1,13 @@
 const HttpError = require('../models/http-error');
 const {v4: uuid} = require('uuid');
 const {validationResult} = require('express-validator');
+const {getAudioDurationInSeconds} = require('get-audio-duration');
+const fs = require('fs');
+const path = require('path');
+const config = require('../config');
 
 const Beat = require('../models/beat');
 
-let DUMMY_BEATS = [
-    {
-        "id": "1",
-        "audioUrl": "/tracks/Vacation Cm 135bpm.mp3",
-        "imgUrl": "/covers/W6MT8iR.png",
-        "bpm": 135,
-        "time": "03:35",
-        "title": "Vacation",
-        "scale": "Cm",
-        "tags": ["JackHill", "JoshA", "Guitar", "Chill", "Soul", "biba", "boba", "eiqweqwe", "qweqweqwe", "qweqwe", "qweqweqwe", "qweqweqweqwe", "qweqwe"]
-    },
-    {
-        "id": "2",
-        "audioUrl": "/tracks/Raindrop Gm 139.mp3",
-        "imgUrl": "/covers/W6MT8iR.png",
-        "bpm": 139,
-        "time": "04:05",
-        "title": "Raindrop",
-        "scale": "Gm",
-        "tags": ["Logic", "Eminem", "Quadeca", "Hard", "BrokenDrill"]
-    },
-    {
-        "id": "3",
-        "audioUrl": "/tracks/Sharp G_sharp_m_190bpm.mp3",
-        "imgUrl": "/covers/W6MT8iR.png",
-        "bpm": 190,
-        "time": "02:27",
-        "title": "Sharp",
-        "scale": "G#m",
-        "tags": ["Tyga", "Tory Lanez", "Club", "Hard"]
-    }
-];
 
 const getBeatById = async (req, res, next) => {
     const beatId = req.params.bid;
@@ -44,14 +16,13 @@ const getBeatById = async (req, res, next) => {
 
     try {
         beat = await Beat.findById(beatId);
-    }
-    catch (e) {
+    } catch (e) {
         return next(new HttpError('Couldn\'t find a beat in database with such id..'), 500);
     }
 
     if (!beat) {
         return next(
-            new HttpError('Couldn\'nt find a beat by specified id!', 404)
+            new HttpError('Couldn\'t find a beat by specified id!', 404)
         );
     }
 
@@ -64,26 +35,37 @@ const createBeat = async (req, res, next) => {
         return next(new HttpError('Invalid inputs passed, please check your data', 422));
     }
 
-    const {title, audioUrl, imgUrl, bpm, scale, tags} = req.body;
+    const {title, mp3Url, wavUrl, stemsUrl, bpm, scale, tags} = req.body;
+
+    const filePath = path.join(req.files.previewAudio[0].path);
+
+    const totalSeconds = await getAudioDurationInSeconds(filePath);
+
+    const minutesInt = Math.floor(totalSeconds / 60);
+    const secondsInt = Math.floor(totalSeconds % 60);
+
+    const formattedMinutes = minutesInt < 10 ? '0' + String(minutesInt) : String(minutesInt);
+    const formattedSeconds = secondsInt < 10 ? '0' + String(secondsInt) : String(secondsInt);
 
     const loadTime = new Date();
-    const duration = "3:00" // DUMMY logic // TODO
 
     const addedBeat = new Beat({
         title,
-        audioUrl,
-        imgUrl,
-        bpm,
-        duration,
+        imgUrl: path.normalize(req.files.cover[0].path),
+        previewAudioUrl: path.normalize(req.files.previewAudio[0].path),
+        mp3Url,
+        wavUrl,
+        stemsUrl,
+        bpm: parseInt(bpm),
         scale,
+        tags,
         loadTime,
-        tags
+        duration: formattedMinutes + ':' + formattedSeconds
     });
 
     try {
         await addedBeat.save();
-    }
-    catch (e) {
+    } catch (e) {
         const err = new HttpError('Creating new beat has been failed', 500);
         return next(err);
     }
@@ -106,8 +88,7 @@ const updateBeatById = async (req, res, next) => {
     let updatedBeat;
     try {
         updatedBeat = await Beat.findById(beatId);
-    }
-    catch (e) {
+    } catch (e) {
         return next(
             new HttpError('Something went wrong while trying to find a beat..'),
             500
@@ -123,8 +104,7 @@ const updateBeatById = async (req, res, next) => {
 
     try {
         await updatedBeat.save();
-    }
-    catch (e) {
+    } catch (e) {
         return next(
             new HttpError('Something went wrong while saving updated beat to database..'),
             500
@@ -141,18 +121,16 @@ const deleteBeat = async (req, res, next) => {
     let beat;
     try {
         beat = await Beat.findById(beatId);
-    }
-    catch (e) {
+    } catch (e) {
         return next(
             new HttpError('Couldn\'t find a beat with this id..'),
             500
         );
     }
-    
+
     try {
         await beat.remove()
-    }
-    catch (e) {
+    } catch (e) {
         return next(
             new HttpError('Couldn\'t delete a beat from database..'),
             500
@@ -164,12 +142,24 @@ const deleteBeat = async (req, res, next) => {
 };
 
 const getAllBeats = async (req, res, next) => {
+
     let beats;
+    let {skip} = req.body;
+
 
     try {
-        beats = await Beat.find({});
-    }
-    catch (e) {
+        skip = skip && /^\d+$/.test(skip) ? Number(skip) : 0;
+
+        beats = await Beat.find(
+            {},
+            {
+                'mp3Url': false,
+                'wavUrl': false,
+                'stemsUrl': false,
+            },
+            {skip, limit: 5},);
+    } catch (e) {
+        console.log(e.message);
         return next(
             new HttpError(
                 'Something went wrong while getting beats',

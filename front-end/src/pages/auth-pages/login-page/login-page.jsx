@@ -1,13 +1,17 @@
 import React from "react";
 import "../auth-page.scss";
-import {Link, useHistory} from "react-router-dom";
-import {VALIDATOR_EMAIL, VALIDATOR_MINLENGTH, VALIDATOR_REQUIRE} from "../../../utils/validators";
+import {Link, Redirect, useHistory} from "react-router-dom";
+import {VALIDATOR_EMAIL, VALIDATOR_REQUIRE} from "../../../utils/validators";
 import Input from "../input";
 import useForm from "../../../hooks/form-hook";
+import {useDispatch, useSelector} from "react-redux";
+import Spinner from "../../../components/spinner";
+import {login} from "../../../redux/actions/actions";
 
 const LoginPage = ({loggedIn}) => {
     const history = useHistory();
-
+    const userState = useSelector(state => state.userReducer);
+    const dispatch = useDispatch();
     const initialState = {
         inputs: {
             email: {
@@ -25,8 +29,19 @@ const LoginPage = ({loggedIn}) => {
 
     const onSubmitHandler = (e) => {
         e.preventDefault();
-        console.log(formState.inputs);
+        dispatch(login(formState.inputs));
     }
+
+    if (userState.processing) {
+        return <Spinner/>;
+    }
+
+    if (userState.loggedIn) {
+        return <Redirect to="/"/>;
+    }
+
+    const invalidCredentialsMsg = userState.error ? (
+        <p className="confirm-pass-error-msg">{userState.error.message}</p>) : null;
 
     return (
         <div className="auth-page">
@@ -49,7 +64,9 @@ const LoginPage = ({loggedIn}) => {
                        errorText="Password field is required"
                        validators={[VALIDATOR_REQUIRE()]}
                        onInput={onInputHandler}/>
-                <button className={formState.isValid ? "sign-up-button" : "unchecked-button"} type="submit">Sign in</button>
+                <button className={formState.isValid ? "sign-up-button" : "unchecked-button"} type="submit">Sign in
+                </button>
+                {invalidCredentialsMsg}
             </form>
             {/*<h2 className="divider-h2">*/}
             {/*    <div className="line"/>*/}
@@ -70,7 +87,6 @@ const LoginPage = ({loggedIn}) => {
         </div>
     )
 }
-
 
 
 export default LoginPage;

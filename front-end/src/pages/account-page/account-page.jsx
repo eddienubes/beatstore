@@ -14,21 +14,32 @@ import {orange} from "@material-ui/core/colors";
 
 import UserProfile from "../../components/user-profile";
 import PurchasesTable from "../../components/purchases-table";
+import Footer from "../../components/footer";
 
 const themeOverrided = createMuiTheme({
     overrides: {
+        MuiPaper: {
+            root: {
+                backgroundColor: '#ff00c1',
+
+            }
+        },
+        MuiTouchRipple: {
+            root: {
+                text: {
+                    textColorcolor: 'white'
+                }
+            }
+        },
         MuiTabs: {
+            text: {
+                color: 'white',
+            },
             indicator: {
                 textColor: '#ff00c1',
                 backgroundColor: '#ff00c1'
             }
         },
-        "root": {
-            "&$selected": {
-                "color": "#ff00c1",
-                "backgroundColor": "#ffe0b2"
-            }
-        }
     }
 });
 
@@ -62,6 +73,9 @@ const a11yProps = (index) => {
 
 const useStyles = makeStyles((theme) => ({
     root: {
+        "& .MuiPaper-root": {
+            backgroundColor: '#000000',
+        },
         backgroundColor: theme.palette.background.paper,
         width: 500,
     },
@@ -102,34 +116,36 @@ const AccountPage = () => {
     };
 
     return (
-        <div className={classes.root + " account-page"}>
-            <MuiThemeProvider theme={themeOverrided}>
-                <AppBar position="static" color="default">
-                    <Tabs
-                        centered
-                        value={value}
-                        onChange={handleChange}
-                        variant="fullWidth"
-                        aria-label="full width tabs example"
+        <>
+            <div className={classes.root + " account-page"}>
+                <MuiThemeProvider theme={themeOverrided}>
+                    <AppBar position="static" color="default">
+                        <Tabs
+                            centered
+                            value={value}
+                            onChange={handleChange}
+                            variant="fullWidth"
+                            aria-label="full width tabs example"
+                        >
+                            <Tab className="account-page__tab" label="Profile" {...a11yProps(0)} />
+                            <Tab className="account-page__tab" label="Purchases" {...a11yProps(1)} />
+                        </Tabs>
+                    </AppBar>
+                    <SwipeableViews
+                        axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
+                        index={value}
+                        onChangeIndex={handleChangeIndex}
                     >
-                        <Tab className="account-page__tab" label="Profile" {...a11yProps(0)} />
-                        <Tab className="account-page__tab" label="Purchases" {...a11yProps(1)} />
-                    </Tabs>
-                </AppBar>
-                <SwipeableViews
-                    axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
-                    index={value}
-                    onChangeIndex={handleChangeIndex}
-                >
-                    <TabPanel value={value} index={0} dir={theme.direction}>
-                        <UserProfile/>
-                    </TabPanel>
-                    <TabPanel value={value} index={1} dir={theme.direction}>
-                        <PurchasesTable/>
-                    </TabPanel>
-                </SwipeableViews>
-            </MuiThemeProvider>
-        </div>
+                        <TabPanel value={value} index={0} dir={theme.direction}>
+                            <UserProfile/>
+                        </TabPanel>
+                        <TabPanel value={value} index={1} dir={theme.direction}>
+                            <PurchasesTable/>
+                        </TabPanel>
+                    </SwipeableViews>
+                </MuiThemeProvider>
+            </div>
+        </>
     );
 };
 
