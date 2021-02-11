@@ -1,14 +1,12 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useState} from 'react';
 import 'react-jinke-music-player/assets/index.css';
 import 'react-jinke-music-player/lib/styles/index.less'
-import axios from "axios";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchBeats, audioPlayed, audioStopped} from "../../redux/actions";
+import {audioPlayed, audioStopped} from "../../redux/actions";
 import ReactJkMusicPlayer from "react-jinke-music-player";
 import AudioInstanceContext from "../audio-instance-context";
 
 import './music-player.scss';
-import BeatstoreService from "../../services";
 
 function Duration({className, seconds}) {
     return (
@@ -34,22 +32,41 @@ function pad(string) {
 }
 
 const MusicPlayer = () => {
+    const [audioInstance, setAudioInstance] = useState(null);
     const dispatch = useDispatch();
-    const {beatList} = useSelector(state => state.beatsReducer);
+    const {beatsReducer, audioReducer} = useSelector(state => state);
+    const {beatList} = beatsReducer;
+    const {id, isPlaying, previousId} = audioReducer;
     const audio = useContext(AudioInstanceContext);
 
-    useEffect(() => {
-        dispatch(fetchBeats(0));
-    }, []);
+    // useEffect(() => {
+    //     if (!audioInstance) return;
+    //
+    //     if (id !== previousId) {
+    //         audioInstance.playByIndex(id - 1);
+    //         return;
+    //     }
+    //
+    //     if (id === previousId) {
+    //         audioInstance.play();
+    //     }
+    // }, [id, isPlaying, audioInstance])
+
+    if (beatList.length === 0) {
+        return null;
+    }
     return (
         <ReactJkMusicPlayer
+            onAudioProgress={(audioInfo => console.log(audioInfo))}
             onAudioPlay={({id}) => {
                 dispatch(audioPlayed(id));
             }}
-            onAudioPause={() => dispatch(audioStopped())}
+            onAudioPause={() => {
+                dispatch(audioStopped())
+            }}
             mode={"full"}
             autoPlay={false}
-
+            glassBg={true}
             audioLists={
                 beatList.map((track) => {
                     const baseUrl = 'http://localhost:5000/api/';
@@ -65,6 +82,7 @@ const MusicPlayer = () => {
                 })}
             getAudioInstance={instance => {
                 audio.updateValue.setAudioInstance(instance);
+                setAudioInstance(instance);
             }}
         />
 

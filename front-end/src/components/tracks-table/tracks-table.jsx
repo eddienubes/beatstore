@@ -1,103 +1,92 @@
 import React, {useEffect, useState} from "react";
-import "./tracks-table.scss";
 import Track from "../track";
-import {withSearch} from '../hoc';
-import Spinner from "../spinner";
 import {useDispatch, useSelector} from "react-redux";
 import ErrorIndicator from "../error-indicator";
-import InfiniteScroll from "react-infinite-scroll-component";
 import {fetchBeats} from "../../redux/actions";
 import {Table} from 'semantic-ui-react';
+import Spinner from "../spinner";
 
-const TracksTable = ({hasMoreByDefault}) => {
+import "./tracks-table.scss";
+import InfiniteScroll from "react-infinite-scroll-component";
+
+const TracksTable = ({isMain = true}) => {
     const [selectedId, setSelected] = useState(null);
-    const [skip, setSkip] = useState(0);
-    const {beatList, isLoading, error} = useSelector(state => state.beatsReducer);
+    const {beatList, isLoading, error, hasMore, skip} = useSelector(state => state.beatsReducer);
+    const [bottomVisible, setBottomVisible] = useState(false);
     const dispatch = useDispatch();
-    const [hasMore, setMore] = useState(true);
 
-    const nextHandler = () => {
-        console.log('here');
-        const newSkip = skip + 5;
-        dispatch(fetchBeats(newSkip));
-        setSkip(newSkip);
-    }
+    const loadBeats = (limit) => {
+        dispatch(fetchBeats(limit));
+    };
+
+    useEffect(() => {
+        if (beatList.length === 0) {
+            // 65 is the number of pixels that determine the height of 1 beat
+            const firstMountBeatCount = Math.floor(window.innerHeight / 65);
+            loadBeats(firstMountBeatCount);
+
+        } else if (
+            hasMore &&
+            !isLoading &&
+            beatList.length === 0) {
+            loadBeats();
+        }
+    }, []);
+
 
     if (error) {
         return <ErrorIndicator/>
     }
 
-    // const beats = beatList.map((beat) => {
-    //         return filter(beat, search.query) ? <Track key={beat.id}
-    //                                                    track={beat}
-    //         /> : null;
-    //     }
-    // );
-    const tracks = beatList.map((beat) => {
-            return <Track key={beat._id}
-                          track={beat}
-                          onSelected={(id) => setSelected(id)}
-                          selectedId={selectedId}
+
+    const tracks = beatList.map((beat, index) => {
+            return <Track
+                index={index}
+                key={beat.id}
+                track={beat}
+                onSelected={(id) => setSelected(id)}
+                selectedId={selectedId}
             />;
         }
     );
-    // TODO ADD HAS MORE IN REDUX STORE
+
     return (
-        // <div className="tracks-table">
-        //     <InfiniteScroll next={nextHandler} hasMore={hasMoreByDefault} loader={<Spinner/>} dataLength={beatList.length}>
-        //         <table id="top-10-track-table">
-        //             <tbody>
-        //             <tr className="table-head">
-        //                 <td/>
-        //                 <td className="title">
-        //                     TITLE
-        //                 </td>
-        //                 <td className="time">
-        //                     TIME
-        //                 </td>
-        //                 <td className="bpm">
-        //                     BPM
-        //                 </td>
-        //                 <td className="tags-cap">
-        //                     TAGS
-        //                 </td>
-        //                 <td/>
-        //             </tr>
-        //             {tracks}
-        //             </tbody>
-        //         </table>
-        //     </InfiniteScroll>
-        // </div>
-        <div className={`tracks-table-main`}>
-            <Table structured striped unstackable>
-                <Table.Header className={`table-head`}>
-                    <Table.Row>
-                        <Table.HeaderCell className={'tracks__title'} width={1} textAlign="left">
-                        </Table.HeaderCell>
-                        <Table.HeaderCell className={'tracks__title'} width={6} textAlign="left">
-                            TITLE
-                        </Table.HeaderCell>
-                        <Table.HeaderCell className={'tracks__title'} width={1}>
-                            TIME
-                        </Table.HeaderCell>
-                        <Table.HeaderCell className={'tracks__title'} width={1}>
-                            BPM
-                        </Table.HeaderCell>
-                        <Table.HeaderCell className={'tracks__title'} width={1}>
-                            SCALE
-                        </Table.HeaderCell>
-                        <Table.HeaderCell className={'tracks__title'} width={5}>
-                            TAGS
-                        </Table.HeaderCell>
-                        <Table.HeaderCell className={'tracks__title'} width={2}>
+        <InfiniteScroll next={!isMain ? loadBeats : null} hasMore={hasMore} loader={null} dataLength={beatList.length}>
+            <div className={`tracks-table-main`} onScroll={e => console.log(e.target)}>
+                <Table structured unstackable>
+                    <Table.Header>
+                        <Table.Row className={`table-head`}>
+                            <Table.HeaderCell className={'tracks__gray-text '} width={6} textAlign="left">
+                                <div className="track__td-img"></div>
+                                TITLE
+                            </Table.HeaderCell>
+                            <Table.HeaderCell className={'tracks__gray-text'} width={1}>
+                                TIME
+                            </Table.HeaderCell>
+                            <Table.HeaderCell className={'tracks__gray-text'} width={1}>
+                                BPM
+                            </Table.HeaderCell>
+                            <Table.HeaderCell className={'tracks__gray-text tracks__scale'} width={1}>
+                                SCALE
+                            </Table.HeaderCell>
+                            <Table.HeaderCell className={'tracks__gray-text track__tags'} width={5}>
+                                TAGS
+                            </Table.HeaderCell>
+                            <Table.HeaderCell className={'tracks__gray-text'} width={1}>
 
-                        </Table.HeaderCell>
-                    </Table.Row>
-                </Table.Header>
-            </Table>
-        </div>
+                            </Table.HeaderCell>
+                        </Table.Row>
+                    </Table.Header>
 
+                    <Table.Body className={`table-body-main`}>
+                        {isMain ? tracks.slice(0, 10) : tracks}
+                    </Table.Body>
+
+                </Table>
+                {isLoading && <Spinner/>}
+            </div>
+        </InfiniteScroll>
     );
 };
 
-export default withSearch(TracksTable);
+export default TracksTable;

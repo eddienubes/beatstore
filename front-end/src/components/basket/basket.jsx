@@ -42,7 +42,7 @@ const Basket = () => {
                 </Table.Header>
 
                 <Table.Body>
-
+                    <BasketItem/>
                 </Table.Body>
             </Table>
             <aside className="sidebar">

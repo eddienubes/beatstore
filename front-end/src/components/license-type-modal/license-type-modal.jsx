@@ -121,7 +121,7 @@ const LicenseTypeModal = (props) => {
                         </Row>
                     </div>
                 </Modal.Content>
-                <Modal.Actions>
+                <Modal.Actions onClick={e => e.stopPropagation()}>
                     <Button basic color='green' className="license__choice-close-button" inverted
                             onClick={(e) => {
                                 e.stopPropagation();

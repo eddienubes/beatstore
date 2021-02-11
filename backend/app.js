@@ -36,6 +36,7 @@ app.use('/api/beats', beatsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/licenses', licensesRoutes);
+
 // audio stream handling
 app.get('/beat', async (req, res, next) => {
     // getting filePath

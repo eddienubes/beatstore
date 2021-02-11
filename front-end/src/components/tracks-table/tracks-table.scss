@@ -1,85 +1,131 @@
-.tracks-table {
+//.tracks-table {
+//    background-color: white;
+//    position: relative;
+//    padding: 10px;
+//    table {
+//
+//        width: 100%;
+//        max-width: 900px;
+//        margin: 0 auto 30px auto;
+//
+//            td {
+//                text-align: left;
+//                margin: 5px!important;
+//                &.title {
+//                    font-weight: 400;
+//                    padding-left: 17px;
+//                    padding-right: 10px;
+//                    white-space: nowrap;
+//                    text-overflow: ellipsis;
+//                    overflow: hidden;
+//                }
+//
+//                &.time {
+//                    max-width: 50px!important;
+//                }
+//
+//                &.tags {
+//                    font-weight: lighter;
+//                }
+//            }
+//        }
+//
+//
+//
+//        .table-head {
+//            letter-spacing: 1.5px;
+//
+//            td {
+//                height: 30px;
+//                color: #8b8b8b;
+//                font-weight: normal;
+//                border: 0!important;
+//                min-width: 50px;
+//            }
+//            .title .bpm .tags-cap {
+//            }
+//        }
+//    }
+//}
+.infinite-scroll {
     background-color: white;
-    position: relative;
-    padding: 10px;
+}
+//////////////////////////////
+.tracks-table-main {
+    background-color: white;
     table {
+        .tracks__scale {
 
-        width: 100%;
-        max-width: 900px;
-        margin: 0 auto 30px auto;
+        }
+        .track__tags {
+        }
+        max-width: 1300px;
+        margin: 0 auto!important;
+        border-radius: 0 !important;
+        border: none !important;
+
         tr {
             transition: .15s ease-in-out;
-            &:not(:first-child) {
-                &:hover:not(.selected_tr) {
-                    cursor: pointer;
-                    background: #e0e0e0;
-                }
-            }
-            td {
-                text-align: left;
-                margin: 5px!important;
-                &.title {
-                    font-weight: 400;
-                    padding-left: 17px;
-                    padding-right: 10px;
-                    white-space: nowrap;
-                    text-overflow: ellipsis;
-                    overflow: hidden;
-                }
-
-                &.time {
-                    max-width: 50px!important;
-                }
-
-                &.tags {
-                    font-weight: lighter;
-                }
+            &:hover:not(.selected_tr) {
+                cursor: pointer;
+                background: #e0e0e0;
             }
         }
 
+        td {
+            vertical-align: middle !important;
+            padding: 7px!important;
 
-        .selected_tr {
-            transition: .25s ease-in-out;
-            color: #ffffff;
-            animation: gradient 4.45s ease-in-out infinite alternate;
         }
-        @keyframes gradient {
-            0% {
-                background: linear-gradient(90deg, var(--c1, #000000) 51%, var(--c2, #ff00c1), var(--c1, #00fff9)) 0%/ 200%;;
-            }
-            100% {
-                background: linear-gradient(90deg, var(--c1, #000000) 51%, var(--c2, #ff00c1), var(--c1, #00fff9)) 100%/ 200%;;
 
-            }
-        }
+
+    }
+
+    .table-body-main {
+        max-width: 100px;
+        //margin: 0 auto!important;
+    }
+
+    .header-container {
+        border-radius: 50% !important;
+        padding: 100px !important;
+
         .table-head {
-            letter-spacing: 1.5px;
+            th {
+                border-radius: 0 !important;
+                border: none;
+            }
 
-            td {
-                height: 30px;
-                color: #8b8b8b;
-                font-weight: normal;
-                border: 0!important;
-                min-width: 50px;
-            }
-            .title .bpm .tags-cap {
-            }
+            letter-spacing: 1.5px;
+        }
+    }
+
+    .tracks__gray-text {
+        background-color: white!important;
+        white-space: nowrap;
+        color: #8b8b8b !important;
+        font-weight: normal !important;
+
+        .track__td-img {
+            display: inline-block;
+            min-width: 50px;
+            margin-right: 10px;
         }
     }
 }
 
-//////////////////////////////
-.tracks-table-main {
-    table {
-        border-radius: 0!important;
-    }
-    .table-head {
-        letter-spacing: 1.5px;
+.selected_tr {
+    transition: .25s ease-in-out;
+    color: #ffffff;
+    animation: gradient 4.45s ease-in-out infinite alternate;
+}
 
+@keyframes gradient {
+    0% {
+        background: linear-gradient(90deg, var(--c1, #000000) 51%, var(--c2, #ff00c1), var(--c1, #00fff9)) 0%/ 200%;;
     }
-    .tracks__title {
-        font-weight: normal!important;
-        color: #8b8b8b!important;
+    100% {
+        background: linear-gradient(90deg, var(--c1, #000000) 51%, var(--c2, #ff00c1), var(--c1, #00fff9)) 100%/ 200%;;
 
     }
 }
@@ -89,6 +135,7 @@
         border-bottom: lightgray 1px solid;
     }
 }
+
 @media (max-width: 700px) {
     .tracks-table {
         tr {

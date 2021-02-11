@@ -6,7 +6,7 @@ const BeatsPage = () => {
 
     return (
         <>
-            <TracksTable hasMoreByDefault={true}/>
+            <TracksTable isMain={false}/>
         </>
         // <AudioSpectrumContainer/>
 

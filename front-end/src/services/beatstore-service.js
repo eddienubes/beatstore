@@ -36,10 +36,11 @@ export default class BeatstoreService {
     //     }];
     // };
     //
-    getBeats = async (skip) => {
+    getBeats = async (skip, limit = 10) => {
         return axios.get(this.baseUrl, {
             params: {
-                skip
+                skip,
+                limit
             }
         });
     };

@@ -12,10 +12,10 @@ const beatsRequested = () => {
     };
 };
 
-const beatsLoaded = (newBeats) => {
+const beatsLoaded = (payload) => {
     return {
         type: actions.BEATS_LOADED,
-        payload: newBeats
+        payload: payload
     };
 };
 
@@ -26,10 +26,10 @@ const beatsFailure = (error) => {
     };
 };
 
-const audioPlayed = (audio) => {
+const audioPlayed = (id) => {
     return {
         type: actions.AUDIO_PLAYED,
-        payload: audio
+        payload: id
     };
 };
 
@@ -121,11 +121,14 @@ const login = (formState) => async (dispatch, getState) => {
     }
 }
 
-const fetchBeats = (skip) => async (dispatch, getState) => {
+const fetchBeats = (limit) => async (dispatch, getState) => {
     dispatch(beatsRequested());
+
+    const skip = getState().beatsReducer.skip;
+    console.log(skip);
     try {
-        const response = await beatstoreService.getBeats(skip);
-        dispatch(beatsLoaded(response.data.beats));
+        const response = await beatstoreService.getBeats(skip, limit);
+        dispatch(beatsLoaded({beats: response.data.beats, limit}));
     }
     catch (e) {
         console.log(e.response);

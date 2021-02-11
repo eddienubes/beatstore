@@ -144,11 +144,11 @@ const deleteBeat = async (req, res, next) => {
 const getAllBeats = async (req, res, next) => {
 
     let beats;
-    let {skip} = req.body;
-
+    let {skip, limit} = req.query;
 
     try {
         skip = skip && /^\d+$/.test(skip) ? Number(skip) : 0;
+        limit = limit && /^\d+$/.test(limit) ? Number(limit) : 10;
 
         beats = await Beat.find(
             {},
@@ -157,7 +157,7 @@ const getAllBeats = async (req, res, next) => {
                 'wavUrl': false,
                 'stemsUrl': false,
             },
-            {skip, limit: 5},);
+            {skip, limit},);
     } catch (e) {
         console.log(e.message);
         return next(
@@ -169,7 +169,7 @@ const getAllBeats = async (req, res, next) => {
     }
 
     res.status(200);
-    res.json({message: 'Beats are fetched successfully', beats});
+    res.json({message: 'Beats are fetched successfully', beats: beats.map(b => b.toObject({getters: true}))});
 };
 
 module.exports = {
