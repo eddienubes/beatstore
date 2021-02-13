@@ -184,12 +184,21 @@
 
     &:hover .license__close-button-icon {
         animation: close .35s ease-in-out;
+        color: #64DCDC!important;
+
     }
 
     &:active {
         //animation: close-active .5s ease-in-out alternate;
         transition: .25s ease-in-out!important;
         transform: scale(0.5);
+        color: #64DCDC;
+        border-radius: 50px;
+        border: #64DCDC!important;
+    }
+    &:hover {
+        border-radius: 50px;
+        border: #64DCDC;
     }
 }
 

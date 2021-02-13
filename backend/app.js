@@ -38,65 +38,66 @@ app.use('/api/orders', ordersRoutes);
 app.use('/api/licenses', licensesRoutes);
 
 // audio stream handling
-app.get('/beat', async (req, res, next) => {
-    // getting filePath
-    const filePath = path.resolve(__dirname, './data', './beats', './Vacation Cm 135bpm.mp3');
-
-    // converting callback into promise
-    const fileInfo = promisify(fs.stat);
-
-    // calculating size of file
-    const {size} = await fileInfo(filePath);
-
-    // cashing requested byte range
-    const range = req.headers.range;
-
-    if (range) {
-        let [start, end] = range.replace(/bytes=/, '').split('-');
-
-        start = parseInt(start, 10);
-        end = end ? parseInt(end, 10) : size - 1;
-
-        if (!isNaN(start) && isNaN(end)) {
-            end = size - 1;
-        }
-        if (isNaN(start) && !isNaN(end)) {
-            start = size - end;
-            end = size - 1;
-        }
-
-        // case when requested range is unavailable
-        if (start >= size || end >= size) {
-            res.writeHead(416, {
-                'Content-Range': `bytes */${size}`
-            });
-            return res.end();
-        }
-
-        res.writeHead(206, {
-            'Content-Range': `bytes ${start}-${end}/${size}`,
-            'Accept-Ranges': 'bytes',
-            'Content-Length': end - start + 1,
-            'Content-Type': 'audio/mp3'
-        });
-
-        let readable = fs.createReadStream(filePath, {start: start, end: end});
-        stream.pipeline(readable, res, err => {
-            console.log(err);
-        });
-    } else {
-
-        res.writeHead(200, {
-            'Content-Length': size,
-            'Content-Type': 'audio/mp3'
-        });
-
-        let readable = fs.createReadStream(filePath);
-        stream.pipeline(readable, res, err => {
-            console.log(err)
-        })
-    }
-});
+// app.get('/api/data/beats/:bid', async (req, res, next) => {
+//     // getting filePath
+//     const bid = req.params.bid;
+//     const filePath = path.resolve(__dirname, './data', './beats', bid);
+//     console.log(filePath);
+//     // converting callback into promise
+//     const fileInfo = promisify(fs.stat);
+//
+//     // calculating size of file
+//     const {size} = await fileInfo(filePath);
+//
+//     // cashing requested byte range
+//     const range = req.headers.range;
+//
+//     if (range) {
+//         let [start, end] = range.replace(/bytes=/, '').split('-');
+//
+//         start = parseInt(start, 10);
+//         end = end ? parseInt(end, 10) : size - 1;
+//
+//         if (!isNaN(start) && isNaN(end)) {
+//             end = size - 1;
+//         }
+//         if (isNaN(start) && !isNaN(end)) {
+//             start = size - end;
+//             end = size - 1;
+//         }
+//
+//         // case when requested range is unavailable
+//         if (start >= size || end >= size) {
+//             res.writeHead(416, {
+//                 'Content-Range': `bytes */${size}`
+//             });
+//             return res.end();
+//         }
+//
+//         res.writeHead(206, {
+//             'Content-Range': `bytes ${start}-${end}/${size}`,
+//             'Accept-Ranges': 'bytes',
+//             'Content-Length': end - start + 1,
+//             'Content-Type': 'audio/mp3'
+//         });
+//
+//         let readable = fs.createReadStream(filePath, {start: start, end: end});
+//         stream.pipeline(readable, res, err => {
+//             console.log(err);
+//         });
+//     } else {
+//
+//         res.writeHead(200, {
+//             'Content-Length': size,
+//             'Content-Type': 'audio/mp3'
+//         });
+//
+//         let readable = fs.createReadStream(filePath);
+//         stream.pipeline(readable, res, err => {
+//             console.log(err)
+//         })
+//     }
+// });
 
 // router in case none of above haven't been reached
 app.use((req, res) => {

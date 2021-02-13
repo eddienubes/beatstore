@@ -1,10 +1,12 @@
-import React, {Component, createRef, useRef} from 'react';
+import React, {useContext, useEffect, useRef, useState} from 'react';
 import {makeStyles} from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
+import {useSelector} from "react-redux";
 
 import './audio-spectrum.scss';
-import {connect, useSelector} from "react-redux";
-import {withAudioInstance} from "../hoc";
+import AudioInstanceContext from "../audio-instance-context";
+import Spinner from "../spinner";
+import axios from "axios";
 
 const useStyles = makeStyles(theme => ({
     flexContainer: {
@@ -15,164 +17,126 @@ const useStyles = makeStyles(theme => ({
     }
 }));
 
-// const AudioSpectrum = (props) => {
-//
-//     const classes = useStyles();
-//
-//     const amplitudeValues = useRef(null);
-//
-//     function adjustFreqBandStyle(newAmplitudeData) {
-//         amplitudeValues.current = newAmplitudeData;
-//         let domElements = props.frequencyBandArray.map((num) =>
-//             document.getElementById(num));
-//         for (let i = 0; i < props.frequencyBandArray.length; i++) {
-//             let num = props.frequencyBandArray[i]
-//             domElements[num].style.backgroundColor = `rgb(0, 255, ${amplitudeValues.current[num]})`
-//             domElements[num].style.height = `${amplitudeValues.current[num]}px`
-//         }
-//     }
-//
-//     function runSpectrum() {
-//         props.getFrequencyData(adjustFreqBandStyle)
-//         requestAnimationFrame(runSpectrum)
-//     }
-//
-//     function handleStartButtonClick() {
-//         // props.initializeAudioAnalyser()
-//         requestAnimationFrame(runSpectrum)
-//     }
-//
-//     if (props.isPlaying) {
-//         handleStartButtonClick();
-//     }
-//
-//     return (
-//
-//         <div>
-//             <div className={classes.flexContainer}>
-//                 {props.frequencyBandArray.map((num) =>
-//                     <Paper
-//                         className={'frequencyBands'}
-//                         elevation={4}
-//                         id={num}
-//                         key={num}
-//                     />
-//                 )}
-//             </div>
-//         </div>
-//
-//     );
-// };
-//
-// export default AudioSpectrum;
-let ctx, x_end, y_end, bar_height;
 
-// constants
-const width = window.innerWidth;
-const height = window.innerHeight;
-const bars = 555;
-const bar_width = 1;
-const radius = 0;
-const center_x = width / 2;
-const center_y = height / 2;
+const AudioSpectrum2 = (props) => {
 
-class AudioSpectrum extends Component {
-    constructor(props) {
-        super(props)
-        this.audio = this.props.instance;
-        this.canvas = createRef();
+    const {state, updateValue} = useContext(AudioInstanceContext);
+    const {isPlaying} = useSelector(state => state.audioReducer);
+    const amplitudeValues = useRef(null);
+    const classes = useStyles();
+    const [audioData, setAudioData] = useState(null);
+    const [animId, setAnimId] = useState(null);
+    const frequencyBandArray = useRef([...Array(25).keys()]).current;
+
+    const {audioInstance, source} = state;
+
+    useEffect(() => {
+        if (isPlaying && audioData) {
+            handleStartButtonClick();
+        }
+        else {
+            console.log('here');
+            cancelAnimationFrame(animId);
+        }
+
+        return () => {
+            cancelAnimationFrame(animId);
+        }
+    }, [isPlaying, audioData]);
+
+    useEffect(() => {
+        if (audioInstance) {
+            initializeAudioAnalyser();
+        }
+    }, [audioInstance]);
+
+    const initializeAudioAnalyser = async () => {
+        const audioContext = new AudioContext();
+        let newSource;
+        if (!source) {
+            newSource = audioContext.createBufferSource();
+            updateValue.setSource(newSource);
+        }
+        else {
+            newSource = source;
+        }
+
+        // let fileReader = new FileReader();
+        // let arrayBuffer;
+        //
+        // fileReader.onloadend = () => {
+        //     arrayBuffer = fileReader.result;
+        // }
+
+        const response = await axios.get(audioInstance.src, {
+            responseType: 'blob'
+        });
+        const arrayBuffer = await new Blob([response.data], {type: 'audio/mp3'}).arrayBuffer();
+
+        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+
+        // fileReader.readAsArrayBuffer(audioInstance.src);
+        console.log(audioBuffer);
+        newSource.buffer = audioBuffer;
+        const analyser = audioContext.createAnalyser();
+
+        analyser.fftSize = 1024;
+
+        newSource.connect(analyser);
+        analyser.connect(audioContext.destination);
+        setAudioData(analyser);
+    }
+    const getFrequencyData = (styleAdjuster) => {
+
+        const bufferLength = audioData.frequencyBinCount;
+        const amplitudeArray = new Uint8Array(bufferLength);
+        audioData.getByteFrequencyData(amplitudeArray);
+        styleAdjuster(amplitudeArray);
+
     }
 
-    animationLooper(canvas) {
-        canvas.width = width;
-        canvas.height = height;
+    const adjustFreqBandStyle = (newAmplitudeData) => {
+        console.log(newAmplitudeData);
+        amplitudeValues.current = newAmplitudeData;
+        let domElements = frequencyBandArray.map((num) =>
+            document.getElementById(num));
 
-        ctx = canvas.getContext("2d");
-
-        for (var i = 0; i < bars; i++) {
-            //divide a circle into equal part
-            const rads = Math.PI * 2 / bars;
-
-            // Math is magical
-            bar_height = this.frequency_array[i] * 2;
-
-            const x = center_x + Math.cos(rads * i) * (radius);
-            const y = center_y + Math.sin(rads * i) * (radius);
-            x_end = center_x + Math.cos(rads * i) * (radius + bar_height);
-            y_end = center_y + Math.sin(rads * i) * (radius + bar_height);
-
-            //draw a bar
-            this.drawBar(x, y, x_end, y_end, this.frequency_array[i], ctx, canvas);
+        for (let i = 0; i < frequencyBandArray.length; i++) {
+            let num = frequencyBandArray[i]
+            domElements[num].style.backgroundColor = `rgb(0, 255, ${amplitudeValues.current[num]})`
+            domElements[num].style.height = `${amplitudeValues.current[num]}px`
         }
     }
 
-    drawBar(x1=0, y1=0, x2=0, y2=0, frequency, ctx, canvas) {
-        const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-        gradient.addColorStop(0, "rgba(35, 7, 77, 1)");
-        gradient.addColorStop(1, "rgb(204,83,51)");
-        ctx.fillStyle = gradient;
-
-        const lineColor = "rgb(" + frequency + ", " + frequency + ", " + 205 + ")";
-        ctx.strokeStyle = lineColor;
-        ctx.lineWidth = bar_width;
-        ctx.beginPath();
-        ctx.moveTo(x1, y1);
-        ctx.lineTo(x2, y2);
-        ctx.stroke();
+    const runSpectrum = () => {
+        getFrequencyData(adjustFreqBandStyle)
+        requestAnimationFrame(runSpectrum)
     }
 
-    componentDidMount() {
-        this.context = new (window.AudioContext || window.webkitAudioContext)();
-        console.log(this.props.sourceSet);
-
-        if (!this.props.sourceSet) {
-            console.log('HER');
-            this.source = this.context.createMediaElementSource(this.audio);
-            this.props.setSource(true);
-        }
-        this.analyser = this.context.createAnalyser();
-        this.source.connect(this.analyser);
-        this.analyser.connect(this.context.destination);
-        this.frequency_array = new Uint8Array(this.analyser.frequencyBinCount);
-
-
+    const handleStartButtonClick = () => {
+        const animId = requestAnimationFrame(runSpectrum);
+        setAnimId(animId);
     }
 
-    togglePlay = (isPlaying) => {
-        const { audio } = this;
-        if (isPlaying) {
-            this.rafId = requestAnimationFrame(this.tick);
-        } else {
-            cancelAnimationFrame(this.rafId);
-        }
+
+
+    if (!state.audioInstance) {
+        return <Spinner/>
     }
 
-    tick = () => {
-        this.animationLooper(this.canvas.current);
-        this.analyser.getByteTimeDomainData(this.frequency_array);
-        this.rafId = requestAnimationFrame(this.tick);
-    }
-
-    componentWillUnmount() {
-        cancelAnimationFrame(this.rafId);
-        this.analyser.disconnect();
-        this.source.disconnect();
-    }
-
-    render() {
-
-        this.togglePlay(this.props.isPlaying);
-
-        return <>
-            <canvas ref={this.canvas}  />
-        </>
-    }
+    return (
+        <div className={`${classes.flexContainer} animat`}>
+            {frequencyBandArray.map((num) =>
+                <Paper
+                    className={'frequencyBands'}
+                    elevation={4}
+                    id={num}
+                    key={num}
+                />
+            )}
+        </div>
+    );
 }
 
-const mapStateToProps = ({audioReducer}) => {
-    return {
-        isPlaying: audioReducer.isPlaying,
-    }
-}
 
-export default connect(mapStateToProps)(AudioSpectrum);
+export default AudioSpectrum2;

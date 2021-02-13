@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {Component, useCallback, useContext, useEffect, useMemo, useState} from "react";
 import "./track.scss";
 import {faShoppingCart} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -8,50 +8,64 @@ import {Table} from 'semantic-ui-react';
 import {useDispatch, useSelector} from "react-redux";
 import {audioPlayed, audioStopped} from "../../redux/actions";
 import AudioInstanceContext from "../audio-instance-context";
+import useTraceUpdate from "../../hooks/trace-updates-hook";
 
-
-const Track = ({track, onSelected, index}) => {
+const Track = ({track, onSelected, index, id, previousId, isPlaying}) => {
 
     const [modalShow, setModalShow] = useState(false);
     const [isActive, setActive] = useState(false);
-    const {id, isPlaying, previousId} = useSelector(state => state.audioReducer);
     const dispatch = useDispatch();
     const {audioInstance} = useContext(AudioInstanceContext).state;
 
+    // useTraceUpdate({isActive, audioInstance, id, previousId, isPlaying});
+
     useEffect(() => {
-        if (track.id === id) {
+        if (track.id === id && isPlaying) {
             setActive(true);
         }
-        else {
+        else if (track.id === id && !isPlaying) {
             setActive(false);
         }
-    }, [id]);
+        else {
+            setActive(false)
+        }
+    }, [id, isPlaying]);
 
-    const onClick = () => {
-        // if (isActive) {
-        //     onSelected(null);
-        // }
-        // else {
-        //     onSelected(track.id);
-        // }
-        ///////
-        // playBack();
-        if (id === track.id && !isPlaying) {
+    // TODO MOVE onClick logic to redux
+    // TODO ADD Audio Instance to Redux Store
+
+    const onClick = (e) => {
+        e.stopPropagation();
+        if (track.id === id && !isPlaying) {
+            // console.log('here play');
+
             audioInstance.play();
         }
-        else if (id === track.id && isPlaying) {
+        else if (track.id === id && isPlaying) {
+            // console.log('here pause');
             audioInstance.pause();
         }
-        else if (previousId === track.id && id) {
+        else if (index === 0 && !id && !previousId) {
+            // console.log('here index === 0 && !id && !previousId', id, previousId);
+            audioInstance.play();
+        }
+        else if (!id && previousId) {
+            // console.log('here !id && previousId', id, previousId);
             audioInstance.playByIndex(index);
         }
-        else if (track.id) {
-            console.log('here', index);
+        else {
+            // console.log('here');
             audioInstance.playByIndex(index);
         }
+    };
 
-    }
-    const imageUrl = 'http://localhost:5000/api/' + track.imgUrl;
+
+    const imageUrl = useMemo(() => 'http://localhost:5000/api/' + track.imgUrl, [track]);
+
+    // useEffect(() => {
+    //     console.log('render', index, track.id);
+    // });
+    // console.log('Playing now: ', id, previousId);
     return (
         // <Table.Row>
         //     <Table.Cell>
@@ -64,7 +78,7 @@ const Track = ({track, onSelected, index}) => {
                 <div className="track__td-img">
                     <img className="td-img-main" src={imageUrl} alt="beat image"/>
                 </div>
-                {track.title}sadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasdsadasdasd
+                {track.title}
             </Table.Cell>
             <Table.Cell >
                 {track.duration}
@@ -99,4 +113,23 @@ const Track = ({track, onSelected, index}) => {
 }
 
 
-export default withPlayables(Track);
+export default React.memo(Track, (prevProps, nextProps) => {
+    const trackId = prevProps.track.id;
+    const index = prevProps.index;
+
+    // if (!prevProps.id && !prevProps.previousId) {
+    //     return false;
+    // }
+    if (index === 0) {
+        // console.log(trackId === nextProps.id, index);
+        return false;
+    }
+
+    if (trackId !== prevProps.id &&
+        trackId !== nextProps.id &&
+        trackId !== prevProps.previousId &&
+        trackId !== nextProps.previousId
+    ) {
+        return true;
+    }
+});

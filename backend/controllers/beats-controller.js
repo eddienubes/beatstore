@@ -35,7 +35,7 @@ const createBeat = async (req, res, next) => {
         return next(new HttpError('Invalid inputs passed, please check your data', 422));
     }
 
-    const {title, mp3Url, wavUrl, stemsUrl, bpm, scale, tags} = req.body;
+    const {title, mp3Url, wavUrl, stemsUrl, bpm, scale, tags, moods, genres} = req.body;
 
     const filePath = path.join(req.files.previewAudio[0].path);
 
@@ -56,10 +56,12 @@ const createBeat = async (req, res, next) => {
         mp3Url,
         wavUrl,
         stemsUrl,
-        bpm: parseInt(bpm),
+        bpm: bpm,
         scale,
         tags,
         loadTime,
+        moods,
+        genres,
         duration: formattedMinutes + ':' + formattedSeconds
     });
 
@@ -80,7 +82,7 @@ const updateBeatById = async (req, res, next) => {
         return next(new HttpError('Invalid inputs passed, please, check your data'));
     }
 
-    const {title, audioUrl, imgUrl, bpm, scale, tags} = req.body;
+    const {title, audioUrl, imgUrl, bpm, scale, tags, moods, genres} = req.body;
     const beatId = req.params.bid;
 
     const duration = "3:00"; // Again DUMMY duration logic // TODO
@@ -101,6 +103,8 @@ const updateBeatById = async (req, res, next) => {
     updatedBeat.bpm = bpm;
     updatedBeat.scale = scale;
     updatedBeat.tags = tags;
+    updatedBeat.moods = moods;
+    updatedBeat.genres = genres;
 
     try {
         await updatedBeat.save();
@@ -144,14 +148,33 @@ const deleteBeat = async (req, res, next) => {
 const getAllBeats = async (req, res, next) => {
 
     let beats;
-    let {skip, limit} = req.query;
+    let {skip, limit, filter} = req.query;
+
+    const jsonFilter = JSON.parse(filter);
+
+    let mongooseFilter = {
+
+    };
+    console.log(jsonFilter);
+    for (let f in jsonFilter) {
+        if (jsonFilter[f]) {
+            if (f === 'bpm') {
+                mongooseFilter[f] = jsonFilter[f];
+            }
+            else {
+                mongooseFilter[f] = {$elemMatch: {$in: [jsonFilter[f]]}};
+            }
+        }
+    }
+
+    console.log(mongooseFilter);
 
     try {
         skip = skip && /^\d+$/.test(skip) ? Number(skip) : 0;
         limit = limit && /^\d+$/.test(limit) ? Number(limit) : 10;
 
         beats = await Beat.find(
-            {},
+            mongooseFilter,
             {
                 'mp3Url': false,
                 'wavUrl': false,
@@ -167,15 +190,64 @@ const getAllBeats = async (req, res, next) => {
             )
         );
     }
-
+    console.log(beats);
     res.status(200);
     res.json({message: 'Beats are fetched successfully', beats: beats.map(b => b.toObject({getters: true}))});
 };
+
+const getUniqueInfo = async (req, res, next) => {
+
+    let beats;
+    const filter = {};
+    try {
+        beats = await Beat.find(
+            {},
+            {
+                'title': false,
+                'imgUrl': false,
+                'previewAudioUrl': false,
+                'duration': false,
+                'scale': false,
+                'loadTime': false,
+                'mp3Url': false,
+                'wavUrl': false,
+                'stemsUrl': false,
+                '_id': false
+            });
+    } catch (e) {
+        console.log(e.message);
+        return next(
+            new HttpError(
+                'Something went wrong while getting info about beats',
+                500
+            )
+        );
+    }
+    let bpms = [];
+    let moods = [];
+    let genres = [];
+    let tags = [];
+
+    beats.map(b => bpms.push(b.bpm));
+    beats.map(b => moods.push(...b.moods));
+    beats.map(b => genres.push(...b.genres));
+    beats.map(b => tags.push(...b.tags));
+
+    filter.bpms = bpms.filter((value, index, self) => self.indexOf(value) === index);
+    filter.moods = moods.filter((value, index, self) => self.indexOf(value) === index);
+    filter.genres = genres.filter((value, index, self) => self.indexOf(value) === index);
+    filter.tags = tags.filter((value, index, self) => self.indexOf(value) === index);
+
+    res.status(200);
+    res.json({message: 'Info is fetched successfully', info: filter});
+
+}
 
 module.exports = {
     getBeatById,
     createBeat,
     updateBeatById,
     deleteBeat,
-    getAllBeats
+    getAllBeats,
+    getUniqueInfo
 };

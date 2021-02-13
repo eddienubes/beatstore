@@ -1,4 +1,6 @@
 import * as actions from '../../constants/redux-action-names';
+import {useContext} from "react";
+import AudioInstanceContext from "../../components/audio-instance-context";
 
 const initialState = {
     isPlaying: false,
@@ -7,6 +9,7 @@ const initialState = {
 };
 
 const audioReducer = (state = initialState, action) => {
+
     switch (action.type) {
         case actions.AUDIO_PLAYED:
             return {
@@ -16,8 +19,8 @@ const audioReducer = (state = initialState, action) => {
             };
         case actions.AUDIO_STOPPED:
             return  {
+                ...state,
                 isPlaying: false,
-                id: null,
                 previousId: state.id
             };
         default:

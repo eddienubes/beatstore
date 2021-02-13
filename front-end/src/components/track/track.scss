@@ -21,8 +21,18 @@ $heightForNotLarge: 50px;
 //}
 //
 
+.selected_tr {
+    transition: .25s ease-in-out;
+    color: #ffffff;
+    cursor: pointer;
+    animation: gradient 4.45s ease-in-out infinite alternate;
+}
 
 .main-row-track {
+    cursor: pointer;
+    user-select: none;
+
+    color: white;
     .track__tags {
         .tags-container {
             display: flex;

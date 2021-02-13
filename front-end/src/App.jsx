@@ -10,14 +10,14 @@ import AudioInstanceContext from "./components/audio-instance-context";
 
 const App = () => {
     const [audioInstance, setAudioInstance] = useState(null);
-    const [sourceSet, setSource] = useState(false);
+    const [source, setSource] = useState(false);
 
 
     return (
         <ErrorBoundary>
             <AudioInstanceContext.Provider value={
                 {
-                    state: {audioInstance, sourceSet},
+                    state: {audioInstance, source},
                     updateValue: {
                         setAudioInstance, setSource
                     }

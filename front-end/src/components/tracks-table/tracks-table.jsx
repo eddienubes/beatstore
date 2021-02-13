@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useMemo, useState} from "react";
 import Track from "../track";
 import {useDispatch, useSelector} from "react-redux";
 import ErrorIndicator from "../error-indicator";
@@ -8,12 +8,16 @@ import Spinner from "../spinner";
 
 import "./tracks-table.scss";
 import InfiniteScroll from "react-infinite-scroll-component";
+import AudioInstanceContext from "../audio-instance-context";
+import useTraceUpdate from "../../hooks/trace-updates-hook";
 
 const TracksTable = ({isMain = true}) => {
     const [selectedId, setSelected] = useState(null);
-    const {beatList, isLoading, error, hasMore, skip} = useSelector(state => state.beatsReducer);
-    const [bottomVisible, setBottomVisible] = useState(false);
+    const {beatList, isLoading, error, hasMore, skip, isFiltering} = useSelector(state => state.beatsReducer);
+    const {audioInstance} = useContext(AudioInstanceContext).state;
     const dispatch = useDispatch();
+    const {id, isPlaying, previousId} = useSelector(state => state.audioReducer);
+
 
     const loadBeats = (limit) => {
         dispatch(fetchBeats(limit));
@@ -28,27 +32,47 @@ const TracksTable = ({isMain = true}) => {
         } else if (
             hasMore &&
             !isLoading &&
+            !isFiltering &&
             beatList.length === 0) {
             loadBeats();
         }
     }, []);
 
 
-    if (error) {
-        return <ErrorIndicator/>
-    }
-
-
-    const tracks = beatList.map((beat, index) => {
+    // const tracks = useMemo(() => {
+    //     return beatList.map((beat, index) => {
+    //         return <Track
+    //             index={index}
+    //             key={index}
+    //             track={beat}
+    //             onSelected={(id) => setSelected(id)}
+    //             selectedId={selectedId}
+    //         />;
+    //     });
+    // }, [beatList.length])
+    const tracks = useMemo(() => {
+        return beatList.map((beat, index) => {
             return <Track
                 index={index}
                 key={beat.id}
                 track={beat}
                 onSelected={(id) => setSelected(id)}
                 selectedId={selectedId}
+                id={id}
+                isPlaying={isPlaying}
+                previousId={previousId}
             />;
-        }
-    );
+        })
+    }, [beatList.length, id, isPlaying, previousId]);
+
+
+    if (error) {
+        return <ErrorIndicator/>
+    }
+
+    if (!audioInstance || isFiltering) {
+        return <Spinner/>
+    }
 
     return (
         <InfiniteScroll next={!isMain ? loadBeats : null} hasMore={hasMore} loader={null} dataLength={beatList.length}>
@@ -89,4 +113,4 @@ const TracksTable = ({isMain = true}) => {
     );
 };
 
-export default TracksTable;
+export default React.memo(TracksTable);

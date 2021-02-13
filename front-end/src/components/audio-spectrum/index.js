@@ -1,3 +1,3 @@
-import AudioSpectrum from "./audio-spectrum";
+import AudioSpectrum2 from "./audio-spectrum";
 
-export default AudioSpectrum;
+export default AudioSpectrum2;

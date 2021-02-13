@@ -7,10 +7,12 @@ const beatsControllers = require('../controllers/beats-controller');
 
 const router = Router();
 
+router.get('/info', beatsControllers.getUniqueInfo);
 
 router.get('/:bid', beatsControllers.getBeatById);
 
 router.get('/', beatsControllers.getAllBeats);
+
 
 router.post(
     '/',

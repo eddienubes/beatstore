@@ -195,8 +195,9 @@
 
 .card-container {
     position: relative;
-    background-image: linear-gradient(white, black);
-    margin: 0 !important;
+    background-image: linear-gradient(black, white, black);
+
+    margin: 120px 0 0 !important;
     padding: 20px;
 }
 

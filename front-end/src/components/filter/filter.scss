@@ -1,0 +1,81 @@
+.filter {
+    min-height: 100px;
+    display: flex;
+    justify-content: center;
+
+    .ui.selection.active.dropdown {
+        border: 1px solid #8b8b8b !important;
+    }
+
+    .dropdown-col {
+        margin: 10px 0;
+
+        .dropdown-itself {
+            display: flex!important;
+            justify-content: space-between;
+            min-width: 150px !important;
+            border-radius: 0 !important;
+            transition: .2s ease-in-out;
+            background-color: black !important;
+            border: 1px solid #8b8b8b !important;
+            padding-right: 13px!important;
+
+            &:hover {
+                transition: .2s ease-in-out;
+                border: 1px solid #00FFF9 !important;
+            }
+
+            //position: relative;
+            svg {
+                color: #00FFF9;
+            }
+
+            .icon {
+                color: #00FFF9;
+                font-family: photon-entypo, serif;
+            }
+
+            .text {
+                color: #FF00C1 !important;
+                user-select: none;
+            }
+
+            .menu {
+                animation: menu-open .12s ease-in-out;
+                background-color: black;
+                border: 1px solid #8b8b8b!important;
+                border-radius: 0!important;
+                will-change: none!important;
+                //position: absolute;
+                &::-webkit-scrollbar {
+                    background-color: black;
+                }
+                &::-webkit-scrollbar-thumb {
+                    background-color: gray !important;
+                    border-radius: 0;
+                }
+                .active.item {
+                    color: #00FFF9!important;
+                }
+                .item {
+                    border-top: none !important;
+                    color: #FF00C1;
+                    user-select: none;
+                    transition: .15s;
+                    &:hover {
+                        background-color: #414141;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@keyframes menu-open {
+    0% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+    }
+}

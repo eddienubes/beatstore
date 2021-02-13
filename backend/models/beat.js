@@ -9,11 +9,13 @@ const beatSchema = new Schema({
     mp3Url: {type: String, required: true},
     wavUrl: {type: String, required: true},
     stemsUrl: {type: String, required: true},
-    bpm: {type: Number, required: true},
     duration: {type: String, required: true},
     scale: {type: String, required: true},
     loadTime: {type: Date, required: true},
-    tags: {type: Array, required: true}
+    bpm: {type: String, required: true},
+    moods: {type: [String], required: true},
+    genres: {type: [String], required: true},
+    tags: {type: [String], required: true}
 });
 
 module.exports = mongoose.model('Beat', beatSchema);
