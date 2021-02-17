@@ -5,7 +5,9 @@ import AudioInstanceContext from "../../components/audio-instance-context";
 const initialState = {
     isPlaying: false,
     id: null,
-    previousId: null
+    previousId: null,
+    played: 0,
+    loaded: 0
 };
 
 const audioReducer = (state = initialState, action) => {
@@ -13,9 +15,8 @@ const audioReducer = (state = initialState, action) => {
     switch (action.type) {
         case actions.AUDIO_PLAYED:
             return {
-                previousId: state.id,
+                ...state,
                 isPlaying: true,
-                id: action.payload,
             };
         case actions.AUDIO_STOPPED:
             return  {
@@ -23,6 +24,24 @@ const audioReducer = (state = initialState, action) => {
                 isPlaying: false,
                 previousId: state.id
             };
+        case actions.AUDIO_LOADED:
+            return {
+                id: action.payload,
+                previousId: action.payload,
+                isPlaying: true,
+                played: 0,
+                loaded: 0
+            }
+        case actions.AUDIO_LENGTH_PLAYED:
+            return {
+                ...state,
+                played: action.payload
+            }
+        case actions.AUDIO_LENGTH_LOADED:
+            return {
+                ...state,
+                loaded: action.payload
+            }
         default:
             return state;
     }

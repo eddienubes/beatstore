@@ -78,7 +78,7 @@ export default function Filter() {
                 return newState;
             });
             dispatch(filter(newState, Math.floor(window.innerHeight / 65)));
-            console.log(newState);
+            // console.log(newState);
         }
     }
 

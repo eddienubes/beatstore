@@ -1,7 +1,6 @@
 import * as actions from '../../constants/redux-action-names';
 import AuthService from "../../services/auth-service";
 import BeatstoreService from "../../services";
-import axios from "axios";
 
 const beatstoreService = new BeatstoreService();
 const authService = new AuthService();
@@ -72,12 +71,32 @@ const filterFailure = (error) => {
     }
 }
 
-const audioPlayed = (id) => {
+const audioPlayed = () => {
     return {
         type: actions.AUDIO_PLAYED,
-        payload: id
     };
 };
+
+const audioLoaded = (url) => {
+    return {
+        type: actions.AUDIO_LOADED,
+        payload: url
+    };
+}
+
+const audioLengthLoaded = (loaded) => {
+    return {
+        type: actions.AUDIO_LENGTH_LOADED,
+        payload: loaded
+    };
+}
+
+const audioLengthPlayed = (played) => {
+    return {
+        type: actions.AUDIO_LENGTH_PLAYED,
+        payload: played
+    };
+}
 
 const audioStopped = () => {
     return {
@@ -143,8 +162,7 @@ const signup = (formState) => async (dispatch, getState) => {
         });
         dispatch(signupSuccess(response.data));
         console.log(response.data);
-    }
-    catch (e) {
+    } catch (e) {
         dispatch(signupFailure(e.response.data));
     }
 }
@@ -160,8 +178,7 @@ const login = (formState) => async (dispatch, getState) => {
             password: password.value
         });
         dispatch(logInSuccess(response.data));
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e.response)
         dispatch(logInFailure(e.response.data))
     }
@@ -173,12 +190,11 @@ const fetchBeats = (limit) => async (dispatch, getState) => {
     const skip = getState().beatsReducer.skip;
     const filter = getState().beatsReducer.filter;
 
-    console.log(filter);
+    // console.log(filter);
     try {
         const response = await beatstoreService.getBeats(skip, limit, filter);
         dispatch(beatsLoaded({beats: response.data.beats, limit}));
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e.response);
         dispatch(beatsFailure(e.response.data))
     }
@@ -190,8 +206,7 @@ const fetchInfo = () => async (dispatch, getState) => {
     try {
         const response = await beatstoreService.getInfo();
         dispatch(beatsInfoSuccess(response.data.info));
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e.response);
         dispatch(beatsInfoFailure(e.response.data))
     }
@@ -200,11 +215,18 @@ const fetchInfo = () => async (dispatch, getState) => {
 const filter = (formState, limit) => async (dispatch, getState) => {
     dispatch(filterRequest());
 
+    const currentFilterSearch = getState().beatsReducer.filter.search;
     try {
-        const response = await beatstoreService.getBeats(0, limit, formState);
-        dispatch(filterSuccess({beats: response.data.beats, limit, filter: formState}));
-    }
-    catch (e) {
+        const response = await beatstoreService.getBeats(0, limit, {
+            ...formState,
+            search: currentFilterSearch
+        });
+        dispatch(filterSuccess({
+            beats: response.data.beats,
+            limit,
+            filter: formState,
+        }));
+    } catch (e) {
         console.log(e.response);
         dispatch(filterFailure(e.response.data))
     }
@@ -217,6 +239,9 @@ export {
 
     audioPlayed,
     audioStopped,
+    audioLengthLoaded,
+    audioLengthPlayed,
+    audioLoaded,
 
     login,
     signup,

@@ -15,7 +15,11 @@ const getBeatById = async (req, res, next) => {
     let beat;
 
     try {
-        beat = await Beat.findById(beatId);
+        beat = await Beat.findById(beatId, {
+            'mp3Url': false,
+            'wavUrl': false,
+            'stemsUrl': false,
+        });
     } catch (e) {
         return next(new HttpError('Couldn\'t find a beat in database with such id..'), 500);
     }
@@ -152,22 +156,23 @@ const getAllBeats = async (req, res, next) => {
 
     const jsonFilter = JSON.parse(filter);
 
-    let mongooseFilter = {
+    let mongooseFilter = {};
 
-    };
-    console.log(jsonFilter);
-    for (let f in jsonFilter) {
+    for (let f in {
+        bpm: jsonFilter.bpm,
+        moods: jsonFilter.moods,
+        genres: jsonFilter.genres,
+        tags: jsonFilter.tags
+    }) {
         if (jsonFilter[f]) {
             if (f === 'bpm') {
                 mongooseFilter[f] = jsonFilter[f];
-            }
-            else {
+            } else {
                 mongooseFilter[f] = {$elemMatch: {$in: [jsonFilter[f]]}};
             }
         }
     }
 
-    console.log(mongooseFilter);
 
     try {
         skip = skip && /^\d+$/.test(skip) ? Number(skip) : 0;
@@ -190,9 +195,17 @@ const getAllBeats = async (req, res, next) => {
             )
         );
     }
-    console.log(beats);
+
+    const filteredBySearchBeats = beats.filter(b => {
+        const optString = (b.bpm + b.genres.join('') + b.moods.join('') + b.tags.join(''))
+            .replace(/\s/g, '')
+            .toLowerCase();
+
+        return optString.includes(jsonFilter.search.toLowerCase());
+    });
+
     res.status(200);
-    res.json({message: 'Beats are fetched successfully', beats: beats.map(b => b.toObject({getters: true}))});
+    res.json({message: 'Beats are fetched successfully', beats: filteredBySearchBeats.map(b => b.toObject({getters: true}))});
 };
 
 const getUniqueInfo = async (req, res, next) => {

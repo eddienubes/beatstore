@@ -63,7 +63,7 @@ const TracksTable = ({isMain = true}) => {
                 previousId={previousId}
             />;
         })
-    }, [beatList.length, id, isPlaying, previousId]);
+    }, [beatList, id, isPlaying, previousId, isFiltering]);
 
 
     if (error) {
@@ -72,6 +72,10 @@ const TracksTable = ({isMain = true}) => {
 
     if (!audioInstance || isFiltering) {
         return <Spinner/>
+    }
+
+    if (!isFiltering && beatList.length === 0) {
+        return <p className={`no-matches`}>Sorry, unfortunately we haven't found any beats matching your request...</p>
     }
 
     return (

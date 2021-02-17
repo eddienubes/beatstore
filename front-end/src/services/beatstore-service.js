@@ -48,4 +48,9 @@ export default class BeatstoreService {
     getInfo = async () => {
         return axios.get(this.baseUrl + '/info');
     };
+
+    getBeatById = async (id) => {
+        console.log(this.baseUrl + `/${id}`);
+        return axios.get(this.baseUrl + `/${id}`);
+    }
 };

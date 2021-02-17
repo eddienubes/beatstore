@@ -14,7 +14,7 @@ const initialState = {
         moods: null,
         genres: null,
         tags: null,
-        search: null
+        search: ''
     },
     info: {
         bpms: [],
@@ -90,6 +90,10 @@ const beatsReducer = (state = initialState, action) => {
             if (action.payload.beats.length === 0) {
                 hasMore = !hasMore;
             }
+            console.log({
+                ...state.filter,
+                ...action.payload.filter
+            });
             return {
                 ...state,
                 skip: action.payload.limit + NUMBER_OF_BEATS_PER_LOAD,
@@ -104,6 +108,7 @@ const beatsReducer = (state = initialState, action) => {
         case actions.FILTER_FAILURE:
             return {
                 ...state,
+                isLoading: false,
                 isFiltering: false,
                 error: action.payload,
                 hasMore: false

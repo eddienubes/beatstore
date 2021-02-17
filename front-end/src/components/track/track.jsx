@@ -1,14 +1,12 @@
-import React, {Component, useCallback, useContext, useEffect, useMemo, useState} from "react";
+import React, {useContext, useEffect, useMemo, useState} from "react";
 import "./track.scss";
 import {faShoppingCart} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import LicenseTypeModal from "../license-type-modal";
-import {withPlayables} from '../hoc';
 import {Table} from 'semantic-ui-react';
-import {useDispatch, useSelector} from "react-redux";
-import {audioPlayed, audioStopped} from "../../redux/actions";
+import {useDispatch} from "react-redux";
+import {audioLoaded, audioPlayed, audioStopped} from "../../redux/actions";
 import AudioInstanceContext from "../audio-instance-context";
-import useTraceUpdate from "../../hooks/trace-updates-hook";
 
 const Track = ({track, onSelected, index, id, previousId, isPlaying}) => {
 
@@ -20,14 +18,14 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying}) => {
     // useTraceUpdate({isActive, audioInstance, id, previousId, isPlaying});
 
     useEffect(() => {
+        // const baseUrl = 'http://localhost:5000/api/';
+        // const itsUrl = baseUrl + track.previewAudioUrl.replaceAll('\\', '/');
         if (track.id === id && isPlaying) {
             setActive(true);
-        }
-        else if (track.id === id && !isPlaying) {
+        } else if (track.id === id && !isPlaying) {
             setActive(false);
-        }
-        else {
-            setActive(false)
+        } else {
+            setActive(false);
         }
     }, [id, isPlaying]);
 
@@ -35,28 +33,54 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying}) => {
     // TODO ADD Audio Instance to Redux Store
 
     const onClick = (e) => {
-        e.stopPropagation();
-        if (track.id === id && !isPlaying) {
-            // console.log('here play');
+        // const baseUrl = 'http://localhost:5000/api/';
+        // const itsUrl = baseUrl + track.previewAudioUrl.replaceAll('\\', '/');
 
-            audioInstance.play();
+        e.stopPropagation();
+
+        if (track.id === id && isPlaying) {
+            console.log('            dispatch(audioStopped());\n');
+            dispatch(audioStopped());
+        } else if (track.id !== id) {
+            dispatch(audioLoaded(track.id));
         }
-        else if (track.id === id && isPlaying) {
-            // console.log('here pause');
-            audioInstance.pause();
+        else if (track.id === id && !isPlaying) {
+            dispatch(audioPlayed());
         }
-        else if (index === 0 && !id && !previousId) {
-            // console.log('here index === 0 && !id && !previousId', id, previousId);
-            audioInstance.play();
-        }
-        else if (!id && previousId) {
-            // console.log('here !id && previousId', id, previousId);
-            audioInstance.playByIndex(index);
-        }
-        else {
-            // console.log('here');
-            audioInstance.playByIndex(index);
-        }
+
+        // if (index === 0 && track.id !== id) {
+        //     console.log('here play 2');
+        //
+        //     audioInstance.playByIndex(index);
+        // }
+        // if (track.id === id && !isPlaying) {
+        //     console.log('here play 1');
+        //
+        //     audioInstance.play();
+        // }
+        // else if (track.id === id && isPlaying) {
+        //     console.log('here pause');
+        //     audioInstance.pause();
+        //     return;
+        // }
+        // else if (index === 0 && !id && !previousId) {
+        //     // console.log('here index === 0 && !id && !previousId', id, previousId);
+        //     console.log('here play');
+        //     audioInstance.play();
+        // }
+        // else if (!id && previousId) {
+        //     console.log('here play 4');
+        //
+        //     // console.log('here !id && previousId', id, previousId);
+        //     audioInstance.playByIndex(index);
+        // }
+        // else {
+        //     console.log('here play 3');
+        //
+        //     // console.log('here');
+        //     audioInstance.playByIndex(index);
+        // }
+        // audioInstance.play();
     };
 
 
@@ -65,25 +89,19 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying}) => {
     // useEffect(() => {
     //     console.log('render', index, track.id);
     // });
-    // console.log('Playing now: ', id, previousId);
     return (
-        // <Table.Row>
-        //     <Table.Cell>
-        //
-        //     </Table.Cell>
-        // </Table.Row>
         <Table.Row className={`main-row-track ${isActive ? "selected_tr" : null}`}
-            onClick={onClick}>
+                   onClick={onClick}>
             <Table.Cell className={`tracks__title`}>
                 <div className="track__td-img">
                     <img className="td-img-main" src={imageUrl} alt="beat image"/>
                 </div>
                 {track.title}
             </Table.Cell>
-            <Table.Cell >
+            <Table.Cell>
                 {track.duration}
             </Table.Cell>
-            <Table.Cell >
+            <Table.Cell>
                 {track.bpm}
             </Table.Cell>
             <Table.Cell className={`tracks__scale`}>
@@ -117,19 +135,21 @@ export default React.memo(Track, (prevProps, nextProps) => {
     const trackId = prevProps.track.id;
     const index = prevProps.index;
 
-    // if (!prevProps.id && !prevProps.previousId) {
+    // // if (!prevProps.id && !prevProps.previousId) {
+    // //     return false;
+    // // }
+    // if (index === 0) {
+    //     // console.log(trackId === nextProps.id, index);
     //     return false;
     // }
-    if (index === 0) {
-        // console.log(trackId === nextProps.id, index);
-        return false;
-    }
 
-    if (trackId !== prevProps.id &&
-        trackId !== nextProps.id &&
-        trackId !== prevProps.previousId &&
-        trackId !== nextProps.previousId
-    ) {
-        return true;
-    }
+    // if (
+    //     trackId !== nextProps.url &&
+    //     trackId !== nextProps.previousUrl)
+    // {
+    //     return true;
+    // }
+    // else {
+    //     return false;
+    // }
 });

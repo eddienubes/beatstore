@@ -1,8 +1,21 @@
-import {audioPlayed, audioStopped, fetchBeats, login, signup, loggedOut} from './actions';
+import {
+    audioPlayed,
+    audioStopped,
+    fetchBeats,
+    login,
+    signup,
+    loggedOut,
+    audioLoaded,
+    audioLengthPlayed,
+    audioLengthLoaded
+} from './actions';
 
 export {
     audioPlayed,
     audioStopped,
+    audioLoaded,
+    audioLengthPlayed,
+    audioLengthLoaded,
 
     fetchBeats,
 
