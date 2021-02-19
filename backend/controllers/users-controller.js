@@ -151,6 +151,7 @@ const signup = async (req, res, next) => {
         user: {
             id: userToSend.id,
             email: userToSend.email,
+            username: userToSend.username,
             cart: userToSend.cart,
             purchased: userToSend.purchased,
             token: token
@@ -171,6 +172,8 @@ const login = async (req, res, next) => {
     }
 
     if (!existingUser) {
+        console.log('DOES NOT EXIST')
+
         return next(
             new HttpError('Invalid credentials..', 401)
         );
@@ -186,14 +189,37 @@ const login = async (req, res, next) => {
     }
 
     if (!isValidPassword) {
+        console.log('HERE INVALID')
         return next(
             new HttpError('Invalid credentials..', 401)
         );
     }
 
-    
+    let token;
+    try {
+        token = jwt.sign(
+            {userId: existingUser, email: existingUser.email},
+            'supersecret_do_not_share',
+            {expiresIn: '1h'}
+        );
+    } catch (e) {
+        return next(
+            new HttpError('Could not log in, please try again.', 500)
+        );
+    }
 
-    res.json({message: 'successfully logged in'});
+
+    res.json({
+        message: 'successfully logged in',
+        user: {
+            id: existingUser.id,
+            email: existingUser.email,
+            username: existingUser.username,
+            cart: existingUser.cart,
+            purchased: existingUser.purchased,
+            token: token
+        }
+    });
 };
 
 module.exports = {

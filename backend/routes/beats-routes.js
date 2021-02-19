@@ -2,6 +2,7 @@ const express = require('express');
 const {Router} = require('express');
 const {check} = require('express-validator');
 const fileUpload = require('../middleware/file-upload');
+const checkAuth = require('../middleware/check-auth');
 
 const beatsControllers = require('../controllers/beats-controller');
 
@@ -15,7 +16,7 @@ router.get('/:bid', beatsControllers.getBeatById);
 
 router.get('/', beatsControllers.getAllBeats);
 
-
+router.use(checkAuth);
 
 router.post(
     '/',
