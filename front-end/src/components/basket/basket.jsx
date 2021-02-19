@@ -5,10 +5,22 @@ import {Table} from "semantic-ui-react";
 import PlaceholderAnimatedButton from "../placeholder-animated-button";
 import {Link} from "react-router-dom";
 import LicenseDescriptionModal from "../license-description-modal";
+import {useSelector} from "react-redux";
+import BrowseAllButton from "../browse-all-button";
 
 const Basket = () => {
     const [isDisabled, setDisabled] = React.useState(true);
     const [modalShow, setModalShow] = React.useState(false);
+    const {cart} = useSelector(state => state.userReducer);
+
+    if (cart.length === 0) {
+        return (
+            <>
+                <p className={`empty-cart-caption`}>Your cart is completely empty. Fill it with some beats :)</p>
+                <BrowseAllButton/>
+            </>
+        );
+    }
 
     const checkInputHandler = (e) => {
         setDisabled(!isDisabled)

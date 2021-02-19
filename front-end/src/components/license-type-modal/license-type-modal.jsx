@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import './license-type-modal.scss';
 import {Col, Row} from 'react-bootstrap'
 import {Button, Modal, TransitionablePortal} from 'semantic-ui-react'
@@ -32,6 +32,8 @@ const LicenseTypeModal = (props) => {
     'EMAIL/INSTAGRAM'];
     const popups = ['CLICK TO ADD IN YOUR CART', 'CLICK TO GO TO CONTACT PAGE'];
 
+    const imageUrl = useMemo(() => 'http://localhost:5000/api/' + props.track.imgUrl, [props.track]);
+
     return (
         <>
             <TransitionablePortal open={show} transition={{animation: 'zoom', duration: 350}}>
@@ -63,18 +65,18 @@ const LicenseTypeModal = (props) => {
                         <div className="licenses-container">
                             <Row className="track-description-container">
                                 <Col xl={1} md={2} sm={2} className="license__img-container">
-                                    <img className="license__img-main" src={props.track.imgUrl} alt="track"/>
+                                    <img className="license__img-main" src={imageUrl} alt="track"/>
                                 </Col>
                                 <Col xl={6} md={4} sm={4} className="license__beat_information">
                                     <div className="license__beat-name">
-                                        <span className="license__green">Track name:</span> {props.track.name}
+                                        <span className="license__green">Track name:</span> {props.track.title}
                                     </div>
                                     <div className="license__author-name">
                                         <span className="license__green">Producer:</span> Cherries
                                     </div>
                                     <div className="license__tags-container">
                                         <span>Tags:</span> {props.track.tags.map((tag, i) => <span key={i}
-                                                                                                   className="tag">#{tag}</span>)}
+                                                                                                   className="tag">#{tag}&nbsp;</span>)}
                                     </div>
                                     <div className="license__bpm">
                                         <span className="license_bpm-caption">BPM: </span> {props.track.bpm}

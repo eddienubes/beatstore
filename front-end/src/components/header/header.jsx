@@ -48,10 +48,11 @@ const Header = () => {
 
     const prevOpen = React.useRef(openLogDropdown);
     React.useEffect(() => {
-        if (prevOpen.current === true && openLogDropdown === false) {
-            anchorRef.current.focus();
+        if (loggedIn) {
+            if (prevOpen.current === true && openLogDropdown === false) {
+                anchorRef.current.focus();
+            }
         }
-
         prevOpen.current = openLogDropdown;
     }, [openLogDropdown]);
 
@@ -134,6 +135,7 @@ const Header = () => {
                                     <hr/>
                                     <MenuItem onClick={() => {
                                         handleCloseDropdown('/logout');
+                                        setOpenLogDropdown(false);
                                         dispatch(loggedOut());
                                     }}><FontAwesomeIcon
                                         icon={faSignOutAlt}/> &nbsp; Logout</MenuItem>

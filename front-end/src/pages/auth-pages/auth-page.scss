@@ -9,6 +9,7 @@ $button-point-events: none;
 }
 
 .auth-page {
+    animation: auth-page 0.8s ease-in-out;
     width: 345px;
     margin: 0 auto;
     .confirm-pass-error-msg {
@@ -21,8 +22,14 @@ $button-point-events: none;
     h2 {
         text-align: center;
         margin: 30px auto;
+        color: white;
     }
-
+    .caption {
+        color: #8d8d8d;
+    }
+    .transfer-to-login {
+        color: #a5a5a5;
+    }
     // login form Login by email, top part
     .email-login-form {
         display: flex;
@@ -43,7 +50,7 @@ $button-point-events: none;
             transition: .3s ease-in-out;
             // change input focus
             &:focus {
-                border-color: black;
+                border-color: #00ffd9;
                 outline: 1px;
             }
         }
@@ -53,6 +60,10 @@ $button-point-events: none;
             color: #383A3F;
             display: block;
             font-size: 1rem;
+
+            .labeled-text {
+                color: #b8b8b8;
+            }
 
             .labeled-text:before {
                 content: "";
@@ -147,18 +158,18 @@ $button-point-events: none;
         // divider line
         .line {
             content: "";
-            background-color: #EDEDED;
+            background-color: #949494;
             width: 100%;
-            height: 2px;
+            height: 1px;
             z-index: 0;
         }
 
         // divider text ("or")
         span {
             padding: 0 5px;
-            color: #757575;
+            color: #949494;
             font-size: 13px;
-            background-color: white;
+            //background-color: white;
             height: auto;
             z-index: 1;
             letter-spacing: .2px;
@@ -201,5 +212,14 @@ $button-point-events: none;
     }
     100% {
         transform: scale(1)
+    }
+}
+
+@keyframes auth-page {
+    0% {
+        transform: scale(0) translateY(-300%);
+    }
+    100% {
+        transform: scale(1) translateY(0%);
     }
 }

@@ -18,4 +18,14 @@ const beatSchema = new Schema({
     tags: {type: [String], required: true}
 });
 
+beatSchema.index({
+    title: 'text',
+    scale: 'text',
+    bpm: 'text',
+    moods: 'text',
+    genres: 'text',
+    tags: 'text'
+});
+
+
 module.exports = mongoose.model('Beat', beatSchema);

@@ -25,7 +25,17 @@ $heightForNotLarge: 50px;
     transition: .25s ease-in-out;
     color: #ffffff;
     cursor: pointer;
-    animation: gradient 4.45s ease-in-out infinite alternate;
+    animation: gradient 4.45s ease-in-out infinite alternate!important;
+}
+
+@keyframes gradient {
+    0% {
+        background: linear-gradient(90deg, var(--c1, #000000) 51%, var(--c2, #ff00c1), var(--c1, #00fff9)) 0%/ 200%;;
+    }
+    100% {
+        background: linear-gradient(90deg, var(--c1, #000000) 51%, var(--c2, #ff00c1), var(--c1, #00fff9)) 100%/ 200%;;
+
+    }
 }
 
 .main-row-track {
@@ -76,6 +86,7 @@ $heightForNotLarge: 50px;
             padding: 7px;
             background: black;
             transition: .25s ease-in-out;
+            border-radius: 2px;
 
             &:hover {
                 border: black 1px solid;
@@ -119,4 +130,11 @@ $heightForNotLarge: 50px;
         display: none;
     }
 }
-
+@keyframes track-on-mount {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

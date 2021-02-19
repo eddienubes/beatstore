@@ -5,8 +5,11 @@ import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import LicenseTypeModal from "../license-type-modal";
 import {Table} from 'semantic-ui-react';
 import {useDispatch} from "react-redux";
-import {audioLoaded, audioPlayed, audioStopped} from "../../redux/actions";
+import {audioLoaded, audioPlayed, audioStopped, filterDropped, filterSearchSet} from "../../redux/actions";
 import AudioInstanceContext from "../audio-instance-context";
+import useTraceUpdate from '../../hooks/trace-updates-hook';
+import {useHistory} from "react-router-dom";
+import {filter} from "../../redux/actions/actions";
 
 const Track = ({track, onSelected, index, id, previousId, isPlaying}) => {
 
@@ -14,12 +17,11 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying}) => {
     const [isActive, setActive] = useState(false);
     const dispatch = useDispatch();
     const {audioInstance} = useContext(AudioInstanceContext).state;
+    const history = useHistory();
 
     // useTraceUpdate({isActive, audioInstance, id, previousId, isPlaying});
 
     useEffect(() => {
-        // const baseUrl = 'http://localhost:5000/api/';
-        // const itsUrl = baseUrl + track.previewAudioUrl.replaceAll('\\', '/');
         if (track.id === id && isPlaying) {
             setActive(true);
         } else if (track.id === id && !isPlaying) {
@@ -33,13 +35,9 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying}) => {
     // TODO ADD Audio Instance to Redux Store
 
     const onClick = (e) => {
-        // const baseUrl = 'http://localhost:5000/api/';
-        // const itsUrl = baseUrl + track.previewAudioUrl.replaceAll('\\', '/');
-
         e.stopPropagation();
 
         if (track.id === id && isPlaying) {
-            console.log('            dispatch(audioStopped());\n');
             dispatch(audioStopped());
         } else if (track.id !== id) {
             dispatch(audioLoaded(track.id));
@@ -47,48 +45,12 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying}) => {
         else if (track.id === id && !isPlaying) {
             dispatch(audioPlayed());
         }
-
-        // if (index === 0 && track.id !== id) {
-        //     console.log('here play 2');
-        //
-        //     audioInstance.playByIndex(index);
-        // }
-        // if (track.id === id && !isPlaying) {
-        //     console.log('here play 1');
-        //
-        //     audioInstance.play();
-        // }
-        // else if (track.id === id && isPlaying) {
-        //     console.log('here pause');
-        //     audioInstance.pause();
-        //     return;
-        // }
-        // else if (index === 0 && !id && !previousId) {
-        //     // console.log('here index === 0 && !id && !previousId', id, previousId);
-        //     console.log('here play');
-        //     audioInstance.play();
-        // }
-        // else if (!id && previousId) {
-        //     console.log('here play 4');
-        //
-        //     // console.log('here !id && previousId', id, previousId);
-        //     audioInstance.playByIndex(index);
-        // }
-        // else {
-        //     console.log('here play 3');
-        //
-        //     // console.log('here');
-        //     audioInstance.playByIndex(index);
-        // }
-        // audioInstance.play();
     };
-
 
     const imageUrl = useMemo(() => 'http://localhost:5000/api/' + track.imgUrl, [track]);
 
-    // useEffect(() => {
-    //     console.log('render', index, track.id);
-    // });
+    // useTraceUpdate({track, id, previousId, isPlaying});
+
     return (
         <Table.Row className={`main-row-track ${isActive ? "selected_tr" : null}`}
                    onClick={onClick}>
@@ -109,7 +71,17 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying}) => {
             </Table.Cell>
             <Table.Cell className={`track__tags`}>
                 <div className={`tags-container`}>
-                    {track.tags.map((tag, i) => <b key={i} className="track__tag">#{tag}</b>)}
+                    {track.tags.map((tag, i) => <b
+                        key={i}
+                        className="track__tag"
+                        onClick={e => {
+                            e.stopPropagation();
+                            // dispatch(filterDropped());
+                            dispatch(filterSearchSet(e.target.innerText));
+                            dispatch(filter(undefined, Math.floor(window.innerHeight / 65)));
+                            history.push('/beats');
+                        }}
+                    >#{tag}</b>)}
                 </div>
             </Table.Cell>
             <Table.Cell className={`tracks__button-buy`}>
@@ -133,23 +105,7 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying}) => {
 
 export default React.memo(Track, (prevProps, nextProps) => {
     const trackId = prevProps.track.id;
-    const index = prevProps.index;
 
-    // // if (!prevProps.id && !prevProps.previousId) {
-    // //     return false;
-    // // }
-    // if (index === 0) {
-    //     // console.log(trackId === nextProps.id, index);
-    //     return false;
-    // }
-
-    // if (
-    //     trackId !== nextProps.url &&
-    //     trackId !== nextProps.previousUrl)
-    // {
-    //     return true;
-    // }
-    // else {
-    //     return false;
-    // }
+    return trackId !== nextProps.id &&
+        trackId !== nextProps.previousId;
 });

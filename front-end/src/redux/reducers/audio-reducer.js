@@ -27,7 +27,7 @@ const audioReducer = (state = initialState, action) => {
         case actions.AUDIO_LOADED:
             return {
                 id: action.payload,
-                previousId: action.payload,
+                previousId: state.id,
                 isPlaying: true,
                 played: 0,
                 loaded: 0

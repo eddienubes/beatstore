@@ -5,8 +5,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {audioLengthLoaded, audioLengthPlayed, audioLoaded, audioPlayed, audioStopped} from "../../redux/actions";
 import AudioInstanceContext from "../audio-instance-context";
 import ReactPlayer from "react-player";
-
-import './music-player.scss';
 import {withStyles} from "@material-ui/core";
 import Slider from '@material-ui/core/Slider';
 import BeatstoreService from "../../services";
@@ -14,7 +12,9 @@ import ErrorIndicator from "../error-indicator";
 import {faPause, faPlay, faStepBackward, faStepForward} from "@fortawesome/free-solid-svg-icons";
 import {Repeat, RepeatOne, VolumeDown, VolumeUp} from '@material-ui/icons';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {TransitionablePortal} from "semantic-ui-react";
+
+import './music-player.scss';
+import SpinnerAudio from "../spinner-audio";
 
 const PrettoSlider = withStyles({
     root: {
@@ -95,74 +95,7 @@ const VolumeSlider = withStyles({
 
 
 const MusicPlayer = () => {
-    // const [audioInstance, setAudioInstance] = useState(null);
-    // const dispatch = useDispatch();
-    // const {beatsReducer, audioReducer} = useSelector(state => state);
-    // const track = useRef(null);
-    // const [audioList, setAudioList] = useState([]);
-    // const {beatList} = beatsReducer;
-    // const {id, isPlaying, previousId} = audioReducer;
 
-    // // useEffect(() => {
-    // //     if (!audioInstance) return;
-    // //
-    // //     if (id !== previousId) {
-    // //         audioInstance.playByIndex(id - 1);
-    // //         return;
-    // //     }
-    // //
-    // //     if (id === previousId) {
-    // //         audioInstance.play();
-    // //     }
-    // // }, [id, isPlaying, audioInstance])
-    //
-    //
-    //
-    // useEffect(() => {
-    //     if (beatList.length !== 0) {
-    //         setAudioList(beatList.map((track) => {
-    //             const baseUrl = 'http://localhost:5000/api/';
-    //             const audioUrl = baseUrl + track.previewAudioUrl.replaceAll('\\', '/');
-    //             const imgUrl = baseUrl + track.imgUrl.replaceAll('\\', '/');
-    //
-    //             return ({
-    //                 id: track.id,
-    //                 name: track.title,
-    //                 musicSrc: audioUrl,
-    //                 cover: imgUrl
-    //             });
-    //         }))
-    //     }
-    // }, [beatList]);
-    //
-    // if (audioList.length === 0) {
-    //     return null;
-    // }
-    //
-    // return (
-    //     <ReactJkMusicPlayer
-    //         showMiniProcessBar={true}
-    //         onAudioPlay={(audioInfo) => {
-    //             dispatch(audioPlayed(audioInfo.id));
-    //             track.current = beatList[audioInfo.playIndex];
-    //         }}
-    //         onAudioPause={() => {
-    //             dispatch(audioStopped())
-    //         }}
-    //         mode={"full"}
-    //         autoPlay={false}
-    //         glassBg={true}
-    //         audioLists={audioList}
-    //         getAudioInstance={instance => {
-    //             audio.updateValue.setAudioInstance(instance);
-    //             setAudioInstance(instance);
-    //             instance.crossOrigin = "anonymous";
-    //         }}
-    //     />
-    //
-    // );
-    //
-    //
     // // loadFile = async () => {
     // //     const response = await axios.get('http://localhost:5000/beat', {
     // //         responseType: 'blob',
@@ -178,8 +111,8 @@ const MusicPlayer = () => {
     // // }
 
     // redux states
-    const {id, isPlaying, played} = useSelector(state => state.audioReducer);
-    const {beatList} = useSelector(state => state.beatsReducer);
+    const {id, isPlaying, played, previousId} = useSelector(state => state.audioReducer);
+    const {beatList, latestBeats} = useSelector(state => state.beatsReducer);
     const dispatch = useDispatch();
 
     // context audio instance
@@ -196,8 +129,9 @@ const MusicPlayer = () => {
         title: null,
         error: null,
         index: null,
-        audioList: null,
-        show: false
+        audioList: [],
+        show: false,
+        loading: false
     });
 
     const playerInstanceRef = useRef(null);
@@ -327,7 +261,7 @@ const MusicPlayer = () => {
         const baseUrl = 'http://localhost:5000/api/';
         const beatstoreService = new BeatstoreService();
 
-        if (beatList.length > 0) {
+        if (beatList.length > 0 && id) {
             setPlayerState(playerState => {
                 return {
                     ...playerState,
@@ -341,9 +275,9 @@ const MusicPlayer = () => {
             setPlayerState(playerState => {
                 return {
                     ...playerState,
-                    show: true
+                    loading: true
                 }
-            })
+            });
             beatstoreService.getBeatById(id).then(({data}) => {
                 const itsUrl = baseUrl + data.beat.previewAudioUrl.replaceAll('\\', '/');
                 const imageUrl = 'http://localhost:5000/api/' + data.beat.imgUrl;
@@ -353,25 +287,115 @@ const MusicPlayer = () => {
                         ...playerState,
                         url: itsUrl,
                         imgUrl: imageUrl,
-                        title: data.beat.title
+                        title: data.beat.title,
+                        loading: false
+                    }
+                });
+            }).catch(error => {
+                setPlayerState(playerState => {
+                    return {
+                        ...playerState,
+                        error: error,
+                        loading: false
                     }
                 });
             });
-        } else {
+        }
+    }, [id])
+
+    useEffect(() => {
+        if (playerState.audioList.length > 0) {
             setPlayerState(playerState => {
                 return {
                     ...playerState,
-                    show: false
+                    show: true
                 }
             })
         }
-    }, [id])
+    }, [playerState.audioList])
+
+    const player = playerState.show ? ( // TODO AND NEW WRAPPER WITH ON ANIMATION END EVENT
+        <div className={`music-player__container`}>
+            <div className={`progress-bar`}>
+                <PrettoSlider
+                    min={0}
+                    max={playerState.duration}
+                    defaultValue={0}
+                    value={played}
+                    valueLabelDisplay="auto"
+                    aria-label="pretto slider"
+                    valueLabelFormat={(value) => {
+                        const minutesInt = Math.floor(value / 60);
+                        const secondsInt = Math.floor(value % 60);
+
+                        const formattedMinutes = minutesInt < 10 ? '0' + String(minutesInt) : String(minutesInt);
+                        const formattedSeconds = secondsInt < 10 ? '0' + String(secondsInt) : String(secondsInt);
+                        return (
+                            <div
+                                className={`seconds-display`}>{formattedMinutes + ':' + formattedSeconds}</div>);
+                    }}
+                    onChange={handleSeekChange}
+                    onChangeCommitted={handleSeekMouseUp}
+                />
+            </div>
+            <div className={`main-content`}>
+                <div className={`information-container`}>
+                    <div className={`image-container`}>
+                        <img src={playerState.imgUrl} alt="beat image"/>
+                    </div>
+                    <div className={'title-container'}>
+                        <div className={`title`}>{playerState.title}</div>
+                        <div className={`author`}>Cherries By</div>
+                    </div>
+                </div>
+                {
+                    playerState.loading ?
+                        <SpinnerAudio/>
+                        :
+                        <div className={`player-buttons`}>
+                            <div className={`repeat`} onClick={handleLoop}>
+                                {playerState.loop ? <RepeatOne/> : <Repeat/>}
+                            </div>
+                            <div className={`step-backward`} onClick={handleStepBackward}>
+                                <FontAwesomeIcon icon={faStepBackward}/>
+                            </div>
+                            <div className={`play`} onClick={handlePlayPause}>
+                                <FontAwesomeIcon className={`icon`} icon={isPlaying ? faPause : faPlay}/>
+                            </div>
+                            <div className={`step-forward`} onClick={handleStepForward}>
+                                <FontAwesomeIcon icon={faStepForward}/>
+                            </div>
+                            <div className={`repeat`} style={{visibility: 'hidden'}}>
+                                {playerState.loop ? <RepeatOne/> : <Repeat/>}
+                            </div>
+                        </div>
+                }
+                <div className={`player-actions`}>
+                    <div className={`volume`}>
+                        <VolumeDown/>
+                        <VolumeSlider
+                            className={'slider'}
+                            min={0}
+                            max={1}
+                            step={0.01}
+                            value={playerState.volume}
+                            onChange={handleVolumeChange}
+                            onChangeCommitted={handleVolumeChange}
+                            valueLabelDisplay="off"
+                            aria-label="pretto slider"
+                        />
+                        <VolumeUp/>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    ) : null;
 
     if (playerState.error) {
         return <ErrorIndicator/>
     }
 
-    console.log(id);
     return (
         <div>
             <div className='player-wrapper'>
@@ -403,78 +427,7 @@ const MusicPlayer = () => {
                     onDuration={handleDuration}
                 />
             </div>
-            <TransitionablePortal open={playerState.show} transition={{animation: 'slide up', duration: 900}}>
-                <div className={`music-player__container`}>
-                    <div className={`progress-bar`}>
-                        <PrettoSlider
-                            min={0}
-                            max={playerState.duration}
-                            value={played}
-                            valueLabelDisplay="auto"
-                            aria-label="pretto slider"
-                            valueLabelFormat={(value) => {
-                                const minutesInt = Math.floor(value / 60);
-                                const secondsInt = Math.floor(value % 60);
-
-                                const formattedMinutes = minutesInt < 10 ? '0' + String(minutesInt) : String(minutesInt);
-                                const formattedSeconds = secondsInt < 10 ? '0' + String(secondsInt) : String(secondsInt);
-                                return (
-                                    <div
-                                        className={`seconds-display`}>{formattedMinutes + ':' + formattedSeconds}</div>);
-                            }}
-                            onChange={handleSeekChange}
-                            onChangeCommitted={handleSeekMouseUp}
-                        />
-                    </div>
-                    <div className={`main-content`}>
-                        <div className={`information-container`}>
-                            <div className={`image-container`}>
-                                <img src={playerState.imgUrl} alt="beat image"/>
-                            </div>
-                            <div className={'title-container'}>
-                                <div className={`title`}>{playerState.title}</div>
-                                <div className={`author`}>Cherries By</div>
-                            </div>
-                        </div>
-
-                        <div className={`player-buttons`}>
-                            <div className={`repeat`} onClick={handleLoop}>
-                                {playerState.loop ? <RepeatOne/> : <Repeat/>}
-                            </div>
-                            <div className={`step-backward`} onClick={handleStepBackward}>
-                                <FontAwesomeIcon icon={faStepBackward}/>
-                            </div>
-                            <div className={`play`} onClick={handlePlayPause}>
-                                <FontAwesomeIcon className={`icon`} icon={isPlaying ? faPause : faPlay}/>
-                            </div>
-                            <div className={`step-forward`} onClick={handleStepForward}>
-                                <FontAwesomeIcon icon={faStepForward}/>
-                            </div>
-                            <div className={`repeat`}>
-                                {/*{playerState.loop ? <RepeatOne/> : <Repeat/>}*/}
-                            </div>
-                        </div>
-                        <div className={`player-actions`}>
-                            <div className={`volume`}>
-                                <VolumeDown/>
-                                <VolumeSlider
-                                    className={'slider'}
-                                    min={0}
-                                    max={1}
-                                    step={0.01}
-                                    value={playerState.volume}
-                                    onChange={handleVolumeChange}
-                                    onChangeCommitted={handleVolumeChange}
-                                    valueLabelDisplay="off"
-                                    aria-label="pretto slider"
-                                />
-                                <VolumeUp/>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-            </TransitionablePortal>
+            {player}
         </div>
     );
 }

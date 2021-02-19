@@ -96,13 +96,16 @@
     width: 100%;
     display: flex !important;
     flex-direction: row;
-    flex-wrap: nowrap;
+    flex-wrap: nowrap !important;
+    white-space: nowrap !important;
 
     .license__img-container {
         width: 100px !important;
         height: 100px !important;
+        max-width: 100px !important;
 
         .license__img-main {
+            border-radius: 2px;
             margin-left: 5px;
             width: 100px !important;
             height: 100px !important;
@@ -113,39 +116,46 @@
 
     .license__beat_information {
         span {
-            font-weight: bold!important;
+            font-weight: bold !important;
         }
+
         margin-left: 20px;
         text-align: left;
         display: flex;
         flex-flow: column wrap;
         align-content: flex-start;
     }
+
     .license__beat-name {
         white-space: pre;
     }
+
     .license__tags-container {
         white-space: pre;
         box-sizing: content-box;
         max-width: 40vw;
         text-overflow: ellipsis;
         overflow: hidden;
+
         .tag {
             border-radius: 0 !important;
             border: none !important;
             font-weight: 500;
             color: #a9a9a9;
+
             &:hover {
                 text-decoration: none !important;
                 cursor: default;
             }
         }
     }
+
     .license_bpm-caption {
         font-size: 1rem;
         letter-spacing: normal;
 
     }
+
     .license__bpm {
         font-weight: bold;
         letter-spacing: 1px;
@@ -184,18 +194,19 @@
 
     &:hover .license__close-button-icon {
         animation: close .35s ease-in-out;
-        color: #64DCDC!important;
+        color: #64DCDC !important;
 
     }
 
     &:active {
         //animation: close-active .5s ease-in-out alternate;
-        transition: .25s ease-in-out!important;
+        transition: .25s ease-in-out !important;
         transform: scale(0.5);
         color: #64DCDC;
         border-radius: 50px;
-        border: #64DCDC!important;
+        border: #64DCDC !important;
     }
+
     &:hover {
         border-radius: 50px;
         border: #64DCDC;
@@ -268,8 +279,3 @@
     }
 }
 
-@media screen and (max-width: 550px) {
-    .license__tags-container {
-        display: none;
-    }
-}

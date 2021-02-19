@@ -9,6 +9,7 @@ import './filter.scss';
 import BigSearch from "../big-search/big-search";
 import {useDispatch, useSelector} from "react-redux";
 import Spinner from "../spinner";
+import SpinnerAudio from "../spinner-audio";
 
 export default function Filter() {
     const [open, setOpen] = useState(null);
@@ -83,7 +84,7 @@ export default function Filter() {
     }
 
     if (isLoadingInfo) {
-        return <Spinner/>;
+        return <SpinnerAudio/>;
     }
 
     return (

@@ -158,21 +158,44 @@ const getAllBeats = async (req, res, next) => {
 
     let mongooseFilter = {};
 
-    for (let f in {
-        bpm: jsonFilter.bpm,
-        moods: jsonFilter.moods,
-        genres: jsonFilter.genres,
-        tags: jsonFilter.tags
-    }) {
-        if (jsonFilter[f]) {
-            if (f === 'bpm') {
-                mongooseFilter[f] = jsonFilter[f];
-            } else {
-                mongooseFilter[f] = {$elemMatch: {$in: [jsonFilter[f]]}};
-            }
-        }
+    if (jsonFilter.bpm) {
+        mongooseFilter.bpm = jsonFilter.bpm;
     }
 
+    if (jsonFilter.genres) {
+        mongooseFilter.genres = jsonFilter.genres;
+    }
+
+    if (jsonFilter.moods) {
+        mongooseFilter.moods = jsonFilter.moods;
+    }
+
+    if (jsonFilter.tags) {
+        mongooseFilter.tags = jsonFilter.tags;
+    }
+
+    if (jsonFilter.search !== '') {
+        jsonFilter.search = jsonFilter.search.replace(/#+/, '');
+        // mongooseFilter.$text = {$search: jsonFilter.search, $caseSensitive: false};
+        // console.log(jsonFilter)
+        mongooseFilter.$or = [
+            {
+                title: {$regex: jsonFilter.search, $options: 'i'}
+            },
+            {
+                tags: {$regex: jsonFilter.search, $options: 'i'}
+            },
+            {
+                genres: {$regex: jsonFilter.search, $options: 'i'}
+            },
+            {
+                bpm: {$regex: jsonFilter.search, $options: 'i'}
+            }
+        ]
+
+    }
+
+    // console.log(mongooseFilter);
 
     try {
         skip = skip && /^\d+$/.test(skip) ? Number(skip) : 0;
@@ -185,7 +208,8 @@ const getAllBeats = async (req, res, next) => {
                 'wavUrl': false,
                 'stemsUrl': false,
             },
-            {skip, limit},);
+            {skip}).sort({loadTime: -1}).limit(limit);
+
     } catch (e) {
         console.log(e.message);
         return next(
@@ -196,16 +220,11 @@ const getAllBeats = async (req, res, next) => {
         );
     }
 
-    const filteredBySearchBeats = beats.filter(b => {
-        const optString = (b.bpm + b.genres.join('') + b.moods.join('') + b.tags.join(''))
-            .replace(/\s/g, '')
-            .toLowerCase();
-
-        return optString.includes(jsonFilter.search.toLowerCase());
-    });
-
     res.status(200);
-    res.json({message: 'Beats are fetched successfully', beats: filteredBySearchBeats.map(b => b.toObject({getters: true}))});
+    res.json({
+        message: 'Beats are fetched successfully',
+        beats: beats.map(b => b.toObject({getters: true}))
+    });
 };
 
 const getUniqueInfo = async (req, res, next) => {
@@ -241,19 +260,66 @@ const getUniqueInfo = async (req, res, next) => {
     let genres = [];
     let tags = [];
 
+    const sortCb = (a, b) => {
+        if (a < b) {
+            return -1;
+        }
+        if (a > b) {
+            return 1;
+        }
+
+        return 0;
+    }
+
     beats.map(b => bpms.push(b.bpm));
     beats.map(b => moods.push(...b.moods));
     beats.map(b => genres.push(...b.genres));
     beats.map(b => tags.push(...b.tags));
 
-    filter.bpms = bpms.filter((value, index, self) => self.indexOf(value) === index);
-    filter.moods = moods.filter((value, index, self) => self.indexOf(value) === index);
-    filter.genres = genres.filter((value, index, self) => self.indexOf(value) === index);
-    filter.tags = tags.filter((value, index, self) => self.indexOf(value) === index);
+    filter.bpms = bpms.filter((value, index, self) => self.indexOf(value) === index).sort(sortCb);
+    filter.moods = moods.filter((value, index, self) => self.indexOf(value) === index).sort(sortCb);
+    filter.genres = genres.filter((value, index, self) => self.indexOf(value) === index).sort(sortCb);
+    filter.tags = tags.filter((value, index, self) => self.indexOf(value) === index).sort(sortCb);
 
     res.status(200);
     res.json({message: 'Info is fetched successfully', info: filter});
 
+}
+
+const getRandomBeat = async (req, res, next) => {
+
+    let beats;
+
+    try {
+        beats = await Beat.aggregate([
+            {
+                $project: {
+                    'mp3Url': false,
+                    'wavUrl': false,
+                    'stemsUrl': false,
+                }
+            },
+            {$sample: {size: 1}}
+        ]);
+    } catch (e) {
+        console.log(e.message);
+        return next(
+            new HttpError(
+                'Something went wrong while getting random beat',
+                500
+            )
+        );
+    }
+
+    res.status(200);
+    res.json({
+        message: 'Successfully retrieved random beat', beat: beats.map(b => {
+            return {
+                ...b,
+                id: b._id.toString()
+            }
+        })[0]
+    })
 }
 
 module.exports = {
@@ -262,5 +328,6 @@ module.exports = {
     updateBeatById,
     deleteBeat,
     getAllBeats,
-    getUniqueInfo
+    getUniqueInfo,
+    getRandomBeat
 };

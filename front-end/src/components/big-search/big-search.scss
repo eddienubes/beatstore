@@ -1,4 +1,5 @@
 .big-search {
+    animation: big-search .9s ease-in-out;
     z-index: 0;
     display: flex;
     flex-direction: column;
@@ -96,6 +97,14 @@
         width: 55%;
 
         input {
+            &::placeholder {
+                transition: .2s ease-in-out;
+                text-align: center;
+                width: 100%;
+                text-overflow: ellipsis;
+                letter-spacing: 1.2px;
+            }
+
             border: 1px solid white;
             width: 100%;
             padding: 10px 20px;
@@ -106,6 +115,10 @@
             transition: .18s ease-in-out;
 
             &:focus {
+                &::placeholder {
+                    opacity: 0;
+                    transform: translateX(-100%);
+                }
                 border: 3px solid white;
                 outline: none;
             }
@@ -129,6 +142,9 @@
             &:hover {
                 transform: scale(1.2) rotate(360deg);
             }
+            &:active {
+                transform: scale(0.8) rotate(350deg)
+            }
         }
     }
 
@@ -144,6 +160,9 @@
     .sub {
         font-size: 2vw;
     }
+    .big-search {
+        padding: 45px;
+    }
 }
 
 @media (max-width: 700px) {
@@ -152,9 +171,27 @@
     }
 }
 
-@media (max-width: 800px) {
+@media (max-width: 1150px) {
+
     .search {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        .search-magnifier-button {
+            font-size: 1.5rem!important;
+            width: 60px!important;
+            height: 60px!important;
+        }
+        input {
+            height: 60px!important;
+            &::placeholder {
+                font-size: 1.4rem;
+                max-width: 60px;
+                display: inline-block;
+                width: 20px;
+            }
+        }
         width: 100% !important;
+        font-size: 0.7rem !important;
     }
 }
 
@@ -164,3 +201,11 @@
     }
 }
 
+@keyframes big-search {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

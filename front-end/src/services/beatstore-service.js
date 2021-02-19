@@ -50,7 +50,10 @@ export default class BeatstoreService {
     };
 
     getBeatById = async (id) => {
-        console.log(this.baseUrl + `/${id}`);
         return axios.get(this.baseUrl + `/${id}`);
+    }
+
+    getRandomBeat = async () => {
+        return axios.get(this.baseUrl + `/random`);
     }
 };

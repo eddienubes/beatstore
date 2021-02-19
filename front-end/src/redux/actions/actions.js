@@ -18,6 +18,7 @@ const beatsLoaded = (payload) => {
     };
 };
 
+
 const beatsFailure = (error) => {
     return {
         type: actions.BEATS_FAILURE,
@@ -64,10 +65,30 @@ const filterSuccess = (payload) => {
     }
 }
 
+const filterSearchSet = (search) => {
+    return {
+        type: actions.FILTER_SEARCH_SET,
+        payload: search
+    }
+}
+
+const filterDropped = () => {
+    return {
+        type: actions.FILTER_DROPPED
+    }
+}
+
 const filterFailure = (error) => {
     return {
         type: actions.FILTER_FAILURE,
         payload: error
+    }
+}
+
+const audioToggle = (id) => {
+    return {
+        type: actions.AUDIO_TOGGLE,
+        payload: id
     }
 }
 
@@ -77,10 +98,10 @@ const audioPlayed = () => {
     };
 };
 
-const audioLoaded = (url) => {
+const audioLoaded = (id) => {
     return {
         type: actions.AUDIO_LOADED,
-        payload: url
+        payload: id
     };
 }
 
@@ -216,15 +237,27 @@ const filter = (formState, limit) => async (dispatch, getState) => {
     dispatch(filterRequest());
 
     const currentFilterSearch = getState().beatsReducer.filter.search;
+
+    let currentFormState;
+    if (!formState) {
+        currentFormState = getState().beatsReducer.filter;
+        // console.log(currentFormState)
+    }
+    else {
+        currentFormState = formState;
+    }
+
+    const filter = {
+        ...currentFormState,
+        search: currentFilterSearch
+    }
+
     try {
-        const response = await beatstoreService.getBeats(0, limit, {
-            ...formState,
-            search: currentFilterSearch
-        });
+        const response = await beatstoreService.getBeats(0, limit, filter);
         dispatch(filterSuccess({
             beats: response.data.beats,
             limit,
-            filter: formState,
+            filter
         }));
     } catch (e) {
         console.log(e.response);
@@ -232,16 +265,33 @@ const filter = (formState, limit) => async (dispatch, getState) => {
     }
 }
 
+// const fetchLatestBeats = () => async (dispatch, getState) => {
+//
+//     dispatch(beatsRequested());
+//
+//     try {
+//         const response = await beatstoreService.getLatestBeats();
+//         dispatch(latestBeatsLoaded(response.data.beats));
+//     }
+//     catch (e) {
+//         console.log(e.response);
+//         dispatch(beatsFailure(e.response.data));
+//     }
+// }
+
 export {
     fetchBeats,
     fetchInfo,
     filter,
+    filterSearchSet,
+    filterDropped,
 
     audioPlayed,
     audioStopped,
     audioLengthLoaded,
     audioLengthPlayed,
     audioLoaded,
+    audioToggle,
 
     login,
     signup,

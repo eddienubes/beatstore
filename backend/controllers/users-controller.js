@@ -1,6 +1,8 @@
 const HttpError = require('../models/http-error');
 const {v4: uuid} = require('uuid');
 const {validationResult} = require('express-validator');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 const Order = require('../models/order');
 const User = require('../models/user');
@@ -88,27 +90,37 @@ const signup = async (req, res, next) => {
         );
     }
 
+    let hashedPassword;
+    try {
+        hashedPassword = await bcrypt.hash(password, 12);
+    } catch (e) {
+        return next(
+            new HttpError('Could not create a user, please try again.', 500)
+        );
+    }
+
+    let userToSend;
+    let messageToSend;
+
     if (!existingUser) {
         const newUser = new User({
             username,
             email,
-            password,
+            password: hashedPassword,
         });
 
         try {
             await newUser.save();
         } catch (e) {
             return next(
-                new HttpError('Something went wrong while saving new user to a database..')
+                new HttpError('Something went wrong while saving new user to a database..', 500)
             );
         }
-        res.status(201);
-        res.json({
-            message: 'New user has been successfully created!',
-            newUser: newUser.toObject({getters: true})
-        });
+
+        userToSend = newUser;
+        messageToSend = 'New user has been successfully created!';
     } else {
-        existingUser.password = password;
+        existingUser.password = hashedPassword;
         existingUser.username = username;
         try {
             await existingUser.save();
@@ -117,12 +129,33 @@ const signup = async (req, res, next) => {
                 new HttpError('Something went wrong while trying to save existing user..')
             );
         }
-        res.status(201);
-        res.json({
-            message: 'New registered user has been successfully created!',
-            newUser: existingUser.toObject({getters: true})
-        });
+        userToSend = existingUser;
+        messageToSend = 'New registered user has been successfully created!';
     }
+
+    let token;
+    try {
+        token = jwt.sign(
+            {userId: userToSend.id, email: userToSend.email},
+            'supersecret_do_not_share',
+            {expiresIn: '1h'});
+    } catch (e) {
+        return next(
+            new HttpError('Could not create a user, please try again.', 500)
+        );
+    }
+
+    res.status(201);
+    res.json({
+        message: messageToSend,
+        user: {
+            id: userToSend.id,
+            email: userToSend.email,
+            cart: userToSend.cart,
+            purchased: userToSend.purchased,
+            token: token
+        }
+    });
 };
 
 const login = async (req, res, next) => {
@@ -137,11 +170,28 @@ const login = async (req, res, next) => {
         );
     }
 
-    if (!existingUser || existingUser.password !== password) {
+    if (!existingUser) {
         return next(
             new HttpError('Invalid credentials..', 401)
         );
     }
+
+    let isValidPassword = false;
+    try {
+        isValidPassword = await bcrypt.compare(password, existingUser.password)
+    } catch (e) {
+        return next(
+            new HttpError('Something went wrong while logging you in, please try again.', 500)
+        );
+    }
+
+    if (!isValidPassword) {
+        return next(
+            new HttpError('Invalid credentials..', 401)
+        );
+    }
+
+    
 
     res.json({message: 'successfully logged in'});
 };

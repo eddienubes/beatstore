@@ -37,6 +37,7 @@ const RoutingContainer = () => {
                         <Route exact path="/contact" component={ContactPage}/>
                         <Route exact path="/checkout" component={CheckoutPage}/>
                         <Route exact path="/beats" component={BeatsPage}/>
+                        <Route exact path="/beats/:id" component={BeatsPage}/>
                         <Route path="/auth" component={AuthContainer}/>
                         <Route path="/account" component={AccountPage}/>
                         <Route component={PageNotFound}/>

@@ -48,7 +48,7 @@ const LoginPage = ({loggedIn}) => {
             {/* todo there might be logo*/}
             <h2>Sign in to continue</h2>
             <form onSubmit={onSubmitHandler} className="email-login-form">
-                <p>Email or username</p>
+                <p className={`caption`}>Email or username</p>
                 <Input id="email"
                        name="email"
                        placeholder="Type your email.."
@@ -56,7 +56,8 @@ const LoginPage = ({loggedIn}) => {
                        errorText="Email field is required and should have a correct form"
                        validators={[VALIDATOR_REQUIRE(), VALIDATOR_EMAIL()]}
                        onInput={onInputHandler}/>
-                <div className="over-password"><p>Password</p> <a href="/forgot-password">Forgot password?</a></div>
+                <div className="over-password">
+                    <p className={`caption`}>Password</p> <a href="/forgot-password">Forgot password?</a></div>
                 <Input id="password"
                        name="password"
                        placeholder="Type your password.."
@@ -83,7 +84,7 @@ const LoginPage = ({loggedIn}) => {
             {/*    />*/}
             {/*    Sign in with Google*/}
             {/*</button>*/}
-            <p>New to us? <Link to="/auth/register">Sign up</Link></p>
+            <p className={`caption`}>New to us? <Link to="/auth/register">Sign up</Link></p>
         </div>
     )
 }

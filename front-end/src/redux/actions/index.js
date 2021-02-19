@@ -7,7 +7,10 @@ import {
     loggedOut,
     audioLoaded,
     audioLengthPlayed,
-    audioLengthLoaded
+    audioLengthLoaded,
+    filterDropped,
+    filterSearchSet,
+    audioToggle
 } from './actions';
 
 export {
@@ -16,6 +19,10 @@ export {
     audioLoaded,
     audioLengthPlayed,
     audioLengthLoaded,
+    audioToggle,
+
+    filterDropped,
+    filterSearchSet,
 
     fetchBeats,
 

@@ -2,54 +2,48 @@ import React, {useContext, useEffect, useMemo, useState} from "react";
 import Track from "../track";
 import {useDispatch, useSelector} from "react-redux";
 import ErrorIndicator from "../error-indicator";
-import {fetchBeats} from "../../redux/actions";
+import {fetchBeats, filterDropped} from "../../redux/actions";
 import {Table} from 'semantic-ui-react';
 import Spinner from "../spinner";
-
-import "./tracks-table.scss";
 import InfiniteScroll from "react-infinite-scroll-component";
 import AudioInstanceContext from "../audio-instance-context";
-import useTraceUpdate from "../../hooks/trace-updates-hook";
+
+import "./tracks-table.scss";
 
 const TracksTable = ({isMain = true}) => {
     const [selectedId, setSelected] = useState(null);
-    const {beatList, isLoading, error, hasMore, skip, isFiltering} = useSelector(state => state.beatsReducer);
+    const {
+        beatList,
+        isLoading,
+        error,
+        hasMore,
+        skip,
+        isFiltering,
+        filter,
+    } = useSelector(state => state.beatsReducer);
     const {audioInstance} = useContext(AudioInstanceContext).state;
     const dispatch = useDispatch();
     const {id, isPlaying, previousId} = useSelector(state => state.audioReducer);
 
+    const firstMountBeatCount = useMemo(() => Math.floor(window.innerHeight / 65), [window.innerHeight]);
 
     const loadBeats = (limit) => {
         dispatch(fetchBeats(limit));
     };
 
     useEffect(() => {
-        if (beatList.length === 0) {
-            // 65 is the number of pixels that determine the height of 1 beat
-            const firstMountBeatCount = Math.floor(window.innerHeight / 65);
-            loadBeats(firstMountBeatCount);
+        dispatch(fetchBeats(firstMountBeatCount));
+        // if (hasMore && !isLoading && !isFiltering) {
+        //     loadBeats(firstMountBeatCount);
+        // }
 
-        } else if (
-            hasMore &&
-            !isLoading &&
-            !isFiltering &&
-            beatList.length === 0) {
-            loadBeats();
+        return () => {
+            if (!isMain) {
+                dispatch(filterDropped());
+            }
         }
     }, []);
 
-
-    // const tracks = useMemo(() => {
-    //     return beatList.map((beat, index) => {
-    //         return <Track
-    //             index={index}
-    //             key={index}
-    //             track={beat}
-    //             onSelected={(id) => setSelected(id)}
-    //             selectedId={selectedId}
-    //         />;
-    //     });
-    // }, [beatList.length])
     const tracks = useMemo(() => {
         return beatList.map((beat, index) => {
             return <Track
@@ -65,21 +59,30 @@ const TracksTable = ({isMain = true}) => {
         })
     }, [beatList, id, isPlaying, previousId, isFiltering]);
 
-
     if (error) {
         return <ErrorIndicator/>
     }
 
-    if (!audioInstance || isFiltering) {
+    if ((!audioInstance || isFiltering) && !isMain) {
         return <Spinner/>
     }
 
-    if (!isFiltering && beatList.length === 0) {
+    if (!isFiltering &&
+        beatList.length === 0 &&
+        !isLoading &&
+        !isMain &&
+        (filter.search !== '' ||
+            filter.bpm ||
+            filter.genres ||
+            filter.moods ||
+            filter.tags)
+    ) {
         return <p className={`no-matches`}>Sorry, unfortunately we haven't found any beats matching your request...</p>
     }
 
     return (
-        <InfiniteScroll next={!isMain ? loadBeats : null} hasMore={hasMore} loader={null} dataLength={beatList.length}>
+        <InfiniteScroll next={!isMain && beatList.length > 0 ? loadBeats : null} hasMore={hasMore} loader={null}
+                        dataLength={beatList.length}>
             <div className={`tracks-table-main`} onScroll={e => console.log(e.target)}>
                 <Table structured unstackable>
                     <Table.Header>

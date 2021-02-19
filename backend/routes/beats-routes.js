@@ -9,9 +9,12 @@ const router = Router();
 
 router.get('/info', beatsControllers.getUniqueInfo);
 
+router.get('/random', beatsControllers.getRandomBeat);
+
 router.get('/:bid', beatsControllers.getBeatById);
 
 router.get('/', beatsControllers.getAllBeats);
+
 
 
 router.post(

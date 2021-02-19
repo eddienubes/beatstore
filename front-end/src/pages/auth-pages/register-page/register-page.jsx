@@ -77,7 +77,7 @@ const RegisterPage = ({authService}) => {
                   className="email-login-form"
                   onSubmit={onUserSignupHandler}
             >
-                <p>Your username</p>
+                <p className={`caption`}>Your username</p>
                 <Input id="username"
                        name="username"
                        placeholder="Set a username for your profile"
@@ -86,7 +86,7 @@ const RegisterPage = ({authService}) => {
                        validators={[VALIDATOR_MINLENGTH(1)]}
                        onInput={onInputHandler}
                 />
-                <p>Your email</p>
+                <p className={`caption`}>Your email</p>
                 <Input id="email"
                        name="email"
                        placeholder="Type your email.."
@@ -95,7 +95,7 @@ const RegisterPage = ({authService}) => {
                        validators={[VALIDATOR_EMAIL()]}
                        onInput={onInputHandler}
                 />
-                <p>Password</p>
+                <p className={`caption`}>Password</p>
                 <Input id="password"
                        name="password"
                        placeholder="Type your password.."
@@ -104,7 +104,7 @@ const RegisterPage = ({authService}) => {
                        validators={[VALIDATOR_MINLENGTH(6)]}
                        onInput={onInputHandler}
                 />
-                <p>Confirmed password</p>
+                <p className={`caption`}>Confirmed password</p>
                 <Input id="confirmedPassword"
                        name="confirmed_password"
                        placeholder="Confirm your password.."
@@ -132,7 +132,7 @@ const RegisterPage = ({authService}) => {
             </form>
             <h2 className="divider-h2">
                 <div className="line"/>
-                <span>OR</span>
+                    <span>OR</span>
                 <div className="line"/>
             </h2>
             <button className="oauth">
@@ -144,7 +144,7 @@ const RegisterPage = ({authService}) => {
                 />
                 Sign up with Google
             </button>
-            <p>Already have an account? <Link to="/auth/login">Sign in</Link></p>
+            <p className={`transfer-to-login`}>Already have an account? <Link to="/auth/login">Sign in</Link></p>
         </div>
     );
 };

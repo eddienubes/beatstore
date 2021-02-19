@@ -31,10 +31,12 @@ const beatsReducer = (state = initialState, action) => {
 
     switch (action.type) {
         case actions.BEATS_REQUESTED:
+
+            console.log(state.filter);
+
             return {
                 ...state,
                 isLoading: true,
-                error: null
             };
         case actions.BEATS_LOADED:
             let skip;
@@ -43,15 +45,13 @@ const beatsReducer = (state = initialState, action) => {
             }
             if (action.payload.limit) {
                 skip = action.payload.limit
-            }
-            else {
+            } else {
                 skip = state.skip + NUMBER_OF_BEATS_PER_LOAD
             }
             return {
                 ...state,
                 beatList: [...state.beatList, ...action.payload.beats],
                 isLoading: false,
-                error: null,
                 hasMore,
                 skip
             };
@@ -96,15 +96,26 @@ const beatsReducer = (state = initialState, action) => {
             });
             return {
                 ...state,
-                skip: action.payload.limit + NUMBER_OF_BEATS_PER_LOAD,
+                skip: action.payload.limit,
                 isFiltering: false,
                 beatList: action.payload.beats,
                 hasMore,
                 filter: {
-                    ...state.filter,
-                    ...action.payload.filter
+                    ...action.payload.filter,
+                    search: state.filter.search
                 }
             }
+        case actions.FILTER_SEARCH_SET:
+
+            return {
+                ...state,
+                filter: {
+                    ...state.filter,
+                    search: action.payload
+                }
+            }
+        case actions.FILTER_DROPPED:
+            return initialState;
         case actions.FILTER_FAILURE:
             return {
                 ...state,
