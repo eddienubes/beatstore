@@ -9,36 +9,37 @@ import {useDispatch, useSelector} from "react-redux";
 import Spinner from "../../../components/spinner";
 import {Redirect} from 'react-router-dom';
 
+
+const initialState = {
+    inputs: {
+        username: {
+            value: '',
+            isValid: false
+        },
+        email: {
+            value: '',
+            isValid: false
+        },
+        password: {
+            value: '',
+            isValid: false
+        },
+        confirmedPassword: {
+            value: '',
+            isValid: false
+        }
+    },
+    isValid: false,
+    confirmed: false
+};
+
+
 const RegisterPage = ({authService}) => {
     const history = useHistory();
     const dispatch = useDispatch();
     const userState = useSelector(state => state.userReducer)
     const [checked, setChecked] = useState(false);
     const [touched, setTouched] = useState(false);
-
-
-    const initialState = {
-        inputs: {
-            username: {
-                value: '',
-                isValid: false
-            },
-            email: {
-                value: '',
-                isValid: false
-            },
-            password: {
-                value: '',
-                isValid: false
-            },
-            confirmedPassword: {
-                value: '',
-                isValid: false
-            }
-        },
-        isValid: false,
-        confirmed: false
-    };
 
     const [formState, onInputHandler] = useForm(initialState.inputs, initialState.isValid, initialState.confirmed);
 

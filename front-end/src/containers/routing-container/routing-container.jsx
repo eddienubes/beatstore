@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 
 import Header from "../../components/header";
 import PageNotFound from "../../components/page-not-found";
@@ -14,25 +14,22 @@ import BeatsPage from "../../pages/beats-page";
 import AuthContainer from "../auth-container";
 import AccountPage from "../../pages/account-page";
 import Footer from "../../components/footer";
-
+import Spinner from "../../components/spinner";
+import useAuth from "../../hooks/auth-hook";
 
 const RoutingContainer = () => {
-    const beats = [].map((track) => {
-        return ({
-            name: track.name,
-            musicSrc: track.audioUrl,
-            cover: track.imgUrl
-        })
-    });
+    const [checking] = useAuth();
+
+    if (checking) {
+        return <Spinner/>
+    }
 
     return (
         <Router>
-
             <Header/>
                 <main>
                     <MusicPlayer/>
                     <Switch>
-
                         <Route exact path="/" component={MainPage}/>
                         <Route exact path="/contact" component={ContactPage}/>
                         <Route exact path="/checkout" component={CheckoutPage}/>
@@ -45,7 +42,6 @@ const RoutingContainer = () => {
                 </main>
             <Footer/>
         </Router>
-
     );
 }
 

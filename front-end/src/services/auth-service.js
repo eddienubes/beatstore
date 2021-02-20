@@ -26,6 +26,10 @@ class AuthService {
             }
         );
     }
+
+    async updateUser(id, newUserData) {
+        return axios.patch(this.baseUrl + `/${id}`, newUserData);
+    }
 }
 
 export default AuthService;

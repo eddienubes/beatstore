@@ -22,7 +22,7 @@ import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import {ClickAwayListener, MenuItem, MenuList} from "@material-ui/core";
 import {useDispatch, useSelector} from "react-redux";
-import {loggedOut} from "../../redux/actions/actions";
+import {logOut} from "../../redux/actions/actions";
 
 const Header = () => {
     const [isOpenedBurger, setOpenBurger] = useState(false);
@@ -136,7 +136,7 @@ const Header = () => {
                                     <MenuItem onClick={() => {
                                         handleCloseDropdown('/logout');
                                         setOpenLogDropdown(false);
-                                        dispatch(loggedOut());
+                                        dispatch(logOut());
                                     }}><FontAwesomeIcon
                                         icon={faSignOutAlt}/> &nbsp; Logout</MenuItem>
                                 </MenuList>

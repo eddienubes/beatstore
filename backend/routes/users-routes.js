@@ -7,9 +7,11 @@ const usersControllers = require('../controllers/users-controller')
 
 const router = Router();
 
-router.get('/', usersControllers.getAllUsers)
+// router.get('/', usersControllers.getAllUsers);
+//
+// router.get('/:uid', usersControllers.getUserById);
 
-router.get('/:uid', usersControllers.getUserById);
+router.patch('/:uid', usersControllers.updateUser)
 
 router.post(
     '/signup',

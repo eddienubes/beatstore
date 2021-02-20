@@ -33,7 +33,7 @@ const FeaturedTrack = (props) => {
                 setError(e);
             });
     }, [])
-    useTraceUpdate({track, loading, dispatch, show, id, isPlaying, error});
+    // useTraceUpdate({track, loading, dispatch, show, id, isPlaying, error});
     if (error) {
         return <ErrorIndicator/>
     }

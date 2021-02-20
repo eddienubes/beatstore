@@ -20,7 +20,7 @@ const themeOverrided = createMuiTheme({
     overrides: {
         MuiPaper: {
             root: {
-                backgroundColor: '#ff00c1',
+                // backgroundColor: '#ff00c1',
 
             }
         },
@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
         width: 500,
     },
     overrides: {
-        backgroundColor: "#ff00c1"
+        // backgroundColor: "#ff00c1"
     }
 }));
 

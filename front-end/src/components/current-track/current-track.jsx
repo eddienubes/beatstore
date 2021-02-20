@@ -44,7 +44,7 @@ const CurrentTrack = () => {
 
     }, [id, urlId]);
 
-    useTraceUpdate({track, loading, dispatch, show, id, isPlaying, error});
+    // useTraceUpdate({track, loading, dispatch, show, id, isPlaying, error});
 
     if (!track) {
         return null;
@@ -99,7 +99,7 @@ const CurrentTrack = () => {
                                 </div>
                             </div>
                             <div className={`info`}>
-                                <p className={`caption`}>CURRENT PLAYING TRACK</p>
+                                <p className={`caption`}>CURRENTLY PLAYING TRACK</p>
                                 <p className={`caption`}>🕒 {date}</p>
                                 <p className={`author`}>✍ Cherries By</p>
                                 <p className={`title`}>{track.title}</p>

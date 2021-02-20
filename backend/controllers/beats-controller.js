@@ -39,6 +39,10 @@ const createBeat = async (req, res, next) => {
         return next(new HttpError('Invalid inputs passed, please check your data', 422));
     }
 
+    // TODO IF THE USER WHO CREATES/PATCHES/DELETES BEAT IS AN ADMIN
+    // IF EVERY ROUTE RELATED TO MANAGING DATA
+    // userData with userId is included by middleware for verifying
+
     const {title, mp3Url, wavUrl, stemsUrl, bpm, scale, tags, moods, genres} = req.body;
 
     const filePath = path.join(req.files.previewAudio[0].path);
@@ -176,8 +180,6 @@ const getAllBeats = async (req, res, next) => {
 
     if (jsonFilter.search !== '') {
         jsonFilter.search = jsonFilter.search.replace(/#+/, '');
-        // mongooseFilter.$text = {$search: jsonFilter.search, $caseSensitive: false};
-        // console.log(jsonFilter)
         mongooseFilter.$or = [
             {
                 title: {$regex: jsonFilter.search, $options: 'i'}

@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useRef, useState} from 'react';
 import 'react-jinke-music-player/assets/index.css';
 import 'react-jinke-music-player/lib/styles/index.less'
 import {useDispatch, useSelector} from "react-redux";
-import {audioLengthLoaded, audioLengthPlayed, audioLoaded, audioPlayed, audioStopped} from "../../redux/actions";
+import {audioLoaded, audioPlayed, audioStopped} from "../../redux/actions";
 import AudioInstanceContext from "../audio-instance-context";
 import ReactPlayer from "react-player";
 import {withStyles} from "@material-ui/core";
@@ -111,7 +111,7 @@ const MusicPlayer = () => {
     // // }
 
     // redux states
-    const {id, isPlaying, played, previousId} = useSelector(state => state.audioReducer);
+    const {id, isPlaying, previousId} = useSelector(state => state.audioReducer);
     const {beatList, latestBeats} = useSelector(state => state.beatsReducer);
     const dispatch = useDispatch();
 
@@ -131,7 +131,9 @@ const MusicPlayer = () => {
         index: null,
         audioList: [],
         show: false,
-        loading: false
+        loading: false,
+        played: 0,
+        loaded: 0
     });
 
     const playerInstanceRef = useRef(null);
@@ -177,18 +179,22 @@ const MusicPlayer = () => {
         setPlayerState(playerState => {
             return {
                 ...playerState,
-                seeking: !playerState.seeking
+                seeking: !playerState.seeking,
+                played: parseFloat(value)
             }
         });
-        const played = parseFloat(value);
-        dispatch(audioLengthPlayed(played));
     }
 
     // change value when mouse button is released
     const handleSeekMouseUp = (e, value) => {
         const played = parseFloat(value);
 
-        dispatch(audioLengthPlayed(played));
+        setPlayerState(playerState => {
+            return {
+                ...playerState,
+                played: played
+            }
+        })
         playerInstanceRef.current.seekTo(played)
     }
 
@@ -196,18 +202,27 @@ const MusicPlayer = () => {
         // console.log('onProgress', state);
 
         if (!playerState.seeking) {
-            dispatch(audioLengthLoaded(state.loadedSeconds));
-            dispatch(audioLengthPlayed(state.playedSeconds));
+            setPlayerState(playerState => {
+                return {
+                    ...playerState,
+                    played: state.playedSeconds,
+                    loaded: state.loadedSeconds
+                }
+            })
         }
     }
 
     // handle case when audio is ended, so we should either continue playing the same song or stop
     const handleEnded = () => {
-        console.log('onEnded')
+        console.log('onEnded HERE')
 
         if (playerState.loop) {
             dispatch(audioPlayed());
-        } else {
+        } else if (playerState.index + 1 < playerState.audioList.length) {
+            // dispatch(audioLoaded(playerState.audioList[playerState.index + 1].id));
+            handleStepForward();
+        }
+        else {
             dispatch(audioStopped());
         }
     }
@@ -275,7 +290,9 @@ const MusicPlayer = () => {
             setPlayerState(playerState => {
                 return {
                     ...playerState,
-                    loading: true
+                    loading: true,
+                    played: 0,
+                    loaded: 0
                 }
             });
             beatstoreService.getBeatById(id).then(({data}) => {
@@ -321,7 +338,7 @@ const MusicPlayer = () => {
                     min={0}
                     max={playerState.duration}
                     defaultValue={0}
-                    value={played}
+                    value={playerState.played}
                     valueLabelDisplay="auto"
                     aria-label="pretto slider"
                     valueLabelFormat={(value) => {
@@ -410,8 +427,6 @@ const MusicPlayer = () => {
                     volume={playerState.volume}
                     onReady={() => console.log('onReady')}
                     onStart={() => console.log('onStart')}
-                    onPlay={handlePlay}
-                    onPause={handlePause}
                     onBuffer={() => console.log('onBuffer')}
                     onSeek={e => console.log('onSeek', e)}
                     onEnded={handleEnded}

@@ -4,21 +4,18 @@ import {
     fetchBeats,
     login,
     signup,
-    loggedOut,
+    logOut,
     audioLoaded,
-    audioLengthPlayed,
-    audioLengthLoaded,
     filterDropped,
     filterSearchSet,
-    audioToggle
+    audioToggle,
+    logInSuccess
 } from './actions';
 
 export {
     audioPlayed,
     audioStopped,
     audioLoaded,
-    audioLengthPlayed,
-    audioLengthLoaded,
     audioToggle,
 
     filterDropped,
@@ -26,7 +23,8 @@ export {
 
     fetchBeats,
 
-    loggedOut,
+    logOut,
     login,
-    signup
+    signup,
+    logInSuccess
 };

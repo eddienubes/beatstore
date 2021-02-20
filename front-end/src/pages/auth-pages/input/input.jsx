@@ -25,7 +25,6 @@ const Input = (props) => {
         isValid: props.initialValid || false,
         isTouched: false
     });
-
     const {id, onInput} = props;
     const {value, isValid, isTouched} = inputState;
 
@@ -50,7 +49,6 @@ const Input = (props) => {
     };
 
     const errorMsg = !isValid && isTouched ? <p className={`input__error-msg`}>{props.errorText}</p> : null;
-
 
     if (props.component) {
         const clonedElement = cloneElement(

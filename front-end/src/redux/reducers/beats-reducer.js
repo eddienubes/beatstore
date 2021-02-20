@@ -31,9 +31,6 @@ const beatsReducer = (state = initialState, action) => {
 
     switch (action.type) {
         case actions.BEATS_REQUESTED:
-
-            console.log(state.filter);
-
             return {
                 ...state,
                 isLoading: true,
@@ -55,6 +52,13 @@ const beatsReducer = (state = initialState, action) => {
                 hasMore,
                 skip
             };
+        case actions.BEATS_DROPPED:
+            return {
+                ...state,
+                beatList: [],
+                skip: 0,
+                hasMore: true
+            }
         case actions.BEATS_FAILURE:
             return {
                 ...state,

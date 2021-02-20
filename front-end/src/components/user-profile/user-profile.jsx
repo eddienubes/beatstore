@@ -1,54 +1,29 @@
-import React, {useEffect, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import PlaceholderAnimatedButton from "../placeholder-animated-button";
 import Input from "../../pages/auth-pages/input";
 import Spinner from "../spinner";
-
+import {useSelector} from "react-redux";
 import useForm from "../../hooks/form-hook";
 import {VALIDATOR_EMAIL, VALIDATOR_NOT_REQUIRED_BUT_MIN_LENGTH, VALIDATOR_REQUIRE} from "../../utils/validators";
-import axios from "axios";
+import {withAuthService} from '../hoc';
 
 import './user-profile.scss';
+import ErrorIndicator from "../error-indicator";
 
-const UserProfile = (props) => {
-    const [isLoading, setLoading] = useState(true); // temporary solution
-    const [touched, setTouched] = useState(false);
-    const initialState = {
-        inputs: {
-            email: {
-                value: '',
-                isValid: false
-            },
-            username: {
-                value: '',
-                isValid: false
-            },
-            password: {
-                value: '',
-                isValid: false
-            },
-            newPassword: {
-                value: '',
-                isValid: false
-            },
-            newPasswordConfirmed: {
-                value: '',
-                isValid: false
-            }
-        },
-        isValid: false
-    }
 
-    const [formState, onInputHandler, setFormData] = useForm(initialState.inputs, initialState.isValid)
+const UserProfile = ({authService}) => {
+    const {processing, email, username, id} = useSelector(state => state.userReducer);
+    const [errorSettings, setErrorSettings] = useState(null);
 
-    useEffect(() => {
-        // read data from redux store TODO
-        setFormData({
+    const initialState = useMemo(() => {
+        return {
+            inputs: {
                 email: {
-                    value: 'example@email.com',
+                    value: email,
                     isValid: true
                 },
                 username: {
-                    value: 'example username',
+                    value: username,
                     isValid: true
                 },
                 password: {
@@ -57,23 +32,37 @@ const UserProfile = (props) => {
                 },
                 newPassword: {
                     value: '',
-                    isValid: false
+                    isValid: true
                 },
                 newPasswordConfirmed: {
                     value: '',
-                    isValid: false
+                    isValid: true
                 }
-            }, false
-        );
-        setLoading(false);
-    }, []); // add user data and setFormData in dependencies TODO
+            },
+            isValid: false
+        }
+    }, [username, email]);
 
+    const [touched, setTouched] = useState(false);
+    const [formState, onInputHandler, setFormData] = useForm(initialState.inputs, initialState.isValid)
+    console.log(formState);
     const onSubmitHandler = async (e) => {
-
         e.preventDefault();
+        authService.updateUser(id, {
+            email: formState.inputs.email.value,
+            username: formState.inputs.username.value,
+            password: formState.inputs.password.value,
+            newPassword: formState.inputs.newPassword.value
+        })
+            .then(({user}) => {
+
+            })
+            .catch(response => {
+                setErrorSettings(response.data);
+            });
     }
+
     const {newPassword, newPasswordConfirmed} = formState.inputs;
-    console.log(formState.inputs, isLoading);
 
     const hasConfirmedError = newPassword.value !== newPasswordConfirmed.value;
     const errorMsg = hasConfirmedError ?
@@ -86,8 +75,12 @@ const UserProfile = (props) => {
     const errorMsg2 = !hasEnoughCharacters && touched ?
         (<p className="user-profile__error-msg">Your new password should contain at least 6 characters</p>) : null;
 
-    if (isLoading) { // use of redux loading state should be there TODO
+    if (processing) {
         return <Spinner/>
+    }
+
+    if (errorSettings) {
+        return <ErrorIndicator/>
     }
 
     return (
@@ -101,7 +94,7 @@ const UserProfile = (props) => {
                 }}>
                 <div className="header">
 
-                    <p className="username">Welcome to your profile {'username'}</p>
+                    <p className="username">Welcome to your profile, {username}</p>
                     <p>Feel free to change your information.</p>
                 </div>
                 <div className="settings">
@@ -160,6 +153,7 @@ const UserProfile = (props) => {
                             name="newPassword"
                             type="password"
                             errorText=""
+                            initialValid={true}
                             validators={[VALIDATOR_NOT_REQUIRED_BUT_MIN_LENGTH(6)]}
                             onInput={onInputHandler}
                         />
@@ -173,13 +167,17 @@ const UserProfile = (props) => {
                             name="newPasswordConfirmed"
                             type="password"
                             errorText=""
+                            initialValid={true}
                             validators={[VALIDATOR_NOT_REQUIRED_BUT_MIN_LENGTH(6)]}
                             onInput={onInputHandler}
                         />
 
                     </div>
                 </div>
-                <button type="button" disabled={!formState.isValid}>Save</button>
+                <button
+                    type="submit"
+                    disabled={!formState.isValid}
+                >Save</button>
                 {errorMsg}
                 {errorMsg2}
             </form>
@@ -187,4 +185,4 @@ const UserProfile = (props) => {
     );
 };
 
-export default UserProfile;
+export default withAuthService(UserProfile);

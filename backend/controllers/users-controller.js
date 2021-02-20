@@ -222,9 +222,72 @@ const login = async (req, res, next) => {
     });
 };
 
+const updateUser = async (req, res, next) => {
+    const userId = req.params.uid;
+    const {email, username, password, newPassword} = req.body;
+
+    let user;
+    try {
+        user = await User.findById(userId);
+    } catch (e) {
+        return next(new HttpError('Something went wrong whilst trying to find user with specified id', 500));
+    }
+
+    if (!user) {
+        return next(new HttpError('User has not been found..', 401));
+    }
+
+    let isPasswordValid;
+
+    try {
+        isPasswordValid = await bcrypt.compare(password, user.password);
+    } catch (e) {
+        return next(new HttpError('Something went wrong while bcrypting..', 500));
+    }
+
+    if (!isPasswordValid) {
+        return next(new HttpError('Invalid credentials..', 401));
+    }
+
+    user.email = email;
+    user.username = username;
+
+    if (newPassword) {
+        let hashedPassword;
+
+        try {
+            hashedPassword = await bcrypt.hash(password, 12);
+        } catch (e) {
+            return next(new HttpError('Something went wrong while hashing..', 500));
+        }
+
+        user.password = hashedPassword;
+    }
+
+    try {
+        await user.save()
+    } catch (e) {
+        return next(new HttpError('Something went wrong while saving user..', 500));
+    }
+
+    res.status(200);
+    res.json({
+        message: 'User has been updated successfully',
+        user: {
+            id: user.id.toString(),
+            username: user.username,
+            email: user.email,
+            cart: user.cart,
+            purchased: user.purchased
+        }
+    });
+}
+// TODO add new action to update the user
+
 module.exports = {
     getUserById,
     getAllUsers,
     signup,
-    login
+    login,
+    updateUser
 };

@@ -9,6 +9,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import AudioInstanceContext from "../audio-instance-context";
 
 import "./tracks-table.scss";
+import {beatsDropped} from "../../redux/actions/actions";
 
 const TracksTable = ({isMain = true}) => {
     const [selectedId, setSelected] = useState(null);
@@ -32,6 +33,8 @@ const TracksTable = ({isMain = true}) => {
     };
 
     useEffect(() => {
+        // dispatch(filterDropped());
+
         dispatch(fetchBeats(firstMountBeatCount));
         // if (hasMore && !isLoading && !isFiltering) {
         //     loadBeats(firstMountBeatCount);
@@ -40,6 +43,9 @@ const TracksTable = ({isMain = true}) => {
         return () => {
             if (!isMain) {
                 dispatch(filterDropped());
+            }
+            else {
+                dispatch(beatsDropped());
             }
         }
     }, []);

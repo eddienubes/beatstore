@@ -87,7 +87,6 @@ const useForm = (initialInputs, initialFormValidity, initialConfirmed) => {
         };
     }
 
-
     const [formState, dispatch] = useReducer(formReducer, initialState);
 
     const onInputHandler = useCallback((id, value, isValid) => {
@@ -115,7 +114,6 @@ const useForm = (initialInputs, initialFormValidity, initialConfirmed) => {
             });
         }
     }, []);
-
     return [formState, onInputHandler, setFormData];
 }
 

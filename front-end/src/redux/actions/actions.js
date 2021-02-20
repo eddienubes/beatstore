@@ -52,6 +52,13 @@ const beatsInfoFailure = (error) => {
         payload: error
     }
 }
+
+const beatsDropped = () => {
+    return {
+        type: actions.BEATS_DROPPED
+    }
+}
+
 const filterRequest = () => {
     return {
         type: actions.FILTER_REQUESTED,
@@ -74,7 +81,7 @@ const filterSearchSet = (search) => {
 
 const filterDropped = () => {
     return {
-        type: actions.FILTER_DROPPED
+        type: actions.FILTER_DROPPED,
     }
 }
 
@@ -102,20 +109,6 @@ const audioLoaded = (id) => {
     return {
         type: actions.AUDIO_LOADED,
         payload: id
-    };
-}
-
-const audioLengthLoaded = (loaded) => {
-    return {
-        type: actions.AUDIO_LENGTH_LOADED,
-        payload: loaded
-    };
-}
-
-const audioLengthPlayed = (played) => {
-    return {
-        type: actions.AUDIO_LENGTH_PLAYED,
-        payload: played
     };
 }
 
@@ -181,15 +174,42 @@ const signup = (formState) => async (dispatch, getState) => {
             username: username.value,
             password: password.value
         });
-        dispatch(signupSuccess(response.data));
+
+        const tokenExpirationDate = new Date(new Date().getTime() + 1000 * 60 * 60);
+
+        dispatch(signupSuccess({
+            ...response.data.user,
+            expiration: tokenExpirationDate
+        }));
+
+        localStorage.setItem('userData', JSON.stringify({
+            ...response.data.user,
+            expiration: tokenExpirationDate.toISOString()
+        }));
+
         console.log(response.data);
     } catch (e) {
         dispatch(signupFailure(e.response.data));
     }
 }
 
-const login = (formState) => async (dispatch, getState) => {
+const login = (formState, userData) => async (dispatch, getState) => {
     dispatch(logInRequested());
+
+    if (!formState) {
+        const tokenExpirationDate = new Date(userData.expiration) || new Date(new Date().getTime() + 1000 * 60 * 60);
+        dispatch(logInSuccess({
+            ...userData,
+            expiration: tokenExpirationDate
+        }));
+
+        localStorage.setItem('userData', JSON.stringify({
+            ...userData,
+            expiration: tokenExpirationDate.toISOString()
+        }));
+        return;
+
+    }
 
     const {email, password} = formState;
 
@@ -198,7 +218,20 @@ const login = (formState) => async (dispatch, getState) => {
             email: email.value,
             password: password.value
         });
-        dispatch(logInSuccess(response.data));
+
+        const tokenExpirationDate = new Date(new Date().getTime() + 1000 * 60 * 60);
+        console.log('IN ACTIONS', tokenExpirationDate);
+
+        dispatch(logInSuccess({
+            ...response.data.user,
+            expiration: tokenExpirationDate.toISOString()
+        }));
+
+        localStorage.setItem('userData', JSON.stringify({
+            ...response.data.user,
+            expiration: tokenExpirationDate.toISOString()
+        }));
+
     } catch (e) {
         console.log(e.response)
         dispatch(logInFailure(e.response.data))
@@ -265,6 +298,11 @@ const filter = (formState, limit) => async (dispatch, getState) => {
     }
 }
 
+const logOut = () => (dispatch, getState) => {
+    dispatch(loggedOut());
+    localStorage.removeItem('userData');
+}
+
 // const fetchLatestBeats = () => async (dispatch, getState) => {
 //
 //     dispatch(beatsRequested());
@@ -285,15 +323,17 @@ export {
     filter,
     filterSearchSet,
     filterDropped,
+    beatsDropped,
 
     audioPlayed,
     audioStopped,
-    audioLengthLoaded,
-    audioLengthPlayed,
+    // audioLengthLoaded,
+    // audioLengthPlayed,
     audioLoaded,
     audioToggle,
 
     login,
     signup,
-    loggedOut
+    logOut,
+    logInSuccess
 };
