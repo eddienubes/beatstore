@@ -1,16 +1,8 @@
-.cart-item-appended-animation {
-    animation: cart-item-appended-animation .2s ease-in-out forwards;
-}
-.cart-item-deleted-animation {
-    animation: cart-item-deleted-animation .2s ease-in-out forwards;
-}
-
 .empty-cart-caption {
     text-align: center;
     font-weight: bold;
     color: white;
     margin-top: 100px;
-    background: black;
 }
 .basket__container {
 
@@ -18,8 +10,6 @@
         font-weight: lighter;
 
         .header-item {
-            height: 55px!important;
-            padding: 5px!important;
             border-radius: 0!important;
             font-size: 0.9rem;
             color: #a5a5a5;
@@ -274,14 +264,5 @@
     100% {
         transform: translateX(0%);
         opacity: 1;
-    }
-}
-
-@keyframes cart-item-deleted-animation {
-    0% {
-        transform: translateX(0%);
-    }
-    100% {
-        transform: translateX(-100%);
     }
 }

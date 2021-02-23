@@ -1,25 +1,28 @@
-import {useCallback} from "react";
-import {audioLoaded, audioPlayed, audioStopped} from "../redux/actions";
-import {useDispatch, useSelector} from "react-redux";
-import audioReducer from "../redux/reducers/audio-reducer";
-
-const useAudio = (track, index) => {
-    const {id, isPlaying} = useSelector(state => state.audioReducer);
-    const dispatch = useDispatch();
-
-    const onClick = useCallback((e) => {
-        e.stopPropagation();
-
-        if (track.id === id && isPlaying) {
-            dispatch(audioStopped());
-        } else if (track.id !== id) {
-            dispatch(audioLoaded(track.id));
-        } else if (track.id === id && !isPlaying) {
-            dispatch(audioPlayed());
-        }
-    }, [track, index, id, isPlaying]);
-
-    return [id, isPlaying, onClick];
-}
-
-export default useAudio;
+// import {useCallback, useContext} from "react";
+// import AudioInstanceContext from "../components/audio-instance-context";
+// import {useSelector} from "react-redux";
+//
+// const useAudio = (track, index) => {
+//     const {isPlaying, id} = useSelector(state => state.audioReducer);
+//     const {audioInstance} = useContext(AudioInstanceContext).state;
+//
+//     const onPlay = useCallback(() => {
+//         if (track.id === id && !isPlaying) {
+//             audioInstance.play();
+//         }
+//         else if (track.id === id && isPlaying) {
+//             console.log('here')
+//             audioInstance.pause();
+//         }
+//         else if (index === 0 && !id && !isPlaying) {
+//             audioInstance.play();
+//         }
+//         else {
+//             audioInstance.playByIndex(index);
+//         }
+//     }, [audioInstance])
+//
+//     return [onPlay, id];
+// }
+//
+// export default useAudio;

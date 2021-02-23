@@ -34,7 +34,6 @@ const createOrder = async (req, res, next) => {
             500
         );
     }
-
     const total = licenses.reduce((sum, {price}) => sum += price, 0);
 
     const order = new Order({

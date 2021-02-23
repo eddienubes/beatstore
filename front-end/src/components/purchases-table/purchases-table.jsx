@@ -1,94 +1,85 @@
 import React from 'react';
-import {Dropdown, Label, Table} from "semantic-ui-react";
-import {useSelector} from "react-redux";
-import {useHistory} from "react-router-dom";
-import box from './box.png'
-import './purchases-table.scss';
-import useAudio from "../../hooks/audio-hook";
+import { makeStyles } from '@material-ui/core/styles';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
 
+import './purchases-table.scss';
+import {withStyles} from "@material-ui/core";
+
+const StyledTableCell = withStyles((theme) => ({
+    head: {
+        backgroundColor: theme.palette.common.black,
+        color: theme.palette.common.white,
+    },
+    body: {
+        fontSize: 14,
+    },
+}))(TableCell);
+
+const StyledTableRow = withStyles((theme) => ({
+    root: {
+        '&:nth-of-type(odd)': {
+            backgroundColor: theme.palette.action.hover,
+        },
+    },
+}))(TableRow);
+
+const useStyles = makeStyles({
+    table: {
+        minWidth: 650,
+        backgroundColor: '#00000'
+    },
+});
+
+const createData = (name, calories, fat, carbs, protein) => {
+    return { name, calories, fat, carbs, protein };
+}
+
+const rows = [
+    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
+    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
+    createData('Eclair', 262, 16.0, 24, 6.0),
+    createData('Cupcake', 305, 3.7, 67, 4.3),
+    createData('Gingerbread', 356, 16.0, 49, 3.9),
+];
 
 const PurchasesTable = () => {
-    const purchases = useSelector(state => state.userReducer).purchased;
-    const history = useHistory();
-
-    if (purchases.length === 0) {
-
-        return (
-            <div className={`empty-box-warning`}>
-                <img src={box} alt="empty box"/>
-                <p className={`empty-cart-caption`}>You have not purchased anything yet.. :c</p>
-            </div>
-        )
-    }
+    const classes = useStyles();
 
     return (
-        <Table celled inverted selectable className={`purchases-table`}>
-            <Table.Header>
-                <Table.Row>
-                    <Table.HeaderCell>TITLE</Table.HeaderCell>
-                    <Table.HeaderCell textAlign={`center`}>BPM</Table.HeaderCell>
-                    <Table.HeaderCell textAlign={`center`}>Scale</Table.HeaderCell>
-                    <Table.HeaderCell textAlign={`center`}>Date</Table.HeaderCell>
-                    <Table.HeaderCell textAlign={`center`}>Price</Table.HeaderCell>
-                    <Table.HeaderCell textAlign={`center`}>License Type</Table.HeaderCell>
-                    <Table.HeaderCell textAlign={`center`}>Links</Table.HeaderCell>
-                </Table.Row>
-            </Table.Header>
-
-            <Table.Body>
-                {
-                    purchases.map((item, index) => {
-                        const dateObj = new Date(item.date);
-                        const month = dateObj.getUTCMonth() + 1; //months from 1-12
-                        const day = dateObj.getUTCDate();
-                        const year = dateObj.getUTCFullYear();
-
-                        const date = year + "/" + month + "/" + day;
-
-                        const imageUrl = 'http://localhost:5000/api/' + item.imgUrl;
-
-                        return (
-                            <Table.Row key={item.beatId + item.licenseId + item.orderId + index}
-                                       className={`purchased-item`}>
-                                <Table.Cell textAlign={`left`}>
-                                    <Label className={`label`} ribbon><img src={imageUrl} alt="cover"/></Label>
-                                    {item.title}
-                                </Table.Cell>
-                                <Table.Cell textAlign="center">{item.bpm}</Table.Cell>
-                                <Table.Cell textAlign="center">{item.scale}</Table.Cell>
-                                <Table.Cell textAlign="center">{date}</Table.Cell>
-                                <Table.Cell textAlign="center" className={`price-item`}>{item.price}$</Table.Cell>
-                                <Table.Cell textAlign="center">{item.label}</Table.Cell>
-                                <Table.Cell textAlign="center">
-                                    <Dropdown
-                                        className={`drop-down`}
-                                        text='Links'
-                                        direction="left"
-                                        key={item.beatId + item.licenseId + item.orderId + index + 'menu'}
-                                    >
-                                        <Dropdown.Menu className={`menu`}
-                                        >
-                                            {
-                                                item.links.map((link, lIndex) => {
-                                                    return (
-                                                        <Dropdown.Item
-                                                            key={link.label + lIndex + item.beatId + item.licenseId + item.orderId}
-                                                            icon="folder"
-                                                            text={link.label}
-                                                            onClick={() => history.push(link.url)}
-                                                        />
-                                                    )
-                                                })
-                                            }
-                                        </Dropdown.Menu>
-                                    </Dropdown>
-                                </Table.Cell>
-                            </Table.Row>
-                        )
-                    })
-                }
-            </Table.Body>
-        </Table>
+        <TableContainer component={Paper} className="purchases-table">
+            <Table className={classes.table + " purchases-table"} aria-label="simple table">
+                <TableHead>
+                    <StyledTableRow className="purchases-table__hear-row">
+                        <StyledTableCell>Dessert (100g serving)</StyledTableCell>
+                        <StyledTableCell align="right">Calories</StyledTableCell>
+                        <StyledTableCell align="right">Fat&nbsp;(g)</StyledTableCell>
+                        <StyledTableCell align="right">Carbs&nbsp;(g)</StyledTableCell>
+                        <StyledTableCell align="right">Protein&nbsp;(g)</StyledTableCell>
+                        <StyledTableCell align="right">Protein&nbsp;(g)</StyledTableCell>
+                    </StyledTableRow>
+                </TableHead>
+                <TableBody>
+                    {rows.map((row) => (
+                        <StyledTableRow key={row.name}>
+                            <StyledTableCell component="th" scope="row">
+                                {row.name}
+                            </StyledTableCell>
+                            <StyledTableCell align="right">{row.calories}</StyledTableCell>
+                            <StyledTableCell align="right">{row.fat}</StyledTableCell>
+                            <StyledTableCell align="right">{row.carbs}</StyledTableCell>
+                            <StyledTableCell align="right">{row.protein}</StyledTableCell>
+                            <StyledTableCell align="right">{row.protein}</StyledTableCell>
+                        </StyledTableRow>
+                    ))}
+                </TableBody>
+            </Table>
+        </TableContainer>
     );
 }
 

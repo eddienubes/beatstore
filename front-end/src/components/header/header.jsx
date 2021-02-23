@@ -22,18 +22,16 @@ import Popper from '@material-ui/core/Popper';
 import Paper from '@material-ui/core/Paper';
 import {ClickAwayListener, MenuItem, MenuList} from "@material-ui/core";
 import {useDispatch, useSelector} from "react-redux";
-import {logOut, notificationClosed} from "../../redux/actions";
-import {Overlay, Popover} from "react-bootstrap";
+import {logOut} from "../../redux/actions/actions";
 
 const Header = () => {
     const [isOpenedBurger, setOpenBurger] = useState(false);
     const history = useHistory();
     const dispatch = useDispatch();
-    const {loggedIn, showNotification, cart} = useSelector(state => state.userReducer);
+    const {loggedIn} = useSelector(state => state.userReducer);
     const [openLogDropdown, setOpenLogDropdown] = React.useState(false);
     const anchorRef = React.useRef(null);
-    const cartRef = React.useRef();
-    console.log(cartRef);
+
     const handleToggle = () => {
         setOpenLogDropdown((prevOpen) => !prevOpen);
     };
@@ -150,28 +148,9 @@ const Header = () => {
         </>) : (<Nav.Link className="invert login" to="/auth/login" as={Link}><FontAwesomeIcon
         icon={faUser}/> Log In</Nav.Link>);
 
-    const popover = (
-        <Popover id="appended-popover-basic" className={`appended-popover`} onClick={e => dispatch(notificationClosed())}>
-            <Popover.Title className={`popover-title`}>YOUR CART HAS {cart.items.length} ITEM(S)</Popover.Title>
-            <Popover.Content className={`popover-content`}>
-                You have successfully added <strong>1 beat</strong> to your cart.
-                <p>Total price: <strong>${cart.total}</strong></p>
-            </Popover.Content>
-        </Popover>
-    );
-    
     return (
+
         <header>
-            <Overlay target={cartRef.current}
-                     show={showNotification}
-                     placement="bottom"
-                     rootClose={true}
-                     onHide={() => {}}
-                     rootCloseEvent={`click`}
-                     onEnter={() => setTimeout(() => dispatch(notificationClosed()), 5000)}
-            >
-                {popover}
-            </Overlay>
             <Navbar className={navbarStyles} variant="dark" expand="sm">
                 <Navbar.Brand className="nav__main-caption" to="/" as={Link}>Cherries</Navbar.Brand>
                 <Navbar.Toggle id="baton" aria-controls="nav-bar" as={ToggleMenu}/>
@@ -180,14 +159,8 @@ const Header = () => {
                         <Nav.Link to="/beats" as={Link}>Beats</Nav.Link>
                         <Nav.Link to="/contact" as={Link}>Contact</Nav.Link>
                         <Nav.Link to="/about" as={Link}>About</Nav.Link>
-                        <Nav.Link className="header__cart-button" to="/checkout"
-                                  as={Link}
-                                  ref={cartRef}
-                                  onClick={() => {
-                                    dispatch(notificationClosed());
-                                  }}>
+                        <Nav.Link className="header__cart-button" to="/checkout" as={Link}>
                             <FontAwesomeIcon className="header__cart-icon" icon={faShoppingCart}/> Cart
-
                         </Nav.Link>
 
                         {logDependentItem}

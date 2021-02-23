@@ -32,11 +32,9 @@ const BigSearch = ({isMain = false}) => {
                             }
                        }}
                        onKeyPress={e => {
-                           if (e.key === 'Enter' && isMain) {
-                               history.push('/beats');
-                           }
-                           else if (!isMain && e.key === 'Enter') {
+                           if (e.key === 'Enter') {
                                dispatch(filter(undefined, Math.floor(window.innerHeight / 65)));
+                               history.push('/beats');
                            }
                        }}
                 />
@@ -44,11 +42,9 @@ const BigSearch = ({isMain = false}) => {
                     setSearch(formState.search);
                     if (search.length > 0) {
 
+                        dispatch(filter(undefined, Math.floor(window.innerHeight / 65)));
                         if (isMain) {
                             history.push('/beats');
-                        }
-                        else if (!isMain) {
-                            dispatch(filter(undefined, Math.floor(window.innerHeight / 65)));
                         }
                     }
                 }}>

@@ -27,25 +27,8 @@ class AuthService {
         );
     }
 
-    async updateUser(id, newUserData, token) {
+    async updateUser(id, newUserData) {
         return axios.patch(this.baseUrl + `/${id}`, newUserData);
-    }
-
-    async appendToCart(userId, product, token) {
-        console.log(token);
-        return axios.post(this.baseUrl + `/${userId}` + '/cart', product, {
-            headers: {
-                Authorization: 'Bearer ' + token
-            }
-        });
-    }
-
-    async removeFromCart(userId, productId, token) {
-        return axios.delete(this.baseUrl + `/${userId}` + '/cart' + `/${productId}`, {
-            headers: {
-                Authorization: 'Bearer ' + token
-            }
-        });
     }
 }
 

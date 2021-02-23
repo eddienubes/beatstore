@@ -1,37 +1,5 @@
-.empty-box-warning {
-    display: flex;
-    min-height: 100%;
-    justify-content: center;
-    text-align: center;
-    color: white;
-    background: black;
-    flex-direction: column;
-    align-items: center;
-    img {
-        max-width: 200px;
-        max-height: 200px;
-    }
-}
-
 .purchases-table {
     border-radius: 0 !important;
-    //background-color: white;
-    //padding: 0;
-    //box-sizing: initial;
-    overflow-x: visible !important;
-
-    .purchased-item {
-        .label {
-            border-radius: 0!important;
-            padding: 0 4px 0 25px!important;
-            background: none!important;
-        }
-        .price-item {
-            color: #00a400;
-        }
-    }
-
-    .drop-down {
-
-    }
+    background-color: white;
+    padding: 0;
 }

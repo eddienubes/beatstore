@@ -63,7 +63,7 @@ const getAllLicenses = async (req, res, next) => {
     }
 
     res.status(200);
-    res.json({message: 'Prices are fetched successfully', licenses: licenses.map(l => l.toObject({getters: true}))});
+    res.json({message: 'Prices are fetched successfully', licenses});
 };
 
 const creatLicense = async (req, res, next) => {

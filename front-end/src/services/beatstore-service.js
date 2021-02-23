@@ -56,5 +56,4 @@ export default class BeatstoreService {
     getRandomBeat = async () => {
         return axios.get(this.baseUrl + `/random`);
     }
-
 };

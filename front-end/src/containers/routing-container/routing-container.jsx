@@ -16,18 +16,9 @@ import AccountPage from "../../pages/account-page";
 import Footer from "../../components/footer";
 import Spinner from "../../components/spinner";
 import useAuth from "../../hooks/auth-hook";
-import {useDispatch, useSelector} from "react-redux";
-import {appendToCard, fetchLicenses} from "../../redux/actions";
-import BlurredSpinner from "../../components/blurred-spinner";
 
 const RoutingContainer = () => {
     const [checking] = useAuth();
-    const dispatch = useDispatch();
-    const {isLoadingAppendToCart} = useSelector(state => state.userReducer);
-    useEffect(() => {
-        dispatch(fetchLicenses());
-    }, [])
-
 
     if (checking) {
         return <Spinner/>
@@ -35,7 +26,6 @@ const RoutingContainer = () => {
 
     return (
         <Router>
-            {isLoadingAppendToCart ? <BlurredSpinner/> : null}
             <Header/>
                 <main>
                     <MusicPlayer/>

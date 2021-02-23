@@ -221,6 +221,7 @@ const getAllBeats = async (req, res, next) => {
             )
         );
     }
+
     res.status(200);
     res.json({
         message: 'Beats are fetched successfully',

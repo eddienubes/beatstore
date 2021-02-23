@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React from "react";
 import './basket.scss';
 import BasketItem from "../basket-item";
 import {Table} from "semantic-ui-react";
@@ -7,18 +7,13 @@ import {Link} from "react-router-dom";
 import LicenseDescriptionModal from "../license-description-modal";
 import {useSelector} from "react-redux";
 import BrowseAllButton from "../browse-all-button";
-import AnimationContainer from "../../containers/animation-container";
-import SpinnerAudio from "../spinner-audio";
-import useAudio from "../../hooks/audio-hook";
-import {audioLoaded, audioPlayed, audioStopped} from "../../redux/actions";
 
 const Basket = () => {
     const [isDisabled, setDisabled] = React.useState(true);
     const [modalShow, setModalShow] = React.useState(false);
-    const {cart, isLoadingRemoveFromCart} = useSelector(state => state.userReducer);
-    const {id, isPlaying, previousId} = useSelector(state => state.audioReducer);
+    const {cart} = useSelector(state => state.userReducer);
 
-    if (cart.items.length === 0) {
+    if (cart.length === 0) {
         return (
             <>
                 <p className={`empty-cart-caption`}>Your cart is completely empty. Fill it with some beats :)</p>
@@ -31,14 +26,12 @@ const Basket = () => {
         setDisabled(!isDisabled)
     };
 
-
     return (
         <div className="basket__container">
             <Table className="cart" celled structured striped unstackable>
                 <Table.Header className="header">
                     <Table.Row>
                         <Table.HeaderCell width={1} className="header-item">
-                            {isLoadingRemoveFromCart ? <SpinnerAudio/> : null}
                         </Table.HeaderCell>
                         <Table.HeaderCell width={2} textAlign="left"
                                           className="header-item">PRODUCT</Table.HeaderCell>
@@ -61,33 +54,12 @@ const Basket = () => {
                 </Table.Header>
 
                 <Table.Body>
-                    {
-                        cart.items.map(i => {
-
-                            return (
-                                <AnimationContainer
-                                    animationMountClass={null}
-                                    key={i._id + 'container'}
-                                    animationUnMountClass={`cart-item-deleted-animation`} >
-                                    <BasketItem
-                                        id={i._id}
-                                        imgUrl={i.beatId.imgUrl}
-                                        amount={i.licenseId.price}
-                                        licenseType={i.licenseId.label}
-                                        product={i.beatId.title}
-                                        beatId={i.beatId._id}
-                                        currentId={id}
-                                        isPlaying={isPlaying}
-                                        previousId={previousId}
-                                    />
-                                </AnimationContainer>
-                                )
-                        })
-                    }
+                    <BasketItem/>
                 </Table.Body>
             </Table>
             <aside className="sidebar">
                 <div className="sidebar-container">
+
                     <form>
                         <PlaceholderAnimatedButton className={"coupon-input"}
                                                    labelStyle={"label-style"}
@@ -112,7 +84,8 @@ const Basket = () => {
                         </div>
                         <div className="numbers-container total">
                             <div>Total</div>
-                            <div className="total-number number">{cart.total.toFixed(2)}$</div>
+                            {/*PUT TOTAL VALUE HERE*/}
+                            <div className="total-number number">${123}</div>
                         </div>
                         {/*TODO: MODAL RELOADS PAGE ISSUE*/}
                         {/*<PolicyBox className="button-review" text="REVIEW LICENSE"/>*/}

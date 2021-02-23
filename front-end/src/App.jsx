@@ -6,7 +6,7 @@ import {login} from './redux/actions';
 import store from "./redux/store";
 import AudioInstanceContext from "./components/audio-instance-context";
 
-import './App.scss';
+import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'semantic-ui-css/semantic.min.css';
 

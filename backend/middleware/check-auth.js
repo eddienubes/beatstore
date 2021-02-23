@@ -3,8 +3,9 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
     if (req.method === 'OPTIONS') {
-        return next();
+        next();
     }
+
     try {
         const token = req.headers.authorization.split(' ')[1]; // Bearer Token
         if (!token) {
@@ -13,10 +14,11 @@ module.exports = (req, res, next) => {
 
         const decodedToken = jwt.verify(token, 'supersecret_do_not_share');
         req.userData = {userId: decodedToken.userId}
-        return next();
+        next();
     }
     catch (e) {
-        console.log(e.message);
         return next(new HttpError('Authentication has failed', 401));
     }
+
+
 };

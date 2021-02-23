@@ -27,4 +27,5 @@ beatSchema.index({
     tags: 'text'
 });
 
+
 module.exports = mongoose.model('Beat', beatSchema);

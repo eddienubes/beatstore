@@ -19,8 +19,6 @@ const server = http.createServer(app);
 
 const url = 'mongodb+srv://eddienubes:xfB6vAVfFlmdfmTR@cluster0.5u9ib.mongodb.net/beatstore?retryWrites=true&w=majority';
 
-// mongoose.set('debug', true);
-
 // default and supported routes
 app.use(bodyParser.json());
 

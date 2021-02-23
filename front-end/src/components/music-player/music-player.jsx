@@ -331,7 +331,7 @@ const MusicPlayer = () => {
         }
     }, [playerState.audioList])
 
-    const player = playerState.show || id ? ( // TODO AND NEW WRAPPER WITH ON ANIMATION END EVENT
+    const player = playerState.show ? ( // TODO AND NEW WRAPPER WITH ON ANIMATION END EVENT
         <div className={`music-player__container`}>
             <div className={`progress-bar`}>
                 <PrettoSlider

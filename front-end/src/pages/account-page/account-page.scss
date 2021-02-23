@@ -1,17 +1,9 @@
 .account-page {
-    height: 100%;
     margin: 0 auto;
     width: 100%!important;
     .account-page__tab {
         font-size: 1.05rem;
         color: white;
-        overflow: visible!important;
-    }
-    & > div {
-        overflow: visible!important;
-    }
-    .tab-panel {
-        overflow: visible!important;
     }
 }
 
