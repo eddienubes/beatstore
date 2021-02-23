@@ -4,15 +4,25 @@ import {Col, Row} from 'react-bootstrap'
 import {Button, Modal, TransitionablePortal} from 'semantic-ui-react'
 import {faTimes} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import BigSearch from "../big-search/big-search";
+import {useDispatch, useSelector} from "react-redux";
+import SpinnerAudio from "../spinner-audio";
+import {appendToCard} from "../../redux/actions";
+import {faCheck} from "@fortawesome/free-solid-svg-icons/faCheck";
 
-const ToCartButton = ({track, price, licenseType, setOpen, caption, desc, popup}) => {
+const ToCartButton = ({trackId, price, licenseType, setOpen, caption, desc, popup, licenseId, isInCart}) => {
+    const dispatch = useDispatch();
+
+
+
     return (
         <button onClick={(e) => {
             e.stopPropagation();
-            setOpen()
+            setOpen();
+            dispatch(appendToCard({product: {beatId: trackId, licenseId}}));
         }}
                 className="license-button-choice mp3-lease">
+            {isInCart ? isInCart.licenseId._id.toString() === licenseId ?
+                <div className={`selected-in-cart`}><FontAwesomeIcon icon={faCheck}/></div> : null : null}
             <div className="license__choice-caption">{caption}</div>
             <div className="license__choice-price">${price}</div>
             <div className="license__choice-desc">{desc}</div>
@@ -21,18 +31,22 @@ const ToCartButton = ({track, price, licenseType, setOpen, caption, desc, popup}
     );
 };
 
-const LicenseTypeModal = (props) => {
 
+const LicenseTypeModal = (props) => {
+    const {isLoading, licenses} = useSelector(state => state.licensesReducer);
     let show = props.show;
     const setOpen = props.setOpen;
-    const prices = [1, 2, 3, 4, '~'];
-    const captions = ['mp3 lease', 'wav lease', 'track out lease', 'unlimited lease', 'exclusive'];
-    const desc = ['MP3', 'MP3 AND WAV', 'MP3, WAV AND TRACK STEMS', 'MP3, WAV AND TRACK STEMS', 'JUST CONTACT ME ' +
-    'VIA CONTACT FORM OR USING' +
-    'EMAIL/INSTAGRAM'];
-    const popups = ['CLICK TO ADD IN YOUR CART', 'CLICK TO GO TO CONTACT PAGE'];
 
+    const captions = useMemo(() => ['mp3 lease', 'wav lease', 'track out lease', 'unlimited lease', 'exclusive'], []);
+    const desc = useMemo(() => ['MP3', 'MP3 AND WAV', 'MP3, WAV AND TRACK STEMS', 'MP3, WAV AND TRACK STEMS', 'JUST CONTACT ME ' +
+    'VIA CONTACT FORM OR USING' +
+    'EMAIL/INSTAGRAM'], []);
+    const popups = useMemo(() => ['CLICK TO ADD IN YOUR CART', 'CLICK TO GO TO CONTACT PAGE'], []);
     const imageUrl = useMemo(() => 'http://localhost:5000/api/' + props.track.imgUrl, [props.track]);
+
+    if (isLoading) {
+        return (<SpinnerAudio/>);
+    }
 
     return (
         <>
@@ -86,48 +100,61 @@ const LicenseTypeModal = (props) => {
                             <Row>
 
                                 <Col xl={3} md={4} sm={12}>
-                                    <ToCartButton price={prices[0]}
-                                                  caption={captions[0]}
+                                    <ToCartButton price={licenses[3].price}
+                                                  caption={licenses[3].label.toLowerCase()}
                                                   desc={desc[0]}
                                                   popup={popups[0]}
                                                   setOpen={() => {
                                                       setOpen(false)
                                                   }}
+                                                  isInCart={props.isInCart}
+                                                  licenseId={licenses[3].id}
+                                                  trackId={props.track.id}
                                     />
                                 </Col>
                                 <Col xl={3} md={4} sm={12}>
-                                    <ToCartButton price={prices[1]}
-                                                  caption={captions[1]}
+                                    <ToCartButton price={licenses[2].price}
+                                                  caption={licenses[2].label.toLowerCase()}
                                                   desc={desc[1]}
                                                   popup={popups[0]}
                                                   setOpen={() => {
                                                       setOpen(false)
                                                   }}
+                                                  isInCart={props.isInCart}
+                                                  licenseId={licenses[2].id}
+                                                  trackId={props.track.id}
                                     />
                                 </Col>
                                 <Col xl={3} md={4} sm={12}>
-                                    <ToCartButton price={prices[2]}
-                                                  caption={captions[2]}
+                                    <ToCartButton price={licenses[1].price}
+                                                  caption={licenses[1].label.toLowerCase()}
                                                   desc={desc[2]}
                                                   popup={popups[0]}
                                                   setOpen={() => {
                                                       setOpen(false)
                                                   }}
+                                                  isInCart={props.isInCart}
+                                                  licenseId={licenses[1].id}
+                                                  trackId={props.track.id}
+
                                     />
                                 </Col>
                                 <Col xl={3} md={6} sm={12}>
-                                    <ToCartButton price={prices[3]}
-                                                  caption={captions[3]}
+                                    <ToCartButton price={licenses[0].price}
+                                                  caption={licenses[0].label.toLowerCase()}
                                                   desc={desc[3]}
                                                   popup={popups[0]}
                                                   setOpen={() => {
                                                       setOpen(false)
                                                   }}
+                                                  isInCart={props.isInCart}
+                                                  licenseId={licenses[0].id}
+                                                  trackId={props.track.id}
                                     />
                                 </Col>
 
                                 <Col xl={12} md={6} sm={12}>
-                                    <ToCartButton price={prices[4]}
+                                    <ToCartButton price={'~'}
                                                   caption={captions[4]}
                                                   desc={desc[4]}
                                                   popup={popups[1]}

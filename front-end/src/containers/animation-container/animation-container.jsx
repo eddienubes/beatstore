@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import {useSelector} from "react-redux";
 
-const AnimationContainer = ({ show, children, animationMountClass, animationUnMountClass }) => {
-    const [shouldRender, setRender] = useState(show);
+const AnimationContainer = ({showDefault, children, animationMountClass, animationUnMountClass }) => {
+    const [shouldRender, setRender] = useState(showDefault || true);
+    const [show, setShow] = useState(showDefault || true);
 
     useEffect(() => {
         if (show) setRender(true);
@@ -9,18 +11,17 @@ const AnimationContainer = ({ show, children, animationMountClass, animationUnMo
 
     const onAnimationEnd = () => {
         if (!show) setRender(false);
+
     };
 
     return (
-        shouldRender && (
-            <div
-                // style={{ animation: `${show ? "fadeIn" : "fadeOut"} 1s` }}
-                className={show ? animationMountClass : animationUnMountClass }
-                onAnimationEnd={onAnimationEnd}
-            >
-                {children}
-            </div>
-        )
+        shouldRender &&
+            React.cloneElement(children, {
+                className: show ? animationMountClass : animationUnMountClass,
+                onAnimationEnd: onAnimationEnd,
+                setShow: setShow,
+                show
+            })
     );
 };
 

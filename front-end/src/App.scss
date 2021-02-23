@@ -1,13 +1,27 @@
 * {
     font-family: 'Poppins', sans-serif !important;
 }
+
 html {
     height: 100%;
 }
+
 body {
     min-height: 100vh;
-    background: black!important;
+    background: black !important;
+
+    .popover {
+        border: none;
+        border-radius: 2px;
+        text-align: center;
+
+        .popover-header {
+            text-align: center;
+        }
+    }
 }
+
+
 /* global classes */
 .bg-black {
     background-color: black !important;
@@ -17,7 +31,7 @@ body {
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
-input:-webkit-autofill:active  {
+input:-webkit-autofill:active {
     -webkit-box-shadow: 0 0 0 30px white inset !important;
 }
 
@@ -90,7 +104,17 @@ button:focus {
     min-height: 100vh;
     flex-direction: column;
 }
+
 main {
+    padding-top: 65px;
     flex: 1;
     height: 100%;
+}
+@media (max-width: 600px) {
+    body {
+        .popover {
+            display: none;
+        }
+    }
+
 }

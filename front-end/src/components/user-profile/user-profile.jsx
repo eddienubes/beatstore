@@ -2,18 +2,19 @@ import React, {useMemo, useState} from 'react';
 import PlaceholderAnimatedButton from "../placeholder-animated-button";
 import Input from "../../pages/auth-pages/input";
 import Spinner from "../spinner";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import useForm from "../../hooks/form-hook";
 import {VALIDATOR_EMAIL, VALIDATOR_NOT_REQUIRED_BUT_MIN_LENGTH, VALIDATOR_REQUIRE} from "../../utils/validators";
 import {withAuthService} from '../hoc';
-
-import './user-profile.scss';
 import ErrorIndicator from "../error-indicator";
+import {updateUser} from "../../redux/actions";
+import './user-profile.scss';
 
 
 const UserProfile = ({authService}) => {
-    const {processing, email, username, id} = useSelector(state => state.userReducer);
-    const [errorSettings, setErrorSettings] = useState(null);
+    const {processing, email, username, id, error} = useSelector(state => state.userReducer);
+    const dispatch = useDispatch();
+
 
     const initialState = useMemo(() => {
         return {
@@ -44,22 +45,16 @@ const UserProfile = ({authService}) => {
     }, [username, email]);
 
     const [touched, setTouched] = useState(false);
-    const [formState, onInputHandler, setFormData] = useForm(initialState.inputs, initialState.isValid)
-    console.log(formState);
-    const onSubmitHandler = async (e) => {
+    const [formState, onInputHandler, setFormData] = useForm(initialState.inputs, initialState.isValid);
+
+    const onSubmitHandler = (e) => {
         e.preventDefault();
-        authService.updateUser(id, {
+        dispatch(updateUser(id, {
             email: formState.inputs.email.value,
             username: formState.inputs.username.value,
             password: formState.inputs.password.value,
             newPassword: formState.inputs.newPassword.value
-        })
-            .then(({user}) => {
-
-            })
-            .catch(response => {
-                setErrorSettings(response.data);
-            });
+        }));
     }
 
     const {newPassword, newPasswordConfirmed} = formState.inputs;
@@ -79,7 +74,7 @@ const UserProfile = ({authService}) => {
         return <Spinner/>
     }
 
-    if (errorSettings) {
+    if (error) {
         return <ErrorIndicator/>
     }
 

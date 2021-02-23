@@ -25,6 +25,7 @@ const TracksTable = ({isMain = true}) => {
     const {audioInstance} = useContext(AudioInstanceContext).state;
     const dispatch = useDispatch();
     const {id, isPlaying, previousId} = useSelector(state => state.audioReducer);
+    const {items} = useSelector(state => state.userReducer).cart;
 
     const firstMountBeatCount = useMemo(() => Math.floor(window.innerHeight / 65), [window.innerHeight]);
 
@@ -34,17 +35,15 @@ const TracksTable = ({isMain = true}) => {
 
     useEffect(() => {
         // dispatch(filterDropped());
-
-        dispatch(fetchBeats(firstMountBeatCount));
-        // if (hasMore && !isLoading && !isFiltering) {
-        //     loadBeats(firstMountBeatCount);
-        // }
+        dispatch(beatsDropped());
+        if (!isFiltering) {
+            dispatch(fetchBeats(firstMountBeatCount));
+        }
 
         return () => {
             if (!isMain) {
                 dispatch(filterDropped());
-            }
-            else {
+            } else {
                 dispatch(beatsDropped());
             }
         }
@@ -61,9 +60,10 @@ const TracksTable = ({isMain = true}) => {
                 id={id}
                 isPlaying={isPlaying}
                 previousId={previousId}
+                cartItems={items}
             />;
         })
-    }, [beatList, id, isPlaying, previousId, isFiltering]);
+    }, [beatList, id, items, isPlaying, previousId, isFiltering]);
 
     if (error) {
         return <ErrorIndicator/>
