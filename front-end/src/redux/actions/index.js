@@ -9,7 +9,12 @@ import {
     filterDropped,
     filterSearchSet,
     audioToggle,
-    logInSuccess
+    logInSuccess,
+    updateUser,
+    appendToCard,
+    removeFromCart,
+    fetchLicenses,
+    notificationClosed
 } from './actions';
 
 export {
@@ -26,5 +31,10 @@ export {
     logOut,
     login,
     signup,
-    logInSuccess
+    logInSuccess,
+    updateUser,
+    appendToCard,
+    removeFromCart,
+    fetchLicenses,
+    notificationClosed
 };

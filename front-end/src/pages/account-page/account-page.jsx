@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {useHistory, useLocation} from 'react-router-dom';
+import {Redirect, useHistory, useLocation} from 'react-router-dom';
 import SwipeableViews from 'react-swipeable-views';
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -15,6 +15,7 @@ import {orange} from "@material-ui/core/colors";
 import UserProfile from "../../components/user-profile";
 import PurchasesTable from "../../components/purchases-table";
 import Footer from "../../components/footer";
+import {useSelector} from "react-redux";
 
 const themeOverrided = createMuiTheme({
     overrides: {
@@ -32,6 +33,10 @@ const themeOverrided = createMuiTheme({
             }
         },
         MuiTabs: {
+            overflowX: 'visible',
+            root: {
+                overflowX: 'visible'
+            },
             text: {
                 color: 'white',
             },
@@ -52,6 +57,7 @@ const TabPanel = (props) => {
             hidden={value !== index}
             id={`full-width-tabpanel-${index}`}
             aria-labelledby={`full-width-tab-${index}`}
+            style={{overflow: 'visible'}}
             {...other}
         >
             {value === index && (
@@ -79,6 +85,9 @@ const useStyles = makeStyles((theme) => ({
         backgroundColor: theme.palette.background.paper,
         width: 500,
     },
+    tabs: {
+        overflowX: 'visible'
+    },
     overrides: {
         // backgroundColor: "#ff00c1"
     }
@@ -87,7 +96,7 @@ const useStyles = makeStyles((theme) => ({
 const AccountPage = () => {
     const location = useLocation();
     const history = useHistory();
-
+    const {loggedIn} = useSelector(state => state.userReducer);
     const classes = useStyles();
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
@@ -115,6 +124,10 @@ const AccountPage = () => {
         setValue(index);
     };
 
+    if (!loggedIn) {
+        return (<Redirect to='/'/>);
+    }
+
     return (
         <>
             <div className={classes.root + " account-page"}>
@@ -126,6 +139,7 @@ const AccountPage = () => {
                             onChange={handleChange}
                             variant="fullWidth"
                             aria-label="full width tabs example"
+                            className={classes.tabs}
                         >
                             <Tab className="account-page__tab" label="Profile" {...a11yProps(0)} />
                             <Tab className="account-page__tab" label="Purchases" {...a11yProps(1)} />
@@ -135,6 +149,7 @@ const AccountPage = () => {
                         axis={theme.direction === 'rtl' ? 'x-reverse' : 'x'}
                         index={value}
                         onChangeIndex={handleChangeIndex}
+                        slideStyle={{overflow: 'visible'}}
                     >
                         <TabPanel value={value} index={0} dir={theme.direction}>
                             <UserProfile/>

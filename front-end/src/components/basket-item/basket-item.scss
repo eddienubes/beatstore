@@ -1,6 +1,13 @@
 $heightForLarge: 60px;
 $heightForNotLarge: 50px;
 
+.cart-item-appended-animation {
+    animation: cart-item-appended-animation .2s ease-in-out forwards;
+}
+.cart-item-deleted-animation {
+    animation: cart-item-deleted-animation .2s ease-in-out forwards;
+}
+
 .main-row {
     transition: .15s ease-in-out;
 
@@ -125,3 +132,20 @@ $heightForNotLarge: 50px;
 
 }
 
+@keyframes cart-item-appended-animation {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0%);
+
+    }
+}
+@keyframes cart-item-deleted-animation {
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}

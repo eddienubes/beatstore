@@ -1,4 +1,17 @@
 header {
+    position: fixed;
+    z-index: 99;
+    width: 100%;
+    overflow: visible;
+    .appended-popover {
+        //background: #3b3b3b!important;
+        //border: none;
+        //border-radius: 2px;
+        .popover-title {
+            //text-align: center!important;
+        }
+    }
+
     .login-menu-toggle-button {
         color: white;
         border-radius: 2px;
@@ -24,6 +37,8 @@ header {
         }
     }
     nav {
+
+        user-select: none;
         height: 100%;
         background-color: black!important;
         .navbar-brand {
@@ -33,12 +48,12 @@ header {
             flex-grow: 0;
         }
         .navbar-nav {
-
+            user-select: none;
             a {
                 margin: 0 7px 0 7px;
                 transition: .4s;
                 color: white !important;
-
+                user-select: none;
                 &:hover {
                     background-color: rgba(158, 158, 158, 0.4);
                     border-radius: 2px;

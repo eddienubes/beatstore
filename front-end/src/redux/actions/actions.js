@@ -1,9 +1,11 @@
 import * as actions from '../../constants/redux-action-names';
 import AuthService from "../../services/auth-service";
 import BeatstoreService from "../../services";
+import LicensesService from "../../services/licenses-service";
 
 const beatstoreService = new BeatstoreService();
 const authService = new AuthService();
+const licensesService = new LicensesService();
 
 const beatsRequested = () => {
     return {
@@ -164,6 +166,91 @@ const loggedOut = () => {
     };
 };
 
+const userUpdateRequested = () => {
+    return {
+        type: actions.USER_UPDATE_REQUESTED
+    }
+}
+
+const userUpdateSuccess = (userData) => {
+    return {
+        type: actions.USER_UPDATED_SUCCESS,
+        payload: userData
+    }
+}
+
+const userUpdateFailure = (error) => {
+    return {
+        type: actions.USER_UPDATE_FAILURE,
+        payload: error
+    }
+}
+
+const notificationClosed = () => {
+    return {
+        type: actions.NOTIFICATION_CLOSED
+    }
+}
+
+const appendToCartRequested = () => {
+    return {
+        type: actions.APPEND_TO_CART_REQUESTED
+    }
+}
+
+const appendToCartSuccess = (product) => {
+    return {
+        type: actions.APPEND_TO_CART_SUCCESS,
+        payload: product
+    }
+}
+
+const appendToCartFailure = (error) => {
+    return {
+        type: actions.APPEND_TO_CART_FAILURE,
+        payload: error
+    }
+}
+const removeFromCartRequested = () => {
+    return {
+        type: actions.REMOVE_FROM_CART_REQUESTED
+    }
+}
+
+const removeFromCartSuccess = (cart) => {
+    return {
+        type: actions.REMOVE_FROM_CART_SUCCESS,
+        payload: cart
+    }
+}
+
+const removeFromCartFailure = (error) => {
+    return {
+        type: actions.REMOVE_FROM_CART_FAILURE,
+        payload: error
+    }
+}
+
+const licensesRequested = () => {
+    return {
+        type: actions.LICENSES_REQUESTED
+    }
+}
+
+const licensesSuccess = (payload) => {
+    return {
+        type: actions.LICENSES_SUCCESS,
+        payload
+    }
+}
+
+const licensesFailure = (error) => {
+    return {
+        type: actions.LICENSES_FAILURE,
+        payload: error
+    }
+}
+
 const signup = (formState) => async (dispatch, getState) => {
     dispatch(signupRequested());
     const {email, username, password} = formState.inputs;
@@ -303,19 +390,76 @@ const logOut = () => (dispatch, getState) => {
     localStorage.removeItem('userData');
 }
 
-// const fetchLatestBeats = () => async (dispatch, getState) => {
-//
-//     dispatch(beatsRequested());
-//
-//     try {
-//         const response = await beatstoreService.getLatestBeats();
-//         dispatch(latestBeatsLoaded(response.data.beats));
-//     }
-//     catch (e) {
-//         console.log(e.response);
-//         dispatch(beatsFailure(e.response.data));
-//     }
-// }
+const updateUser = (id, userData) => async (dispatch, getState) => {
+    dispatch(userUpdateRequested());
+
+    const {expiration} = getState().userReducer;
+
+    try {
+        const response = await authService.updateUser(id, userData);
+        localStorage.setItem('userData', JSON.stringify({
+            ...response.data.user,
+            expiration
+        }));
+        dispatch(userUpdateSuccess(response.data.user));
+    }
+    catch (e) {
+        console.log(e.response);
+        dispatch(userUpdateFailure(e.response.data));
+    }
+
+}
+
+const fetchLicenses = () => async (dispatch, getState) => {
+    dispatch(licensesRequested());
+
+
+    try {
+        const response = await licensesService.getAllLicenses();
+        dispatch(licensesSuccess(response.data.licenses));
+    }
+    catch (e) {
+        console.log(e.response);
+        dispatch(licensesFailure(e.response.data));
+    }
+}
+
+const appendToCard = (product) => async (dispatch, getState) => {
+    dispatch(appendToCartRequested());
+
+    const {id, token} = getState().userReducer;
+
+    try {
+        const response = await authService.appendToCart(id, product, token);
+        localStorage.setItem('userData', JSON.stringify({
+            ...getState().userReducer,
+            cart: response.data.cart,
+        }));
+        dispatch(appendToCartSuccess(response.data.cart));
+    }
+    catch (e) {
+        dispatch(appendToCartFailure(e.response.data));
+    }
+}
+
+const removeFromCart = (productId) => async (dispatch, getState) => {
+    dispatch(removeFromCartRequested());
+
+    const {id, token, expiration} = getState().userReducer;
+
+    try {
+        const response = await authService.removeFromCart(id, productId, token);
+        localStorage.setItem('userData', JSON.stringify({
+            ...getState().userReducer,
+            cart: response.data.cart,
+        }));
+        dispatch(removeFromCartSuccess(response.data.cart));
+    }
+    catch (e) {
+        dispatch(removeFromCartFailure(e.response.data));
+    }
+
+}
 
 export {
     fetchBeats,
@@ -327,13 +471,17 @@ export {
 
     audioPlayed,
     audioStopped,
-    // audioLengthLoaded,
-    // audioLengthPlayed,
     audioLoaded,
     audioToggle,
 
     login,
     signup,
     logOut,
-    logInSuccess
+    logInSuccess,
+    updateUser,
+    appendToCard,
+    removeFromCart,
+    notificationClosed,
+
+    fetchLicenses,
 };

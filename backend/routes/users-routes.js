@@ -2,7 +2,7 @@ const express = require('express');
 const {Router} = require('express');
 const bodyParser = require('body-parser');
 const {check} = require('express-validator');
-
+const checkAuth = require('../middleware/check-auth');
 const usersControllers = require('../controllers/users-controller')
 
 const router = Router();
@@ -12,6 +12,8 @@ const router = Router();
 // router.get('/:uid', usersControllers.getUserById);
 
 router.patch('/:uid', usersControllers.updateUser)
+
+router.post('/login', usersControllers.login);
 
 router.post(
     '/signup',
@@ -28,6 +30,11 @@ router.post(
     usersControllers.signup
 );
 
-router.post('/login', usersControllers.login);
+
+router.use(checkAuth);
+
+router.post('/:uid/cart', usersControllers.appendInUserCart)
+
+router.delete('/:uid/cart/:pid', usersControllers.removeFromUserCart)
 
 module.exports = router;
