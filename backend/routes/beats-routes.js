@@ -2,7 +2,7 @@ const express = require('express');
 const {Router} = require('express');
 const {check} = require('express-validator');
 const fileUpload = require('../middleware/file-upload');
-const checkAuth = require('../middleware/check-auth');
+const checkAuth = require('../middleware/check-standard-auth');
 
 const beatsControllers = require('../controllers/beats-controller');
 

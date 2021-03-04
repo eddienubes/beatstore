@@ -17,19 +17,19 @@ import Footer from "../../components/footer";
 import Spinner from "../../components/spinner";
 import useAuth from "../../hooks/auth-hook";
 import {useDispatch, useSelector} from "react-redux";
-import {appendToCard, fetchLicenses} from "../../redux/actions";
+import {appendToCart, fetchLicenses} from "../../redux/actions";
 import BlurredSpinner from "../../components/blurred-spinner";
 
 const RoutingContainer = () => {
     const [checking] = useAuth();
     const dispatch = useDispatch();
-    const {isLoadingAppendToCart} = useSelector(state => state.userReducer);
+    const {isLoadingAppendToCart, isLoggingOut} = useSelector(state => state.userReducer);
     useEffect(() => {
         dispatch(fetchLicenses());
-    }, [])
+    }, []);
 
 
-    if (checking) {
+    if (checking || isLoggingOut) {
         return <Spinner/>
     }
 

@@ -1,16 +1,18 @@
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {login, logOut} from "../redux/actions";
+import {cartItemsSet, login, logOut, refreshToken} from "../redux/actions";
 
+let refreshTokenTimer;
 let logoutTimer;
 
 const useAuth = () => {
     const dispatch = useDispatch();
     const [checking, setChecking] = useState(true);
-    const {token, expiration} = useSelector(state => state.userReducer);
+    const {token, expiration, refreshToken: currentRToken, refreshTokenExpirationDate, cart} = useSelector(state => state.userReducer);
 
     useEffect(() => {
         const userData = JSON.parse(localStorage.getItem('userData'));
+        const cartData = JSON.parse(localStorage.getItem('cartData'));
         if (userData &&
             userData.token &&
             new Date(userData.expiration) > new Date()) {
@@ -18,23 +20,41 @@ const useAuth = () => {
             dispatch(login(undefined, userData));
             setChecking(false);
         }
+        else if (cartData) {
+            dispatch(cartItemsSet(cartData));
+            setChecking(false);
+        }
         else {
+            localStorage.setItem('cartData', JSON.stringify(cart));
             setChecking(false);
         }
     }, [dispatch]);
 
     useEffect(() => {
         if (token && expiration) {
-            const remainingTime = new Date(expiration).getTime() - new Date().getTime();
-            // console.log(remainingTime);
-            logoutTimer = setTimeout(() => {dispatch(logOut()); console.log('LOGGED OUT')}, remainingTime);
+            const remainingTimeAccessToken = new Date(expiration).getTime() - new Date().getTime();
+            refreshTokenTimer = setTimeout(
+                () => {dispatch(refreshToken(currentRToken))},
+                remainingTimeAccessToken);
+        }
+        else {
+            clearTimeout(refreshTokenTimer);
+        }
+    }, [token, expiration]);
+
+    useEffect(() => {
+        if (refreshToken && refreshTokenExpirationDate) {
+            const remainingTimeRefreshToken = new Date(refreshTokenExpirationDate).getTime() - new Date().getTime();
+            logoutTimer = setTimeout(
+                () => {dispatch(logOut())}, remainingTimeRefreshToken
+            );
         }
         else {
             clearTimeout(logoutTimer);
         }
-    }, [token, expiration]);
+    }, [refreshToken, refreshTokenExpirationDate])
 
-    return [checking]
+    return [checking];
 }
 
 export default useAuth;

@@ -91,7 +91,7 @@ export default function Filter() {
         <>
             <BigSearch/>
             <div className={`filter`}>
-                <Row lg={12} md={12} sm={12}>
+                <Row lg={12} md={12} sm={12} className={`filter-row`}>
                     <Col xl={3} md={4} sm={4} className={`dropdown-col`}>
                         <Dropdown
                             tabIndex={0}

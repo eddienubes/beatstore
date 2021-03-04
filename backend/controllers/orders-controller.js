@@ -54,15 +54,7 @@ const createOrder = async (req, res, next) => {
             await user.save();
             order.customerId = user._id;
         }
-        if (!hasUser) {
-            const newUser = new User({
-                email,
-                cart: [],
-            });
-            newUser.purchased.push(order);
-            order.customerId = newUser._id;
-            await newUser.save();
-        }
+
         await order.save({session: sess});
         await sess.commitTransaction();
 

@@ -47,6 +47,33 @@ class AuthService {
             }
         });
     }
+
+    async googleLogin(tokenId) {
+        return axios.post(this.baseUrl + '/login-google', {tokenId: tokenId});
+    }
+
+    async googleSignup(tokenId) {
+        return axios.post(this.baseUrl + '/signup-google', {tokenId: tokenId});
+    }
+
+    async logout(token) {
+        return axios.post(this.baseUrl + '/logout', {}, {
+            headers: {
+                Authorization: 'Bearer ' + token
+            }
+        })
+    }
+
+    async refreshToken(refreshToken) {
+        return axios.post(this.baseUrl + '/token', {refreshToken: refreshToken});
+    }
+
+    async removeFromCartOffline(productId, cart) {
+        return axios.patch(this.baseUrl + '/cart' + `/${productId}`, {cart: cart});
+    }
+    async appendToCartOffline(product, cart) {
+        return axios.post(this.baseUrl + '/cart', {cart: cart, product: product});
+    }
 }
 
 export default AuthService;

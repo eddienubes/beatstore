@@ -15,7 +15,7 @@ import {audioLoaded, audioPlayed, audioStopped} from "../../redux/actions";
 const Basket = () => {
     const [isDisabled, setDisabled] = React.useState(true);
     const [modalShow, setModalShow] = React.useState(false);
-    const {cart, isLoadingRemoveFromCart} = useSelector(state => state.userReducer);
+    const {cart, isLoadingRemoveFromCart, loggedIn} = useSelector(state => state.userReducer);
     const {id, isPlaying, previousId} = useSelector(state => state.audioReducer);
 
     if (cart.items.length === 0) {
@@ -67,10 +67,10 @@ const Basket = () => {
                             return (
                                 <AnimationContainer
                                     animationMountClass={null}
-                                    key={i._id + 'container'}
+                                    key={i._id || i.id}
                                     animationUnMountClass={`cart-item-deleted-animation`} >
                                     <BasketItem
-                                        id={i._id}
+                                        id={i._id || i.id}
                                         imgUrl={i.beatId.imgUrl}
                                         amount={i.licenseId.price}
                                         licenseType={i.licenseId.label}
@@ -112,7 +112,7 @@ const Basket = () => {
                         </div>
                         <div className="numbers-container total">
                             <div>Total</div>
-                            <div className="total-number number">{cart.total.toFixed(2)}$</div>
+                            <div className="total-number number">${cart.total.toFixed(2)}</div>
                         </div>
                         {/*TODO: MODAL RELOADS PAGE ISSUE*/}
                         {/*<PolicyBox className="button-review" text="REVIEW LICENSE"/>*/}
@@ -120,6 +120,15 @@ const Basket = () => {
                         <button className="coupon-button" type="button" onClick={() => setModalShow(true)}>READ
                             LICENSE
                         </button>
+                        {
+                            !loggedIn ? (<PlaceholderAnimatedButton className={"coupon-input"}
+                                                                   labelStyle={"label-style"}
+                                                                   name="email"
+                                                                   text="Enter your email"
+                                                                   required={true}>
+                            </PlaceholderAnimatedButton>) : (<p className={`email-caption-warning`}>Beats will be sent on email your current account logged in with.</p>)
+                        }
+
                         <LicenseDescriptionModal
                             show={modalShow}
                             onHide={() => setModalShow(false)}

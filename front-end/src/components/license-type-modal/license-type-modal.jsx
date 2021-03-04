@@ -6,7 +6,7 @@ import {faTimes} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {useDispatch, useSelector} from "react-redux";
 import SpinnerAudio from "../spinner-audio";
-import {appendToCard} from "../../redux/actions";
+import {appendToCart} from "../../redux/actions";
 import {faCheck} from "@fortawesome/free-solid-svg-icons/faCheck";
 
 const ToCartButton = ({trackId, price, licenseType, setOpen, caption, desc, popup, licenseId, isInCart}) => {
@@ -18,7 +18,7 @@ const ToCartButton = ({trackId, price, licenseType, setOpen, caption, desc, popu
         <button onClick={(e) => {
             e.stopPropagation();
             setOpen();
-            dispatch(appendToCard({product: {beatId: trackId, licenseId}}));
+            dispatch(appendToCart({product: {beatId: trackId, licenseId}}));
         }}
                 className="license-button-choice mp3-lease">
             {isInCart ? isInCart.licenseId._id.toString() === licenseId ?

@@ -2,7 +2,9 @@ const express = require('express');
 const {Router} = require('express');
 const bodyParser = require('body-parser');
 const {check} = require('express-validator');
-const checkAuth = require('../middleware/check-auth');
+const checkStandardAuth = require('../middleware/check-standard-auth');
+const checkGoogleAuth = require('../middleware/check-google-auth');
+const checkRefreshToken = require('../middleware/check-refresh-token');
 const usersControllers = require('../controllers/users-controller')
 
 const router = Router();
@@ -11,9 +13,13 @@ const router = Router();
 //
 // router.get('/:uid', usersControllers.getUserById);
 
-router.patch('/:uid', usersControllers.updateUser)
-
 router.post('/login', usersControllers.login);
+
+router.post('/login-google', checkGoogleAuth, usersControllers.googleLogin)
+router.post('/signup-google', checkGoogleAuth, usersControllers.googleSignup)
+
+router.post('/token', checkRefreshToken, usersControllers.token)
+router.post('/logout', checkStandardAuth, usersControllers.logout);
 
 router.post(
     '/signup',
@@ -30,11 +36,14 @@ router.post(
     usersControllers.signup
 );
 
+router.post('/:uid/cart', checkStandardAuth, usersControllers.appendInUserCart)
 
-router.use(checkAuth);
+router.delete('/:uid/cart/:pid', checkStandardAuth, usersControllers.removeFromUserCart)
 
-router.post('/:uid/cart', usersControllers.appendInUserCart)
+router.post('/cart', usersControllers.appendToCartOffline);
+router.patch('/cart/:pid', usersControllers.removeFromCartOffline);
 
-router.delete('/:uid/cart/:pid', usersControllers.removeFromUserCart)
+router.patch('/:uid', usersControllers.updateUser)
+
 
 module.exports = router;

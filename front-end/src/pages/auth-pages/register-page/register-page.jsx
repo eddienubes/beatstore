@@ -1,14 +1,14 @@
 import React, {useState} from 'react';
-import {Link, useHistory} from 'react-router-dom';
+import {Link, Redirect, useHistory} from 'react-router-dom';
 import Input from "../input";
 import {VALIDATOR_CHECKBOX, VALIDATOR_EMAIL, VALIDATOR_MINLENGTH} from "../../../utils/validators";
 import useForm from "../../../hooks/form-hook";
 import {withAuthService} from '../../../components/hoc';
-import {signup} from "../../../redux/actions/actions";
+import {googleSignupFailed, signup, userErrorCleared} from "../../../redux/actions";
 import {useDispatch, useSelector} from "react-redux";
 import Spinner from "../../../components/spinner";
-import {Redirect} from 'react-router-dom';
-
+import {GoogleLogin} from 'react-google-login';
+import {googleSignup} from "../../../redux/actions/actions";
 
 const initialState = {
     inputs: {
@@ -52,6 +52,14 @@ const RegisterPage = ({authService}) => {
         dispatch(signup(formState));
         setChecked(false);
         setTouched(false);
+    }
+
+    const googleSuccess = async (res) => {
+        dispatch(googleSignup(res.tokenId));
+    }
+
+    const googleFailure = async (err) => {
+        dispatch(googleSignupFailed(err));
     }
 
     const canSignup = checked && formState.isValid && formState.confirmed;
@@ -133,19 +141,40 @@ const RegisterPage = ({authService}) => {
             </form>
             <h2 className="divider-h2">
                 <div className="line"/>
-                    <span>OR</span>
+                <span>OR</span>
                 <div className="line"/>
             </h2>
-            <button className="oauth">
-                <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
-                    width="15"
-                    height="15"
-                    alt="Google"
-                />
-                Sign up with Google
-            </button>
-            <p className={`transfer-to-login`}>Already have an account? <Link to="/auth/login">Sign in</Link></p>
+            <GoogleLogin
+                uxMode={`popup`}
+                clientId={`718477232651-i09ba8bjtbaqlt7h1i2fq3j4klklth2h.apps.googleusercontent.com`}
+                render={renderProps =>
+                    (
+                        <button
+                            className="oauth"
+                            onClick={renderProps.onClick}
+                            disabled={renderProps.disabled}
+                        >
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
+                                width="15"
+                                height="15"
+                                alt="Google"
+                            />
+                            Sign up with Google
+                        </button>
+                    )
+                }
+                onSuccess={googleSuccess}
+                onFailure={googleFailure}
+                cookiePolicy={`single_host_origin`}
+            />
+            <p className={`transfer-to-login`}>Already have an account?
+                <Link to="/auth/login"
+                      onClick={e => dispatch(userErrorCleared())}
+                >
+                     &nbsp;Sign in
+                </Link>
+            </p>
         </div>
     );
 };

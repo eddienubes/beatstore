@@ -4,22 +4,21 @@ const {validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const mongoose = require('mongoose');
+const config = require('../config.json');
 
 const Order = require('../models/order');
 const User = require('../models/user');
 const License = require('../models/license');
+const RefreshToken = require('../models/refresh-token');
+const Beat = require('../models/beat');
 
 const populateUserCart = async (user, next) => {
-    try {
-        await user.populate([
-            {
-                path: 'cart.items.beatId',
-                select: 'title imgUrl'
-            },
-            {path: "cart.items.licenseId"}]).execPopulate();
-    } catch (e) {
-        return next(new HttpError('Something went wrong while populating beats..', 500));
-    }
+    await user.populate([
+        {
+            path: 'cart.items.beatId',
+            select: 'title imgUrl'
+        },
+        {path: "cart.items.licenseId"}]).execPopulate();
 }
 
 const populateUserPurchases = async (user, next) => {
@@ -51,58 +50,52 @@ const populateUserPurchases = async (user, next) => {
     let normalizedPurchasesList = [];
 
     // fucking javascript below
-    try {
-        await Promise.all(user.purchased.map(async (order, orderIndex) => {
-            await Promise.all(order.products.map(async (product, productIndex) => {
-                await Promise.all(beatProjectionsToLicenseTypes.map(async proj => {
-                    if (product.licenseId.type === proj.type) {
-                        await user.populate({
-                            path: `purchased.${orderIndex}.products.${productIndex}.beatId`,
-                            select: proj.select
-                        })
-                            .execPopulate()
-                            .then(data => {
-                                let links = [];
+    await user.populate({path: 'purchased'}).execPopulate();
 
-                                const licenseUrlKeys = proj.select
-                                    .replace(new RegExp('\\s' + baseSelect), '')
-                                    .split(/\s+/);
+    await Promise.all(user.purchased.map(async (order, orderIndex) => {
+        await Promise.all(order.products.map(async (product, productIndex) => {
+            await Promise.all(beatProjectionsToLicenseTypes.map(async proj => {
+                if (product.licenseId.type === proj.type) {
+                    await user.populate({
+                        path: `purchased.${orderIndex}.products.${productIndex}.beatId`,
+                        select: proj.select
+                    })
+                        .execPopulate()
+                        .then(data => {
+                            let links = [];
 
-                                licenseUrlKeys.map((l, index) => {
-                                    links.push({
-                                        label: proj.labels[index],
-                                        url: data.purchased[orderIndex].products[productIndex].beatId[l]
-                                    });
-                                });
+                            const licenseUrlKeys = proj.select
+                                .replace(new RegExp('\\s' + baseSelect), '')
+                                .split(/\s+/);
 
-                                normalizedPurchasesList.push({
-                                    beatId: user.purchased[orderIndex].products[productIndex].beatId._id.toString(),
-                                    licenseId: user.purchased[orderIndex].products[productIndex].licenseId._id.toString(),
-                                    orderId: user.purchased[orderIndex]._id.toString(),
-                                    licenseType: user.purchased[orderIndex].products[productIndex].licenseId.type,
-                                    label: user.purchased[orderIndex].products[productIndex].licenseId.label,
-                                    title: user.purchased[orderIndex].products[productIndex].beatId.title,
-                                    bpm: user.purchased[orderIndex].products[productIndex].beatId.bpm,
-                                    scale: user.purchased[orderIndex].products[productIndex].beatId.scale,
-                                    imgUrl: user.purchased[orderIndex].products[productIndex].beatId.imgUrl,
-                                    previewAudioUrl: user.purchased[orderIndex].products[productIndex].beatId.previewAudioUrl,
-                                    links: links,
-                                    price: user.purchased[orderIndex].products[productIndex].licenseId.price,
-                                    date: user.purchased[orderIndex].date
+                            licenseUrlKeys.map((l, index) => {
+                                links.push({
+                                    label: proj.labels[index],
+                                    url: data.purchased[orderIndex].products[productIndex].beatId[l]
                                 });
                             });
-                    }
-                }));
+
+                            normalizedPurchasesList.push({
+                                beatId: user.purchased[orderIndex].products[productIndex].beatId._id.toString(),
+                                licenseId: user.purchased[orderIndex].products[productIndex].licenseId._id.toString(),
+                                orderId: user.purchased[orderIndex]._id.toString(),
+                                licenseType: user.purchased[orderIndex].products[productIndex].licenseId.type,
+                                label: user.purchased[orderIndex].products[productIndex].licenseId.label,
+                                title: user.purchased[orderIndex].products[productIndex].beatId.title,
+                                bpm: user.purchased[orderIndex].products[productIndex].beatId.bpm,
+                                scale: user.purchased[orderIndex].products[productIndex].beatId.scale,
+                                imgUrl: user.purchased[orderIndex].products[productIndex].beatId.imgUrl,
+                                previewAudioUrl: user.purchased[orderIndex].products[productIndex].beatId.previewAudioUrl,
+                                links: links,
+                                price: user.purchased[orderIndex].products[productIndex].licenseId.price,
+                                date: user.purchased[orderIndex].date
+                            });
+                        });
+                }
             }));
         }));
-    } catch (e) {
-        return next(
-            new HttpError('Something went wrong while populating purchased items..', 500)
-        );
-    }
-
+    }));
     return normalizedPurchasesList;
-
 }
 
 const getUserById = (req, res, next) => {
@@ -154,9 +147,9 @@ const signup = async (req, res, next) => {
         );
     }
 
-    if (existingUser && existingUser.password) {
+    if (existingUser) {
         return next(
-            new HttpError('User with such email or username already exists', 409)
+            new HttpError('User with such email already exists', 409)
         );
     }
 
@@ -172,50 +165,68 @@ const signup = async (req, res, next) => {
     let userToSend;
     let messageToSend;
 
-    if (!existingUser) {
-        const newUser = new User({
-            username,
-            email,
-            password: hashedPassword,
-        });
+    let orders;
 
-         try {
-            await newUser.save();
-        } catch (e) {
-            return next(
-                new HttpError('Something went wrong while saving new user to a database..', 500)
-            );
-        }
-
-        userToSend = newUser;
-        messageToSend = 'New user has been successfully created!';
-    } else {
-        existingUser.password = hashedPassword;
-        existingUser.username = username;
-        try {
-            await existingUser.save();
-        } catch (e) {
-            return next(
-                new HttpError('Something went wrong while trying to save existing user..')
-            );
-        }
-        userToSend = existingUser;
-        messageToSend = 'New registered user has been successfully created!';
+    try {
+        orders = await Order.find({email});
+    } catch (e) {
+        return next(new HttpError('Something went wrong while finding orders with such email!', 500));
     }
 
+    const newUser = new User({
+        username,
+        email,
+        password: hashedPassword,
+        purchased: [...orders]
+        // cart: {
+        //     items: [],
+        //     total: 0
+        // }
+    });
+
+    try {
+        await newUser.save();
+    } catch (e) {
+        return next(
+            new HttpError('Something went wrong while saving new user to a database..', 500)
+        );
+    }
+
+    userToSend = newUser;
+    messageToSend = 'New user has been successfully created!';
+
     let token;
+    let refreshToken;
+    let refreshTokenExpirationDate;
     try {
         token = jwt.sign(
             {userId: userToSend.id, email: userToSend.email},
-            'supersecret_do_not_share',
-            {expiresIn: '1h'});
+            config.secret,
+            {expiresIn: config.tokenExpireTime}
+        );
+        refreshToken = jwt.sign(
+            {userId: userToSend.id, email: userToSend.email},
+            config.refreshTokenSecret,
+            {expiresIn: config.refreshTokenExpireTime}
+        );
+        const newRefreshToken = new RefreshToken({
+            refreshToken,
+            email: email,
+            expirationDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
+        });
+        await newRefreshToken.save();
+        refreshTokenExpirationDate = newRefreshToken.expirationDate;
     } catch (e) {
         return next(
             new HttpError('Could not create a user, please try again.', 500)
         );
     }
-
-    const normalizedPurchasesList = await populateUserPurchases(userToSend, next);
+    let normalizedPurchasesList;
+    try {
+        normalizedPurchasesList = await populateUserPurchases(userToSend, next);
+    } catch (e) {
+        return next(new HttpError('Error while populating user purchased list', 500));
+    }
 
     res.status(201);
     res.json({
@@ -225,11 +236,13 @@ const signup = async (req, res, next) => {
             email: userToSend.email,
             username: userToSend.username,
             cart: {
-                items: existingUser.cart.items,
+                items: userToSend.cart.items,
                 total: Math.round((userToSend.cart.total + Number.EPSILON) * 100) / 100
             },
             purchased: normalizedPurchasesList,
-            token: token
+            token: token,
+            refreshToken: refreshToken,
+            refreshTokenExpiration: refreshTokenExpirationDate
         }
     });
 };
@@ -256,7 +269,7 @@ const login = async (req, res, next) => {
         );
     }
 
-    if (!existingUser) {
+    if (!existingUser || !existingUser?.password) {
         return next(
             new HttpError('Invalid credentials..', 401)
         );
@@ -278,20 +291,50 @@ const login = async (req, res, next) => {
     }
 
     let token;
+    let refreshToken;
+    let refreshTokenExpirationDate;
     try {
         token = jwt.sign(
             {userId: existingUser._id.toString(), email: existingUser.email},
-            'supersecret_do_not_share',
-            {expiresIn: '1h'}
+            config.secret,
+            {expiresIn: config.tokenExpireTime}
         );
+        const existingRefreshToken = await RefreshToken.findOne({email: existingUser.email});
+
+        if (!existingRefreshToken || existingRefreshToken?.expirationDate.getTime() <= new Date().getTime()) {
+            refreshToken = jwt.sign(
+                {userId: existingUser._id.toString(), email: existingUser.email},
+                config.refreshTokenSecret,
+                {expiresIn: config.refreshTokenExpireTime}
+            );
+
+            // 1k milliseconds => 1 second => 1 minute => 1 hour => 1 day => 1 month (30 days)
+            await existingRefreshToken?.remove();
+
+            const newRefreshToken = new RefreshToken({
+                email: existingUser.email,
+                refreshToken: refreshToken,
+                expirationDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
+            });
+            refreshTokenExpirationDate = newRefreshToken.expirationDate;
+            await newRefreshToken.save();
+        } else {
+            refreshToken = existingRefreshToken.refreshToken;
+            refreshTokenExpirationDate = existingRefreshToken.expirationDate;
+        }
     } catch (e) {
         return next(
             new HttpError('Could not log in, please try again.', 500)
         );
     }
 
-    const normalizedPurchases = await populateUserPurchases(existingUser, next);
-    await populateUserCart(existingUser, next);
+    let normalisedPurchases;
+    try {
+        normalisedPurchases = await populateUserPurchases(existingUser, next);
+        await populateUserCart(existingUser, next);
+    } catch (e) {
+        return next(new HttpError('Error while populating user purchases or user cart...', 500));
+    }
 
     res.status(200);
     res.json({
@@ -304,8 +347,10 @@ const login = async (req, res, next) => {
                 items: existingUser.cart.items,
                 total: Math.round((existingUser.cart.total + Number.EPSILON) * 100) / 100
             },
-            purchased: normalizedPurchases,
-            token: token
+            purchased: normalisedPurchases,
+            token: token,
+            refreshToken: refreshToken,
+            refreshTokenExpiration: refreshTokenExpirationDate
         }
     });
 };
@@ -323,6 +368,17 @@ const updateUser = async (req, res, next) => {
 
     if (!user) {
         return next(new HttpError('User has not been found..', 401));
+    }
+
+    let existingUser;
+    try {
+        existingUser = await User.findOne({email});
+    } catch (e) {
+        return next(new HttpError('Something went wrong whilst trying to find user with specified email', 500));
+    }
+
+    if (existingUser && email !== user.email) {
+        return next(new HttpError('User with such email already exists..', 401));
     }
 
     let isPasswordValid;
@@ -356,9 +412,12 @@ const updateUser = async (req, res, next) => {
     } catch (e) {
         return next(new HttpError('Something went wrong while saving user..', 500));
     }
-        await populateUserCart(user, next);
 
-    await populateUserCart(user, next);
+    try {
+        await populateUserCart(user, next);
+    } catch (e) {
+        return next(new HttpError('Something went wrong while populating user cart..', 500));
+    }
 
     res.status(200);
     res.json({
@@ -406,13 +465,11 @@ const appendInUserCart = async (req, res, next) => {
     if (!~existingProductIndex) {
         user.cart.total += license.price;
         user.cart.items.push({beatId: product.beatId, licenseId: product.licenseId});
-    }
-    else {
+    } else {
         let existingLicense;
         try {
             existingLicense = await License.findById(user.cart.items[existingProductIndex].licenseId);
-        }
-        catch (e) {
+        } catch (e) {
             return next(new HttpError('Something went wrong while trying to find license in database..', 500));
         }
         if (!existingLicense) {
@@ -424,8 +481,6 @@ const appendInUserCart = async (req, res, next) => {
     }
 
 
-
-
     try {
         await user.save();
     } catch (e) {
@@ -433,7 +488,11 @@ const appendInUserCart = async (req, res, next) => {
         return next(new HttpError('Something went wrong while saving user to database..', 500));
     }
 
-    await populateUserCart(user, next);
+    try {
+        await populateUserCart(user, next);
+    } catch (e) {
+        return next(new HttpError('Error while populating', 500));
+    }
 
     res.status(200);
     res.json({
@@ -485,7 +544,11 @@ const removeFromUserCart = async (req, res, next) => {
         return next(new HttpError('Something went wrong while deleting product from cart', 401));
     }
 
-    await populateUserCart(user, next);
+    try {
+        await populateUserCart(user, next);
+    } catch (e) {
+        return next(new HttpError('Something went wrong while populating user cart..', 500));
+    }
 
     res.status(200);
     res.json({
@@ -497,6 +560,289 @@ const removeFromUserCart = async (req, res, next) => {
     });
 }
 
+const googleLogin = async (req, res, next) => {
+    const userData = req.userData;
+
+    let user;
+    try {
+        user = await User.findOne({email: userData.email});
+    } catch (e) {
+        return next(new HttpError('Something went wring while trying to find user in database!', 500));
+    }
+
+    if (!user) {
+        return next(new HttpError('Invalid credentials..', 403));
+    }
+
+    let token;
+    let refreshToken;
+    let refreshTokenExpirationDate;
+    try {
+        token = jwt.sign(
+            {userId: user._id.toString(), email: user.email},
+            config.secret,
+            {expiresIn: config.tokenExpireTime}
+        );
+        const existingRefreshToken = await RefreshToken.findOne({email: userData.email});
+
+        if (!existingRefreshToken || existingRefreshToken?.expirationDate.getTime() <= new Date().getTime()) {
+            refreshToken = jwt.sign(
+                {userId: user._id.toString(), email: userData.email},
+                config.refreshTokenSecret,
+                {expiresIn: config.refreshTokenExpireTime}
+            );
+
+            // 1k milliseconds => 1 second => 1 minute => 1 hour => 1 day => 1 month (30 days)
+            await existingRefreshToken?.remove();
+
+            const newRefreshToken = new RefreshToken({
+                email: userData.email,
+                refreshToken: refreshToken,
+                expirationDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
+            });
+            refreshTokenExpirationDate = newRefreshToken.expirationDate;
+            await newRefreshToken.save();
+        } else {
+            refreshToken = existingRefreshToken.refreshToken;
+            refreshTokenExpirationDate = existingRefreshToken.expirationDate;
+        }
+    } catch (e) {
+        return next(
+            new HttpError('Could not log in, please try again.', 500)
+        );
+    }
+
+    let normalizedPurchases;
+    try {
+        normalizedPurchases = await populateUserPurchases(user, next);
+        await populateUserCart(user, next);
+    } catch (e) {
+        console.log(e.message);
+        return next(new HttpError('Error while populating..', 500));
+    }
+
+    res.status(200);
+    res.json({
+        message: 'Google login was successful',
+        user: {
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            cart: {
+                items: user.cart.items,
+                total: Math.round((user.cart.total + Number.EPSILON) * 100) / 100
+            },
+            purchased: normalizedPurchases,
+            token: token,
+            refreshToken: refreshToken,
+            refreshTokenExpiration: refreshTokenExpirationDate
+        }
+    });
+}
+
+const googleSignup = async (req, res, next) => {
+    const userData = req.userData;
+
+    let existingUser;
+    try {
+        existingUser = await User.findOne({email: userData.email})
+    } catch (e) {
+        return next(new HttpError('Error while trying to find existing user', 500))
+    }
+
+    if (existingUser) {
+        return next(new HttpError('User with such email already exists..', 403));
+    }
+    let orders;
+
+    try {
+        orders = await Order.find({email: userData.email});
+    } catch (e) {
+        return next(new HttpError('Something went wrong while finding orders with such email!', 500));
+    }
+
+    let newUser;
+    try {
+        newUser = new User({
+            email: userData.email,
+            username: userData.name,
+            purchased: [...orders]
+        });
+        await newUser.save();
+    } catch (e) {
+        return next(new HttpError('Error while saving new user who signed up with oauth..', 500));
+    }
+
+    let token;
+    let refreshToken;
+    let refreshTokenExpirationDate;
+    try {
+        token = jwt.sign(
+            {userId: newUser._id.toString(), email: newUser.email},
+            config.secret,
+            {expiresIn: config.tokenExpireTime}
+        );
+        refreshToken = jwt.sign(
+            {userId: newUser._id.toString(), email: userData.email},
+            config.refreshTokenSecret,
+            {expiresIn: config.refreshTokenExpireTime}
+        );
+        const newRefreshToken = new RefreshToken({
+            refreshToken: refreshToken,
+            email: newUser.email,
+            expirationDate: new Date(new Date().getTime() * 1000 * 60 * 60 * 24 * 30)
+        });
+        await newRefreshToken.save();
+        refreshTokenExpirationDate = newRefreshToken.expirationDate.toISOString();
+    } catch (e) {
+        return next(
+            new HttpError('Could not log in, please try again.', 500)
+        );
+    }
+
+    let normalizedPurchases;
+    try {
+        normalizedPurchases = await populateUserPurchases(newUser, next);
+        await populateUserCart(newUser, next);
+    } catch (e) {
+        return next(new HttpError('Error while populating..', 500));
+    }
+
+    res.status(200);
+    res.json({
+        message: 'Google signup was successful',
+        user: {
+            id: newUser.id,
+            email: newUser.email,
+            username: newUser.username,
+            cart: {
+                items: newUser.cart.items,
+                total: Math.round((newUser.cart.total + Number.EPSILON) * 100) / 100
+            },
+            purchased: normalizedPurchases,
+            token: token,
+            refreshToken: refreshToken,
+            refreshTokenExpiration: refreshTokenExpirationDate
+        }
+    });
+}
+
+const token = async (req, res, next) => {
+    const userData = req.userData;
+    let token;
+    try {
+        token = jwt.sign(
+            {userId: userData.userId, email: userData.email},
+            config.secret,
+            {expiresIn: config.tokenExpireTime});
+    } catch (e) {
+        console.log(e.message);
+        return next(new HttpError('Error while refreshing token', 500));
+    }
+
+    res.status(200);
+    res.json({message: 'Successfully refreshed access token!', accessToken: token})
+}
+
+const logout = async (req, res, next) => {
+    const {userId} = req.userData;
+
+    let user;
+    try {
+        user = await User.findById(userId);
+    } catch (e) {
+        return next(new HttpError('Error while finding user..', 500))
+    }
+
+    let refreshToken;
+    try {
+        refreshToken = await RefreshToken.findOne({email: user.email});
+        await refreshToken?.remove()
+    } catch (e) {
+        return next(new HttpError('Error while finding user..', 500))
+    }
+
+    res.status(200)
+    res.json({message: 'Logged out successfully'});
+};
+
+const appendToCartOffline = async (req, res, next) => {
+    const {cart} = req.body;
+    const {product} = req.body.product;
+
+    let license;
+    try {
+        license = await License.findById(product.licenseId);
+    } catch (e) {
+        console.log(e.message);
+        return next(new HttpError('Something went wrong while trying to find such license in database..', 500));
+    }
+
+    const existingProductIndex = cart.items.findIndex(i => i.beatId._id.toString() === product.beatId.toString());
+
+    if (!~existingProductIndex) {
+        let beat;
+        let license;
+        try {
+            beat = await Beat.findById(product.beatId, {'mp3Url': 0, 'wavUrl': 0, 'stemsUrl': 0});
+            license = await License.findById(product.licenseId)
+        }
+        catch (e) {
+            return next(new HttpError('Something went wring while finding license and beat in db..', 500));
+        }
+        if (!beat || !license) {
+            return next(new HttpError('Beat or license with such ids have not been found', 500));
+        }
+
+        cart.total += license.price;
+        cart.items.push({id: uuid(), beatId: beat, licenseId: license});
+    } else {
+        let existingLicense;
+        try {
+            existingLicense = await License.findById(cart.items[existingProductIndex].licenseId);
+        } catch (e) {
+            return next(new HttpError('Something went wrong while trying to find license in database..', 500));
+        }
+        if (!existingLicense) {
+            return next(new HttpError('License with such id does not exist...', 500));
+        }
+
+        cart.total += -existingLicense.price + license.price;
+        cart.items[existingProductIndex].licenseId = license._id;
+    }
+
+    res.status(200);
+    res.json({
+        message: 'Successfully added item to cart of unregistered user',
+        cart: cart
+    });
+}
+
+const removeFromCartOffline = async (req, res, next) => {
+    const productId = req.params.pid;
+    const {cart} = req.body;
+
+    try {
+
+        const productIndex = cart.items.findIndex(p => {
+            return p.id === productId;
+        });
+        const license = await License.findById(cart.items[productIndex].licenseId._id);
+        cart.total -= license.price;
+        cart.items.splice(productIndex, 1);
+
+    } catch (e) {
+        console.log(e.message);
+        return next(new HttpError('Something went wrong while deleting product from cart', 401));
+    }
+
+    res.status(200);
+    res.json({
+        message: 'Successfully removed item to cart of unregistered user',
+        cart: cart
+    })
+}
+
 module.exports = {
     getUserById,
     getAllUsers,
@@ -504,5 +850,11 @@ module.exports = {
     login,
     updateUser,
     appendInUserCart,
-    removeFromUserCart
+    removeFromUserCart,
+    googleLogin,
+    googleSignup,
+    token,
+    logout,
+    appendToCartOffline,
+    removeFromCartOffline
 };

@@ -64,6 +64,10 @@
         margin: 0 20px 0;
         min-width: 330px;
         padding: 30px 25px 10px 25px!important;
+        .email-caption-warning {
+            color: #e7a403;
+            text-align: center;
+        }
         .label-style {
             color: white;
             font-weight: 400;
@@ -76,6 +80,7 @@
         .coupon-button {
             color: black;
             margin-top: 10px;
+            margin-bottom: 25px;
             height: 44px;
             background-color: white;
             border: white 1px solid;

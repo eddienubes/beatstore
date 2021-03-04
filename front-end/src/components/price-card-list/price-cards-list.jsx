@@ -15,12 +15,6 @@ import Spinner from "../spinner";
 const PriceCardsList = () => {
     const [activeKey, setActiveKey] = useState(null);
     const {licenses, isLoading} = useSelector(state => state.licensesReducer);
-    const dispatch = useDispatch();
-    useEffect(() => {
-        if (licenses.length === 0) {
-            dispatch(fetchLicenses());
-        }
-    }, [])
 
     if (isLoading) {
         return <Spinner/>
@@ -34,10 +28,10 @@ const PriceCardsList = () => {
                     <div className="head">
                         <p>POPULAR</p>
                         <div className="license-type">
-                            Wav Lease
+                            {licenses[2].label}
                         </div>
                         <div className="price">
-                            ${licenses[3].price}
+                            ${licenses[2].price}
                         </div>
                         <div className="per-unit">
                             PER UNIT
@@ -92,10 +86,11 @@ const PriceCardsList = () => {
                 <Card className="card">
                     <div className="head">
                         <div className="license-type">
-                            MP3 Lease
+                            {licenses[3].label}
+
                         </div>
                         <div className="price">
-                            ${licenses[2].price}
+                            ${licenses[3].price}
                         </div>
                         <div className="per-unit">
                             PER UNIT
@@ -150,7 +145,8 @@ const PriceCardsList = () => {
                 <Card className="card">
                     <div className="head">
                         <div className="license-type">
-                            Track Out Lease
+                            {licenses[1].label}
+
                         </div>
                         <div className="price">
                             ${licenses[1].price}
@@ -208,7 +204,7 @@ const PriceCardsList = () => {
                 <Card className="card">
                     <div className="head">
                         <div className="license-type">
-                            Unlimited Lease
+                            {licenses[0].label}
                         </div>
                         <div className="price">
                             ${licenses[0].price}

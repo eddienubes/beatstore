@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const stream = require('stream');
 const {promisify} = require('util');
+const config = require('./config.json');
 
 const beatsRoutes = require('./routes/beats-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -17,9 +18,7 @@ const HttpError = require('./models/http-error');
 const app = express();
 const server = http.createServer(app);
 
-const url = 'mongodb+srv://eddienubes:xfB6vAVfFlmdfmTR@cluster0.5u9ib.mongodb.net/beatstore?retryWrites=true&w=majority';
-
-// mongoose.set('debug', true);
+const url = 'mongodb+srv://eddienubes:L1srThVA8KpVMYp8@cluster0.5u9ib.mongodb.net/beatstore?retryWrites=true&w=majority';
 
 // default and supported routes
 app.use(bodyParser.json());
@@ -128,6 +127,6 @@ app.use((error, req, res, next) => {
 mongoose
     .connect(url)
     .then(() => {
-        server.listen(5000);
+        server.listen(config.port);
     })
-    .catch((err) => console.log(err));
+    .catch((err) => console.log(err.message));

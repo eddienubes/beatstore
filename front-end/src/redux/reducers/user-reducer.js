@@ -12,10 +12,13 @@ const initialState = {
     username: null,
     error: null,
     token: null,
+    refreshToken: null,
+    refreshTokenExpiration: null,
     expiration: null,
     id: null,
     isLoadingAppendToCart: false,
     isLoadingRemoveFromCart: false,
+    isLoggingOut: false,
     showNotification: false
 };
 
@@ -37,7 +40,10 @@ const userReducer = (state = initialState, action) => {
                 email: action.payload.email,
                 username: action.payload.username,
                 token: action.payload.token,
-                expiration: action.payload.expiration
+                refreshToken: action.payload.refreshToken,
+                refreshTokenExpiration: action.payload.refreshTokenExpiration,
+                expiration: action.payload.expiration,
+                error: null
             }
         case actions.SIGN_UP_FAILURE:
             return {
@@ -45,9 +51,25 @@ const userReducer = (state = initialState, action) => {
                 processing: false,
                 error: action.payload,
             }
-        case actions.LOGGED_OUT:
-            return initialState;
-
+        case actions.LOGGED_OUT_REQUESTED:
+            return {
+                ...state,
+                isLoggingOut: true,
+            };
+        case actions.LOGGED_OUT_SUCCESS:
+            return {
+                ...initialState,
+                loggedIn: false,
+                isLoggingOut: false,
+                error: null
+            }
+        case actions.LOGGED_OUT_FAILED:
+            return {
+                ...state,
+                loggedIn: false,
+                isLoggingOut: false,
+                error: action.payload
+            }
         case actions.LOG_IN_REQUESTED:
             return {
                 ...state,
@@ -64,6 +86,8 @@ const userReducer = (state = initialState, action) => {
                 email: action.payload.email,
                 username: action.payload.username,
                 token: action.payload.token,
+                refreshToken: action.payload.refreshToken,
+                refreshTokenExpiration: action.payload.refreshTokenExpiration,
                 expiration: action.payload.expiration,
                 error: null
             }
@@ -140,6 +164,87 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 showNotification: false
+            }
+        case actions.GOOGLE_SIGN_UP_REQUESTED:
+            return {
+                ...state,
+                processing: true
+            }
+        case actions.GOOGLE_SIGN_UP_SUCCESS:
+            return {
+                ...state,
+                id: action.payload.id,
+                loggedIn: true,
+                processing: false,
+                cart: action.payload.cart,
+                purchased: action.payload.purchased,
+                email: action.payload.email,
+                username: action.payload.username,
+                token: action.payload.token,
+                refreshToken: action.payload.refreshToken,
+                refreshTokenExpiration: action.payload.refreshTokenExpiration,
+                expiration: action.payload.expiration,
+                error: null
+            }
+        case actions.GOOGLE_SIGN_UP_FAILED:
+            return {
+                ...state,
+                processing: false,
+                error: action.payload
+            }
+        case actions.GOOGLE_LOG_IN_REQUESTED:
+            return {
+                ...state,
+                processing: true
+            }
+        case actions.GOOGLE_LOG_IN_SUCCESS:
+            return {
+                ...state,
+                id: action.payload.id,
+                loggedIn: true,
+                processing: false,
+                cart: action.payload.cart,
+                purchased: action.payload.purchased,
+                email: action.payload.email,
+                username: action.payload.username,
+                token: action.payload.token,
+                refreshToken: action.payload.refreshToken,
+                refreshTokenExpiration: action.payload.refreshTokenExpiration,
+                expiration: action.payload.expiration,
+                error: null
+            }
+        case actions.GOOGLE_LOG_IN_FAILED:
+            return {
+                ...state,
+                processing: false,
+                error: action.payload
+            }
+        case actions.REFRESH_TOKEN_REQUESTED:
+            return {
+                ...state
+            }
+        case actions.REFRESH_TOKEN_SUCCESS:
+            return {
+                ...state,
+                token: action.payload.accessToken,
+                expiration: action.payload.expiration,
+                error: null
+            }
+        case actions.REFRESH_TOKEN_FAILED:
+            return {
+                ...state,
+                error: action.payload
+            }
+        case actions.USER_ERROR_CLEARED:
+            return {
+                ...state,
+                error: null
+            }
+        case actions.CART_ITEMS_SET:
+            return {
+                ...state,
+                error: null,
+                cart: action.payload
             }
         default:
             return state;

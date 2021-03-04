@@ -155,7 +155,7 @@ const Header = () => {
             <Popover.Title className={`popover-title`}>YOUR CART HAS {cart.items.length} ITEM(S)</Popover.Title>
             <Popover.Content className={`popover-content`}>
                 You have successfully added <strong>1 beat</strong> to your cart.
-                <p>Total price: <strong>${cart.total}</strong></p>
+                <p>Total price: <strong>${cart.total.toFixed(2)}</strong></p>
             </Popover.Content>
         </Popover>
     );

@@ -160,11 +160,47 @@ const logInFailure = (payload) => {
     }
 }
 
-const loggedOut = () => {
+
+const googleLoginRequested = () => {
     return {
-        type: actions.LOGGED_OUT,
+        type: actions.GOOGLE_LOG_IN_REQUESTED,
     };
-};
+}
+
+const googleLoginSuccess = (userData) => {
+    return {
+        type: actions.GOOGLE_LOG_IN_SUCCESS,
+        payload: userData
+    }
+}
+
+const googleLoginFailed = (error) => {
+    return {
+        type: actions.GOOGLE_LOG_IN_FAILED,
+        payload: error
+    }
+}
+
+
+const googleSignupRequested = () => {
+    return {
+        type: actions.GOOGLE_SIGN_UP_REQUESTED,
+    }
+}
+
+const googleSignupSuccess = (userData) => {
+    return {
+        type: actions.GOOGLE_SIGN_UP_SUCCESS,
+        payload: userData
+    }
+}
+
+const googleSignupFailed = (error) => {
+    return {
+        type: actions.GOOGLE_SIGN_UP_FAILED,
+        payload: error
+    }
+}
 
 const userUpdateRequested = () => {
     return {
@@ -251,6 +287,58 @@ const licensesFailure = (error) => {
     }
 }
 
+const logoutRequested = () => {
+    return {
+        type: actions.LOGGED_OUT_REQUESTED
+    }
+}
+
+const logoutSuccess = () => {
+    return {
+        type: actions.LOGGED_OUT_SUCCESS
+    }
+}
+
+const logoutFailed = (error) => {
+    return {
+        type: actions.LOGGED_OUT_FAILED,
+        payload: error
+    }
+}
+
+const refreshTokenRequested = () => {
+    return {
+        type: actions.REFRESH_TOKEN_REQUESTED
+    }
+}
+
+const refreshTokenSuccess = (accessToken) => {
+    return {
+        type: actions.REFRESH_TOKEN_SUCCESS,
+        payload: accessToken
+    }
+}
+
+const refreshTokenFailed = (err) => {
+    return {
+        type: actions.REFRESH_TOKEN_FAILED,
+        payload: err
+    }
+}
+
+const userErrorCleared = () => {
+    return {
+        type: actions.USER_ERROR_CLEARED
+    }
+}
+
+const cartItemsSet = (cart) => {
+    return {
+        type: actions.CART_ITEMS_SET,
+        payload: cart
+    }
+}
+
 const signup = (formState) => async (dispatch, getState) => {
     dispatch(signupRequested());
     const {email, username, password} = formState.inputs;
@@ -273,6 +361,7 @@ const signup = (formState) => async (dispatch, getState) => {
             ...response.data.user,
             expiration: tokenExpirationDate.toISOString()
         }));
+        localStorage.removeItem('cartData');
 
         console.log(response.data);
     } catch (e) {
@@ -280,20 +369,22 @@ const signup = (formState) => async (dispatch, getState) => {
     }
 }
 
-const login = (formState, userData) => async (dispatch, getState) => {
+const login = (formState, userDataLocalStorage) => async (dispatch, getState) => {
     dispatch(logInRequested());
 
     if (!formState) {
-        const tokenExpirationDate = new Date(userData.expiration) || new Date(new Date().getTime() + 1000 * 60 * 60);
+        const tokenExpirationDate = new Date(userDataLocalStorage.expiration) || new Date(new Date().getTime() + 1000 * 60 * 60);
         dispatch(logInSuccess({
-            ...userData,
+            ...userDataLocalStorage,
             expiration: tokenExpirationDate
         }));
 
         localStorage.setItem('userData', JSON.stringify({
-            ...userData,
+            ...userDataLocalStorage,
             expiration: tokenExpirationDate.toISOString()
         }));
+        localStorage.removeItem('cartData');
+
         return;
 
     }
@@ -307,7 +398,6 @@ const login = (formState, userData) => async (dispatch, getState) => {
         });
 
         const tokenExpirationDate = new Date(new Date().getTime() + 1000 * 60 * 60);
-        console.log('IN ACTIONS', tokenExpirationDate);
 
         dispatch(logInSuccess({
             ...response.data.user,
@@ -362,8 +452,7 @@ const filter = (formState, limit) => async (dispatch, getState) => {
     if (!formState) {
         currentFormState = getState().beatsReducer.filter;
         // console.log(currentFormState)
-    }
-    else {
+    } else {
         currentFormState = formState;
     }
 
@@ -385,9 +474,20 @@ const filter = (formState, limit) => async (dispatch, getState) => {
     }
 }
 
-const logOut = () => (dispatch, getState) => {
-    dispatch(loggedOut());
-    localStorage.removeItem('userData');
+const logOut = () => async (dispatch, getState) => {
+    dispatch(logoutRequested());
+    const {token} = getState().userReducer;
+
+    try {
+        const response = await authService.logout(token);
+        dispatch(logoutSuccess());
+    } catch (e) {
+        console.log(e.response.data);
+        dispatch(logoutFailed(e.response.data));
+    } finally {
+        localStorage.removeItem('userData');
+        localStorage.removeItem('cartData');
+    }
 }
 
 const updateUser = (id, userData) => async (dispatch, getState) => {
@@ -402,8 +502,7 @@ const updateUser = (id, userData) => async (dispatch, getState) => {
             expiration
         }));
         dispatch(userUpdateSuccess(response.data.user));
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e.response);
         dispatch(userUpdateFailure(e.response.data));
     }
@@ -417,27 +516,32 @@ const fetchLicenses = () => async (dispatch, getState) => {
     try {
         const response = await licensesService.getAllLicenses();
         dispatch(licensesSuccess(response.data.licenses));
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e.response);
         dispatch(licensesFailure(e.response.data));
     }
 }
 
-const appendToCard = (product) => async (dispatch, getState) => {
+const appendToCart = (product) => async (dispatch, getState) => {
     dispatch(appendToCartRequested());
 
-    const {id, token} = getState().userReducer;
+    const {id, token, loggedIn, cart} = getState().userReducer;
 
     try {
-        const response = await authService.appendToCart(id, product, token);
-        localStorage.setItem('userData', JSON.stringify({
-            ...getState().userReducer,
-            cart: response.data.cart,
-        }));
+        let response
+        if (loggedIn) {
+            response = await authService.appendToCart(id, product, token);
+            localStorage.setItem('userData', JSON.stringify({
+                ...getState().userReducer,
+                cart: response.data.cart,
+            }));
+        }
+        else {
+            response = await authService.appendToCartOffline(product, cart);
+            localStorage.setItem('cartData', JSON.stringify(response.data.cart));
+        }
         dispatch(appendToCartSuccess(response.data.cart));
-    }
-    catch (e) {
+    } catch (e) {
         dispatch(appendToCartFailure(e.response.data));
     }
 }
@@ -445,20 +549,90 @@ const appendToCard = (product) => async (dispatch, getState) => {
 const removeFromCart = (productId) => async (dispatch, getState) => {
     dispatch(removeFromCartRequested());
 
-    const {id, token, expiration} = getState().userReducer;
+    const {id, token, expiration, loggedIn, cart} = getState().userReducer;
 
     try {
-        const response = await authService.removeFromCart(id, productId, token);
-        localStorage.setItem('userData', JSON.stringify({
-            ...getState().userReducer,
-            cart: response.data.cart,
-        }));
+        let response;
+        if (loggedIn) {
+            response = await authService.removeFromCart(id, productId, token);
+            localStorage.setItem('userData', JSON.stringify({
+                ...getState().userReducer,
+                cart: response.data.cart,
+            }));
+        }
+        else {
+            response = await authService.removeFromCartOffline(productId, cart);
+            localStorage.setItem('cartData', JSON.stringify(response.data.cart));
+        }
         dispatch(removeFromCartSuccess(response.data.cart));
-    }
-    catch (e) {
+    } catch (e) {
         dispatch(removeFromCartFailure(e.response.data));
     }
 
+}
+
+const googleLogin = (tokenId) => async (dispatch, getState) => {
+
+    dispatch(googleLoginRequested());
+    try {
+        const response = await authService.googleLogin(tokenId);
+
+        const tokenExpirationDate = new Date(new Date().getTime() + 1000 * 60 * 60);
+
+        dispatch(googleLoginSuccess({
+            ...response.data.user,
+            expiration: tokenExpirationDate.toISOString()
+        }));
+
+        localStorage.setItem('userData', JSON.stringify({
+            ...response.data.user,
+            expiration: tokenExpirationDate.toISOString()
+        }));
+        localStorage.removeItem('cartData');
+
+    } catch (e) {
+        console.log(e.message);
+        dispatch(googleLoginFailed(e.response.data));
+    }
+}
+
+const googleSignup = (tokenId) => async (dispatch, getState) => {
+    dispatch(googleSignupRequested());
+    try {
+        const response = await authService.googleSignup(tokenId);
+        const tokenExpirationDate = new Date(new Date().getTime() + 1000 * 60 * 60);
+
+        dispatch(googleSignupSuccess({
+            ...response.data.user,
+            expiration: tokenExpirationDate
+        }));
+        localStorage.removeItem('cartData');
+
+    } catch (e) {
+        console.log(e.response.data);
+        dispatch(googleSignupFailed(e.response.data));
+    }
+}
+
+const refreshToken = (refreshToken) => async (dispatch, getState) => {
+    dispatch(refreshTokenRequested());
+    const userState = getState().userReducer;
+    try {
+        const response = await authService.refreshToken(refreshToken);
+        const tokenExpirationDate = new Date(new Date().getTime() + 1000 * 60 * 60);
+        dispatch(refreshTokenSuccess({
+            accessToken: response.data.accessToken,
+            expiration: tokenExpirationDate
+        }));
+
+        localStorage.setItem('userData', JSON.stringify({
+            ...userState,
+            expiration: tokenExpirationDate
+        }));
+    } catch (e) {
+        console.log(e.response.data);
+        dispatch(refreshTokenFailed(e.response.data));
+    }
 }
 
 export {
@@ -476,12 +650,19 @@ export {
 
     login,
     signup,
-    logOut,
     logInSuccess,
     updateUser,
-    appendToCard,
+    appendToCart,
     removeFromCart,
     notificationClosed,
+    googleSignup,
+    googleLogin,
+    googleLoginFailed,
+    googleSignupFailed,
+    refreshToken,
+    logOut,
+    userErrorCleared,
+    cartItemsSet,
 
     fetchLicenses,
 };

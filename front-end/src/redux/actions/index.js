@@ -11,10 +11,17 @@ import {
     audioToggle,
     logInSuccess,
     updateUser,
-    appendToCard,
+    appendToCart,
     removeFromCart,
     fetchLicenses,
-    notificationClosed
+    notificationClosed,
+    googleSignup,
+    googleLogin,
+    googleLoginFailed,
+    googleSignupFailed,
+    refreshToken,
+    userErrorCleared,
+    cartItemsSet
 } from './actions';
 
 export {
@@ -33,8 +40,15 @@ export {
     signup,
     logInSuccess,
     updateUser,
-    appendToCard,
+    appendToCart,
     removeFromCart,
     fetchLicenses,
-    notificationClosed
+    notificationClosed,
+    googleSignup,
+    googleLogin,
+    googleLoginFailed,
+    googleSignupFailed,
+    refreshToken,
+    userErrorCleared,
+    cartItemsSet
 };

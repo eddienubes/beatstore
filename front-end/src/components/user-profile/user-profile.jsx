@@ -74,9 +74,9 @@ const UserProfile = ({authService}) => {
         return <Spinner/>
     }
 
-    if (error) {
-        return <ErrorIndicator/>
-    }
+    // if (error) {
+    //     return <ErrorIndicator/>
+    // }
 
     return (
         <div className="user-profile__main">
@@ -175,6 +175,7 @@ const UserProfile = ({authService}) => {
                 >Save</button>
                 {errorMsg}
                 {errorMsg2}
+                {error ? <span className="user-profile__error-msg">{error.message}</span> : null}
             </form>
         </div>
     );

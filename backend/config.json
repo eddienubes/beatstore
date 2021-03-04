@@ -1,0 +1,7 @@
+{
+    "secret": "beatstore_cherries_by_SECRET_token_do_not_share",
+    "refreshTokenSecret": "beatstore_cherries_by_SECRET_refresh_token_do_not_share_as_well",
+    "port": 5000,
+    "tokenExpireTime": "1h",
+    "refreshTokenExpireTime": "30d"
+}

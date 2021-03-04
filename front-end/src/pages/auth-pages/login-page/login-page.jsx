@@ -6,7 +6,8 @@ import Input from "../input";
 import useForm from "../../../hooks/form-hook";
 import {useDispatch, useSelector} from "react-redux";
 import Spinner from "../../../components/spinner";
-import {login} from "../../../redux/actions/actions";
+import {googleLogin, googleLoginFailed, login, userErrorCleared} from "../../../redux/actions";
+import {GoogleLogin} from "react-google-login";
 
 const LoginPage = ({loggedIn}) => {
     const history = useHistory();
@@ -40,6 +41,14 @@ const LoginPage = ({loggedIn}) => {
         return <Redirect to="/"/>;
     }
 
+    const googleSuccess = async (res) => {
+        dispatch(googleLogin(res.tokenId));
+    }
+
+    const googleFailure = async (error) => {
+        dispatch(googleLoginFailed(error));
+    }
+
     const invalidCredentialsMsg = userState.error ? (
         <p className="confirm-pass-error-msg">{userState.error.message}</p>) : null;
 
@@ -69,22 +78,42 @@ const LoginPage = ({loggedIn}) => {
                 </button>
                 {invalidCredentialsMsg}
             </form>
-            {/*<h2 className="divider-h2">*/}
-            {/*    <div className="line"/>*/}
-            {/*    <span>OR</span>*/}
-            {/*    <div className="line"/>*/}
-            {/*</h2>*/}
+            <h2 className="divider-h2">
+                <div className="line"/>
+                <span>OR</span>
+                <div className="line"/>
+            </h2>
             {/* todo add google oauth */}
-            {/*<button className="oauth">*/}
-            {/*    <img*/}
-            {/*        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"*/}
-            {/*        width="15"*/}
-            {/*        height="15"*/}
-            {/*        alt="Google"*/}
-            {/*    />*/}
-            {/*    Sign in with Google*/}
-            {/*</button>*/}
-            <p className={`caption`}>New to us? <Link to="/auth/register">Sign up</Link></p>
+            <GoogleLogin
+                uxMode={`popup`}
+                clientId={`718477232651-i09ba8bjtbaqlt7h1i2fq3j4klklth2h.apps.googleusercontent.com`}
+                render={renderProps =>
+                    (
+                        <button
+                            className="oauth"
+                            onClick={renderProps.onClick}
+                            disabled={renderProps.disabled}
+                        >
+                            <img
+                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
+                                width="15"
+                                height="15"
+                                alt="Google"
+                            />
+                            Log in with Google
+                        </button>
+                    )
+                }
+                onSuccess={googleSuccess}
+                onFailure={googleFailure}
+                cookiePolicy={`single_host_origin`}
+            />
+            <p className={`caption`}>New to us?
+                <Link to="/auth/register"
+                      onClick={e => dispatch(userErrorCleared())}>
+                    &nbsp;Sign up
+                </Link>
+            </p>
         </div>
     )
 }
