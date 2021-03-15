@@ -6,4 +6,8 @@ export default class LicensesService {
     async getAllLicenses() {
         return axios.get(this.baseUrl);
     }
+
+    async getLicenseTemplate(type) {
+        return axios.get(this.baseUrl + `/${type}`);
+    }
 }

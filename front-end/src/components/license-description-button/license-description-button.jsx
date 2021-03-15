@@ -16,6 +16,7 @@ const LicenseDescriptionButton = (props) => {
             <LicenseDescriptionModal
                 show={modalShow}
                 onHide={() => setModalShow(false)}
+                type={props.type}
             />
         </>
     );

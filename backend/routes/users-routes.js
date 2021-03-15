@@ -15,11 +15,23 @@ const router = Router();
 
 router.post('/login', usersControllers.login);
 
+router.post('/verify/:confirmationCode', usersControllers.verifyUser);
+
+
 router.post('/login-google', checkGoogleAuth, usersControllers.googleLogin)
 router.post('/signup-google', checkGoogleAuth, usersControllers.googleSignup)
 
 router.post('/token', checkRefreshToken, usersControllers.token)
 router.post('/logout', checkStandardAuth, usersControllers.logout);
+
+router.post(
+    '/contact', [
+        check('email').isEmail(),
+        check('name').not().isEmpty(),
+        check('subject').not().isEmpty(),
+        check('message').not().isEmpty()
+    ],
+    usersControllers.contact);
 
 router.post(
     '/signup',
@@ -28,7 +40,6 @@ router.post(
             .not()
             .isEmpty(),
         check('email')
-            .normalizeEmail()
             .isEmail(),
         check('password')
             .isLength({min: 6})
@@ -44,6 +55,5 @@ router.post('/cart', usersControllers.appendToCartOffline);
 router.patch('/cart/:pid', usersControllers.removeFromCartOffline);
 
 router.patch('/:uid', usersControllers.updateUser)
-
 
 module.exports = router;

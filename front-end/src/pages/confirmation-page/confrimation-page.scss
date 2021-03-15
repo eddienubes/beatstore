@@ -1,0 +1,27 @@
+.confirmation-container {
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+
+    img {
+        margin: 100px auto 50px;
+        display: block;
+        max-width: 128px;
+        max-height: 128px;
+    }
+
+    .caption {
+        font-weight: bold;
+        font-size: 1.2rem;
+    }
+
+    .seconds {
+        font-size: 1.5rem;
+    }
+
+    p {
+        font-size: 1.2rem;
+        color: white;
+    }
+
+}

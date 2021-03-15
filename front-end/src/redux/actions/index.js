@@ -21,7 +21,8 @@ import {
     googleSignupFailed,
     refreshToken,
     userErrorCleared,
-    cartItemsSet
+    cartItemsSet,
+    confirmationErrorRemoved
 } from './actions';
 
 export {
@@ -50,5 +51,6 @@ export {
     googleSignupFailed,
     refreshToken,
     userErrorCleared,
-    cartItemsSet
+    cartItemsSet,
+    confirmationErrorRemoved
 };

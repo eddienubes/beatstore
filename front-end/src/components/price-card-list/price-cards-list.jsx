@@ -47,7 +47,7 @@ const PriceCardsList = () => {
 
                         </ul>
                         <div className="license-button-container">
-                            <LicenseDescriptionButton className="license-button-popular" text="Read License"/>
+                            <LicenseDescriptionButton className="license-button-popular" text="Read License" type={1}/>
                         </div>
                     </div>
                     <div className="card-footer card-footer-white">
@@ -105,7 +105,7 @@ const PriceCardsList = () => {
                             <li>Must Credit (prod. cherriesby)</li>
                         </ul>
                         <div className="license-button-container">
-                            <LicenseDescriptionButton className="license-button" text="Read License"/>
+                            <LicenseDescriptionButton className="license-button" text="Read License" type={2}/>
                         </div>
                     </div>
                     <div className="card-footer card-footer-black">
@@ -164,7 +164,7 @@ const PriceCardsList = () => {
                             <li>Must Credit (prod. cherriesby)</li>
                         </ul>
                         <div className="license-button-container">
-                            <LicenseDescriptionButton className="license-button" text="Read License"/>
+                            <LicenseDescriptionButton className="license-button" text="Read License" type={3}/>
                         </div>
                     </div>
                     <div className="card-footer card-footer-black">
@@ -222,7 +222,7 @@ const PriceCardsList = () => {
                             <li>Must Credit (prod. eddienubes)</li>
                         </ul>
                         <div className="license-button-container">
-                            <LicenseDescriptionButton className="license-button" text="Read License"/>
+                            <LicenseDescriptionButton className="license-button" text="Read License" type={4}/>
                         </div>
                     </div>
                     <div className="card-footer card-footer-black">
@@ -279,9 +279,9 @@ const PriceCardsList = () => {
                             <li>Able to put song on all platforms (Spotify, Apple Music etc.)</li>
                             <li>Must Credit (prod. eddienubes)</li>
                         </ul>
-                        <div className="license-button-container">
-                            <LicenseDescriptionButton className="license-button" text="Read License"/>
-                        </div>
+                        {/*<div className="license-button-container">*/}
+                        {/*    <LicenseDescriptionButton className="license-button" text="Read License"/>*/}
+                        {/*</div>*/}
                     </div>
                     <div className="card-footer card-footer-black">
                         <div className="card-footer-caption bulk-deals-color">

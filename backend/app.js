@@ -7,6 +7,7 @@ const path = require('path');
 const stream = require('stream');
 const {promisify} = require('util');
 const config = require('./config.json');
+const adminBot = require('./admin-bot/main');
 
 const beatsRoutes = require('./routes/beats-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -33,6 +34,7 @@ app.use((req, res, next) => {
 
 app.use('/api/data/beats', express.static(path.join(__dirname, 'data', 'beats')));
 app.use('/api/data/covers', express.static(path.join(__dirname, 'data', 'covers')));
+app.use(express.static(path.join(__dirname, '/public')));
 app.use('/api/beats', beatsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/orders', ordersRoutes);
@@ -118,15 +120,17 @@ app.use((error, req, res, next) => {
     if (res.headerSent) {
         return next(error);
     }
-    res.status(error.status || 500);
+    res.status(error.code || 500 );
     res.json({message: error.message || 'An unknown error occurred!'});
 });
 
 
 // port configuration and connection to database
 mongoose
-    .connect(url)
-    .then(() => {
+    .connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
+    .then(async () => {
         server.listen(config.port);
+        console.log('Server is up and running on port ' + config.port);
+        await adminBot();
     })
-    .catch((err) => console.log(err.message));
+    .catch(async (err) => console.log(err.message));

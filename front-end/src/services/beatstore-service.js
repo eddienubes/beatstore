@@ -57,4 +57,5 @@ export default class BeatstoreService {
         return axios.get(this.baseUrl + `/random`);
     }
 
+
 };

@@ -1,12 +1,13 @@
 const mongoose = require('mongoose');
 const License = require('../models/license')
 const HttpError = require('../models/http-error');
+const path = require('path');
 
 const updateLicense = async (req, res, next) => {
     const {type, price, label} = req.body;
 
     let license;
-
+    
     try {
         license = await License.findOne({type});
     } catch (e) {
@@ -92,8 +93,14 @@ const creatLicense = async (req, res, next) => {
     res.json({message: 'Price added successfully!', license});
 };
 
+const getLicenseDescriptionByType = async (req, res, next) => {
+    const type = req.params.type;
+    res.status(200).sendFile(path.join(__dirname, '..', 'public', 'licenses-description', `${type}.html`));
+}
+
 module.exports = {
     updateLicense,
     getAllLicenses,
-    creatLicense
+    creatLicense,
+    getLicenseDescriptionByType
 };

@@ -13,6 +13,8 @@
     "nodemon": "^2.0.7"
   },
   "dependencies": {
+    "@paypal/checkout-server-sdk": "^1.0.2",
+    "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
@@ -23,8 +25,9 @@
     "mongoose": "^5.11.13",
     "mongoose-unique-validator": "^2.0.3",
     "multer": "^1.4.2",
-    "socket.io": "^3.1.1",
-    "socket.io-stream": "^0.9.1",
+    "nodemailer": "^6.5.0",
+    "nodemailer-express-handlebars": "^4.0.0",
+    "telegraf": "^4.2.1",
     "uuid": "^8.3.2"
   }
 }

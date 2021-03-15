@@ -8,4 +8,6 @@ router.patch('/', licensesController.updateLicense);
 
 router.post('/', licensesController.creatLicense);
 
+router.get('/:type', licensesController.getLicenseDescriptionByType)
+
 module.exports = router;

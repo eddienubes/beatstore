@@ -15,6 +15,17 @@ class AuthService {
         );
     }
 
+    async verify(confirmationCode) {
+        return axios.post(
+            this.baseUrl + '/verify/' + confirmationCode,
+            {confirmationCode},
+            {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    }
+
     async login(data) {
         return axios.post(
             this.baseUrl + '/login',
@@ -61,7 +72,7 @@ class AuthService {
             headers: {
                 Authorization: 'Bearer ' + token
             }
-        })
+        });
     }
 
     async refreshToken(refreshToken) {
@@ -71,8 +82,18 @@ class AuthService {
     async removeFromCartOffline(productId, cart) {
         return axios.patch(this.baseUrl + '/cart' + `/${productId}`, {cart: cart});
     }
+
     async appendToCartOffline(product, cart) {
         return axios.post(this.baseUrl + '/cart', {cart: cart, product: product});
+    }
+
+    async contact(email, subject, name, message) {
+        return axios.post(this.baseUrl + '/contact', {
+            email,
+            subject,
+            name,
+            message
+        });
     }
 }
 

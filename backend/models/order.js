@@ -6,7 +6,7 @@ const productSchema = new mongoose.Schema({
 });
 
 const orderSchema = new mongoose.Schema({
-    customerId: {type: mongoose.Types.ObjectId, ref: 'User', required: true},
+    customerId: {type: mongoose.Types.ObjectId, ref: 'User', required: false},
     email: {type: String, required: true},
     products: {
         type: [
@@ -19,7 +19,10 @@ const orderSchema = new mongoose.Schema({
         required: true
     },
     date: {type: Date, required: true},
-    total: {type: Number, required: true}
+    total: {type: Number, required: true},
+    captureId: {type: String, required: false, unique: true},
+    paypalOrderId: {type: String, required: false, unique: true},
+    orderId: {type: String, required: true, unique: true}
 });
 
 module.exports = mongoose.model('Order', orderSchema);

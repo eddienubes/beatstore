@@ -12,6 +12,14 @@ $button-point-events: none;
     animation: auth-page 0.8s ease-in-out;
     width: 345px;
     margin: 0 auto;
+
+    .next-step {
+        color: green;
+        font-weight: bold;
+    }
+    .suggestion-to-visit {
+        color: white;
+    }
     .confirm-pass-error-msg {
         text-align: center;
         color: red;

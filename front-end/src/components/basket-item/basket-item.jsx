@@ -9,7 +9,7 @@ import {audioLoaded, audioPlayed, audioStopped, removeFromCart} from "../../redu
 import SpinnerAudio from "../spinner-audio";
 import useAudio from "../../hooks/audio-hook";
 
-const BasketItem = ({id, product, amount, licenseType, imgUrl, className, setShow, beatId, isPlaying, currentId, previousId}) => {
+const BasketItem = ({id, product, amount, licenseType, imgUrl, className, setShow, beatId, isPlaying, currentId, previousId, type}) => {
     const dispatch = useDispatch();
 
     const imageUrl = useMemo(() => 'http://localhost:5000/api/' + imgUrl, [imgUrl]);
@@ -46,7 +46,7 @@ const BasketItem = ({id, product, amount, licenseType, imgUrl, className, setSho
                 {amount}$
             </Table.Cell>
             <Table.Cell textAlign="center" width={1} verticalAlign="middle" className="row-item button-license">
-                <LicenseDescriptionButton className="button" text="License"/>
+                <LicenseDescriptionButton className="button" text="REVIEW LICENSE" type={type}/>
             </Table.Cell>
             <Table.Cell width={1} verticalAlign="middle" textAlign="center"
                         className="row-item remove-from-cart-button-container">

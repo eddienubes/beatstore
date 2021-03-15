@@ -6,11 +6,15 @@
     align-items: center;
     width: 750px;
     // div
+
+
     .contact-info-block {
         width: 100%;
         display: flex;
         justify-content: space-between;
         margin-bottom: 40px;
+
+
     }
 
     // label
@@ -22,7 +26,8 @@
 
     // contact-input
     .contact-input {
-        width: 350px;
+        width: 325px;
+
     }
 
     button {

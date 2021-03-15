@@ -158,46 +158,48 @@ const getAllBeats = async (req, res, next) => {
     let beats;
     let {skip, limit, filter} = req.query;
 
-    const jsonFilter = JSON.parse(filter);
-
+    let jsonFilter;
     let mongooseFilter = {};
 
-    if (jsonFilter.bpm) {
-        mongooseFilter.bpm = jsonFilter.bpm;
+    if (filter) {
+        jsonFilter = JSON.parse(filter);
+
+
+        if (jsonFilter.bpm) {
+            mongooseFilter.bpm = jsonFilter.bpm;
+        }
+
+        if (jsonFilter.genres) {
+            mongooseFilter.genres = jsonFilter.genres;
+        }
+
+        if (jsonFilter.moods) {
+            mongooseFilter.moods = jsonFilter.moods;
+        }
+
+        if (jsonFilter.tags) {
+            mongooseFilter.tags = jsonFilter.tags;
+        }
+
+        if (jsonFilter.search !== '') {
+            jsonFilter.search = jsonFilter.search.replace(/#+/, '');
+            mongooseFilter.$or = [
+                {
+                    title: {$regex: jsonFilter.search, $options: 'i'}
+                },
+                {
+                    tags: {$regex: jsonFilter.search, $options: 'i'}
+                },
+                {
+                    genres: {$regex: jsonFilter.search, $options: 'i'}
+                },
+                {
+                    bpm: {$regex: jsonFilter.search, $options: 'i'}
+                }
+            ]
+
+        }
     }
-
-    if (jsonFilter.genres) {
-        mongooseFilter.genres = jsonFilter.genres;
-    }
-
-    if (jsonFilter.moods) {
-        mongooseFilter.moods = jsonFilter.moods;
-    }
-
-    if (jsonFilter.tags) {
-        mongooseFilter.tags = jsonFilter.tags;
-    }
-
-    if (jsonFilter.search !== '') {
-        jsonFilter.search = jsonFilter.search.replace(/#+/, '');
-        mongooseFilter.$or = [
-            {
-                title: {$regex: jsonFilter.search, $options: 'i'}
-            },
-            {
-                tags: {$regex: jsonFilter.search, $options: 'i'}
-            },
-            {
-                genres: {$regex: jsonFilter.search, $options: 'i'}
-            },
-            {
-                bpm: {$regex: jsonFilter.search, $options: 'i'}
-            }
-        ]
-
-    }
-
-    // console.log(mongooseFilter);
 
     try {
         skip = skip && /^\d+$/.test(skip) ? Number(skip) : 0;

@@ -339,6 +339,48 @@ const cartItemsSet = (cart) => {
     }
 }
 
+const paypalPaymentRequested = () => {
+    return {
+        type: actions.PAYPAL_PAYMENT_REQUESTED
+    }
+}
+
+const paypalPaymentSuccess = (data) => {
+    return {
+        type: actions.PAYPAL_PAYMENT_SUCCESS,
+        payload: data
+    }
+}
+
+const paypalPaymentFailed = (err) => {
+    return {
+        type: actions.PAYPAL_PAYMENT_FAILED,
+        payload: err
+    }
+}
+
+const confirmationRequested = () => {
+    return {type: actions.CONFIRMATION_REQUESTED}
+}
+
+const confirmationSuccess = (userData) => {
+    return {
+        type: actions.CONFIRMATION_SUCCESS,
+        payload: userData
+    }
+}
+
+const confirmationFailed = (err) => {
+    return {
+        type: actions.CONFIRMATION_FAILED,
+        payload: err
+    }
+}
+
+const confirmationErrorRemoved = () => {
+    return {type: actions.CONFIRMATION_ERROR_REMOVED}
+};
+
 const signup = (formState) => async (dispatch, getState) => {
     dispatch(signupRequested());
     const {email, username, password} = formState.inputs;
@@ -347,24 +389,23 @@ const signup = (formState) => async (dispatch, getState) => {
         const response = await authService.signup({
             email: email.value,
             username: username.value,
-            password: password.value
+            password: password.value,
+            clientIP: 'http://localhost:3000/confirmation'
         });
 
-        const tokenExpirationDate = new Date(new Date().getTime() + 1000 * 60 * 60);
+        // const tokenExpirationDate = new Date(new Date().getTime() + 1000 * 60 * 60);
 
-        dispatch(signupSuccess({
-            ...response.data.user,
-            expiration: tokenExpirationDate
-        }));
+        dispatch(signupSuccess());
 
-        localStorage.setItem('userData', JSON.stringify({
-            ...response.data.user,
-            expiration: tokenExpirationDate.toISOString()
-        }));
-        localStorage.removeItem('cartData');
+        // localStorage.setItem('userData', JSON.stringify({
+        //     ...response.data.user,
+        //     expiration: tokenExpirationDate.toISOString()
+        // }));
+        // localStorage.removeItem('cartData');
 
         console.log(response.data);
     } catch (e) {
+        console.log(e.response.data);
         dispatch(signupFailure(e.response.data));
     }
 }
@@ -627,12 +668,42 @@ const refreshToken = (refreshToken) => async (dispatch, getState) => {
 
         localStorage.setItem('userData', JSON.stringify({
             ...userState,
+            token: response.data.accessToken,
             expiration: tokenExpirationDate
         }));
     } catch (e) {
         console.log(e.response.data);
         dispatch(refreshTokenFailed(e.response.data));
     }
+}
+
+const confirmUser = (confirmationCode) => async (dispatch, getState) => {
+    dispatch(confirmationRequested());
+
+    try {
+        const response = await authService.verify(confirmationCode);
+
+        const tokenExpirationDate = new Date(new Date().getTime() + 1000 * 60 * 60);
+
+        dispatch(confirmationSuccess({
+            ...response.data.user,
+            expiration: tokenExpirationDate
+        }));
+
+        localStorage.setItem('userData', JSON.stringify({
+            ...response.data.user,
+            expiration: tokenExpirationDate.toISOString()
+        }));
+
+        localStorage.removeItem('cartData');
+
+        console.log(response.data);
+    }
+    catch (e) {
+        console.log(e);
+        dispatch(confirmationFailed(e.response.data));
+    }
+
 }
 
 export {
@@ -663,6 +734,8 @@ export {
     logOut,
     userErrorCleared,
     cartItemsSet,
+    confirmUser,
+    confirmationErrorRemoved,
 
     fetchLicenses,
 };

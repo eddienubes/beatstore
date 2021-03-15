@@ -7,8 +7,6 @@ import ContactPage from "../../pages/contact-page";
 import CheckoutPage from "../../pages/checkout-page";
 
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
-import 'react-jinke-music-player/assets/index.css';
-import 'react-jinke-music-player/lib/styles/index.less'
 import MusicPlayer from "../../components/music-player";
 import BeatsPage from "../../pages/beats-page";
 import AuthContainer from "../auth-container";
@@ -19,17 +17,18 @@ import useAuth from "../../hooks/auth-hook";
 import {useDispatch, useSelector} from "react-redux";
 import {appendToCart, fetchLicenses} from "../../redux/actions";
 import BlurredSpinner from "../../components/blurred-spinner";
+import ConfirmationPage from "../../pages/confirmation-page";
 
 const RoutingContainer = () => {
     const [checking] = useAuth();
     const dispatch = useDispatch();
-    const {isLoadingAppendToCart, isLoggingOut} = useSelector(state => state.userReducer);
+    const {isLoadingAppendToCart, isLoggingOut, isProcessingPayment} = useSelector(state => state.userReducer);
     useEffect(() => {
         dispatch(fetchLicenses());
     }, []);
 
 
-    if (checking || isLoggingOut) {
+    if (checking || isLoggingOut || isProcessingPayment) {
         return <Spinner/>
     }
 
@@ -47,6 +46,9 @@ const RoutingContainer = () => {
                         <Route exact path="/beats/:id" component={BeatsPage}/>
                         <Route path="/auth" component={AuthContainer}/>
                         <Route path="/account" component={AccountPage}/>
+                        <Route path="/checkout/success" exact render={history => <h1>Success</h1>}/>
+                        <Route path="/checkout/failed" exact render={history => <h1>Failed</h1>}/>
+                        <Route path="/confirmation/:confirmationCode" exact component={ConfirmationPage}/>
                         <Route component={PageNotFound}/>
                     </Switch>
                 </main>

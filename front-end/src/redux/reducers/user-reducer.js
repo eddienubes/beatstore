@@ -19,7 +19,10 @@ const initialState = {
     isLoadingAppendToCart: false,
     isLoadingRemoveFromCart: false,
     isLoggingOut: false,
-    showNotification: false
+    showNotification: false,
+    isProcessingPayment: false,
+    isConfirming: false,
+    confirmationError: null
 };
 
 const userReducer = (state = initialState, action) => {
@@ -32,18 +35,7 @@ const userReducer = (state = initialState, action) => {
         case actions.SIGN_UP_SUCCESS:
             return {
                 ...state,
-                id: action.payload.id,
-                loggedIn: true,
-                processing: false,
-                cart: action.payload.cart,
-                purchased: action.payload.purchased,
-                email: action.payload.email,
-                username: action.payload.username,
-                token: action.payload.token,
-                refreshToken: action.payload.refreshToken,
-                refreshTokenExpiration: action.payload.refreshTokenExpiration,
-                expiration: action.payload.expiration,
-                error: null
+                processing: false
             }
         case actions.SIGN_UP_FAILURE:
             return {
@@ -245,6 +237,55 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 error: null,
                 cart: action.payload
+            }
+        case actions.PAYPAL_PAYMENT_REQUESTED:
+            return {
+                ...state,
+                isProcessingPayment: true
+            }
+        case actions.PAYPAL_PAYMENT_SUCCESS:
+            return {
+                ...state,
+                isProcessingPayment: false,
+                error: null
+            }
+        case actions.PAYPAL_PAYMENT_FAILED:
+            return {
+                ...state,
+                isProcessingPayment: false,
+                error: action.payload
+            }
+        case actions.CONFIRMATION_REQUESTED:
+            return {
+                ...state,
+                isConfirming: true
+            }
+        case actions.CONFIRMATION_SUCCESS:
+            return {
+                ...state,
+                id: action.payload.id,
+                loggedIn: true,
+                isConfirming: false,
+                cart: action.payload.cart,
+                purchased: action.payload.purchased,
+                email: action.payload.email,
+                username: action.payload.username,
+                token: action.payload.token,
+                refreshToken: action.payload.refreshToken,
+                refreshTokenExpiration: action.payload.refreshTokenExpiration,
+                expiration: action.payload.expiration,
+                error: null
+            }
+        case actions.CONFIRMATION_FAILED:
+            return {
+                ...state,
+                confirmationError: action.payload,
+                isConfirming: false
+            }
+        case actions.CONFIRMATION_ERROR_REMOVED:
+            return {
+                ...state,
+                confirmationError: null
             }
         default:
             return state;

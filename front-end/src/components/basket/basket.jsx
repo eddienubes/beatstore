@@ -1,21 +1,19 @@
-import React, {useCallback} from "react";
+import React from "react";
 import './basket.scss';
 import BasketItem from "../basket-item";
 import {Table} from "semantic-ui-react";
-import PlaceholderAnimatedButton from "../placeholder-animated-button";
+import PlaceholderAnimatedInput from "../placeholder-animated-input";
 import {Link} from "react-router-dom";
-import LicenseDescriptionModal from "../license-description-modal";
 import {useSelector} from "react-redux";
 import BrowseAllButton from "../browse-all-button";
 import AnimationContainer from "../../containers/animation-container";
 import SpinnerAudio from "../spinner-audio";
-import useAudio from "../../hooks/audio-hook";
-import {audioLoaded, audioPlayed, audioStopped} from "../../redux/actions";
+import PaypalButtons from "../paypal-buttons/paypal-buttons";
 
 const Basket = () => {
     const [isDisabled, setDisabled] = React.useState(true);
     const [modalShow, setModalShow] = React.useState(false);
-    const {cart, isLoadingRemoveFromCart, loggedIn} = useSelector(state => state.userReducer);
+    const {cart, isLoadingRemoveFromCart, loggedIn, email} = useSelector(state => state.userReducer);
     const {id, isPlaying, previousId} = useSelector(state => state.audioReducer);
 
     if (cart.items.length === 0) {
@@ -68,12 +66,13 @@ const Basket = () => {
                                 <AnimationContainer
                                     animationMountClass={null}
                                     key={i._id || i.id}
-                                    animationUnMountClass={`cart-item-deleted-animation`} >
+                                    animationUnMountClass={`cart-item-deleted-animation`}>
                                     <BasketItem
                                         id={i._id || i.id}
                                         imgUrl={i.beatId.imgUrl}
                                         amount={i.licenseId.price}
                                         licenseType={i.licenseId.label}
+                                        type={i.licenseId.type}
                                         product={i.beatId.title}
                                         beatId={i.beatId._id}
                                         currentId={id}
@@ -81,28 +80,31 @@ const Basket = () => {
                                         previousId={previousId}
                                     />
                                 </AnimationContainer>
-                                )
+                            )
                         })
                     }
                 </Table.Body>
             </Table>
             <aside className="sidebar">
                 <div className="sidebar-container">
-                    <form>
-                        <PlaceholderAnimatedButton className={"coupon-input"}
-                                                   labelStyle={"label-style"}
-                                                   name="coupon"
-                                                   text="Bonus coupon"
-                                                   required={true}>
-                        </PlaceholderAnimatedButton>
-                        <button className="coupon-button" type="submit">APPLY COUPON</button>
+                    <p>Coupons are on the stage of development</p>
+                    <form className={`bonus-coupon-form`}>
+                        <PlaceholderAnimatedInput className={"coupon-input"}
+                                                  labelStyle={"label-style"}
+                                                  name="coupon"
+                                                  text="Bonus coupon"
+                                                  required={true}
+                                                  disabled={true}
+                        >
+                        </PlaceholderAnimatedInput>
+                        <button className="coupon-button" type="submit" disabled>APPLY COUPON</button>
                     </form>
-                    <form>
+                    <form >
                         <div className="numbers-container gross">
                             <div>Gross</div>
                             {/*PUT GROSS VALUE HERE*/}
                             <div className="number">
-                                ${123}
+                                ${cart.total.toFixed(2)}
                             </div>
                         </div>
                         <div className="numbers-container discount">
@@ -114,34 +116,33 @@ const Basket = () => {
                             <div>Total</div>
                             <div className="total-number number">${cart.total.toFixed(2)}</div>
                         </div>
-                        {/*TODO: MODAL RELOADS PAGE ISSUE*/}
-                        {/*<PolicyBox className="button-review" text="REVIEW LICENSE"/>*/}
 
-                        <button className="coupon-button" type="button" onClick={() => setModalShow(true)}>READ
-                            LICENSE
-                        </button>
                         {
-                            !loggedIn ? (<PlaceholderAnimatedButton className={"coupon-input"}
+                            !loggedIn ? (<PlaceholderAnimatedInput className={"coupon-input"}
                                                                    labelStyle={"label-style"}
                                                                    name="email"
-                                                                   text="Enter your email"
-                                                                   required={true}>
-                            </PlaceholderAnimatedButton>) : (<p className={`email-caption-warning`}>Beats will be sent on email your current account logged in with.</p>)
+                                                                   text="Enter your email to send purchases to"
+                                                                   required={true}/>) :
+                                (<p className={`email-caption-warning`}>Beats will be sent on email your current account
+                                    logged in with.</p>)
                         }
-
-                        <LicenseDescriptionModal
-                            show={modalShow}
-                            onHide={() => setModalShow(false)}
-                        />
 
                         <div className="agreement">
                             <label className="cart-label">
                                 <input onChange={(e) => checkInputHandler(e)} type="checkbox" name="checked"/>
                                 <span className="labeled-text">
-                I reviewed and agree to the Track(s) License Agreements
-                </span>
+                        I reviewed and agree to the Track(s) License Agreements
+                    </span>
                             </label>
-                            <button type="submit" className="buy-button" disabled={isDisabled}>PURCHASE</button>
+                            <div className={`payment-buttons`}>
+                                <span className="paypal-payment-desc">
+                                    pay via paypal or wayforpay
+                                </span>
+                                    <PaypalButtons disabled={isDisabled}/>
+                                <button className={`wayforpay ${isDisabled ? 'disabled-wayforpay-button' : null}`} type="submit">
+                                    <span>Checkout</span>
+                                </button>
+                            </div>
                         </div>
                     </form>
                     <span className="offer-sign-up">Would you like keep records of your Transaction(s)

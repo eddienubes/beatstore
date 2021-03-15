@@ -1,0 +1,8 @@
+.paypal-buttons {
+    transition: .2s ease-in-out;
+}
+
+.disabled-paypal-button {
+    pointer-events: none;
+    filter: brightness(20%);
+}

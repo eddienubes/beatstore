@@ -4,11 +4,11 @@ import Input from "../input";
 import {VALIDATOR_CHECKBOX, VALIDATOR_EMAIL, VALIDATOR_MINLENGTH} from "../../../utils/validators";
 import useForm from "../../../hooks/form-hook";
 import {withAuthService} from '../../../components/hoc';
-import {googleSignupFailed, signup, userErrorCleared} from "../../../redux/actions";
+import {googleSignup, googleSignupFailed, signup, userErrorCleared} from "../../../redux/actions";
 import {useDispatch, useSelector} from "react-redux";
 import Spinner from "../../../components/spinner";
 import {GoogleLogin} from 'react-google-login';
-import {googleSignup} from "../../../redux/actions/actions";
+import SecondRegistrationStep from "../../../components/second-registration-step";
 
 const initialState = {
     inputs: {
@@ -40,6 +40,7 @@ const RegisterPage = ({authService}) => {
     const userState = useSelector(state => state.userReducer)
     const [checked, setChecked] = useState(false);
     const [touched, setTouched] = useState(false);
+    const [hasRegistered, setRegistered] = useState(false);
 
     const [formState, onInputHandler] = useForm(initialState.inputs, initialState.isValid, initialState.confirmed);
 
@@ -50,6 +51,7 @@ const RegisterPage = ({authService}) => {
     const onUserSignupHandler = async (e) => {
         e.preventDefault();
         dispatch(signup(formState));
+        setRegistered(true);
         setChecked(false);
         setTouched(false);
     }
@@ -81,100 +83,105 @@ const RegisterPage = ({authService}) => {
     return (
         <div className="auth-page">
             {/* todo there might be logo*/}
-            <h2>Register</h2>
-            <form onBlur={() => setTouched(true)}
-                  className="email-login-form"
-                  onSubmit={onUserSignupHandler}
-            >
-                <p className={`caption`}>Your username</p>
-                <Input id="username"
-                       name="username"
-                       placeholder="Set a username for your profile"
-                       type="text"
-                       errorText="Please, enter at least 1 character as your username"
-                       validators={[VALIDATOR_MINLENGTH(1)]}
-                       onInput={onInputHandler}
-                />
-                <p className={`caption`}>Your email</p>
-                <Input id="email"
-                       name="email"
-                       placeholder="Type your email.."
-                       type="text"
-                       errorText="Please enter correct email"
-                       validators={[VALIDATOR_EMAIL()]}
-                       onInput={onInputHandler}
-                />
-                <p className={`caption`}>Password</p>
-                <Input id="password"
-                       name="password"
-                       placeholder="Type your password.."
-                       type="password"
-                       errorText="Your password should contain at least 6 characters"
-                       validators={[VALIDATOR_MINLENGTH(6)]}
-                       onInput={onInputHandler}
-                />
-                <p className={`caption`}>Confirmed password</p>
-                <Input id="confirmedPassword"
-                       name="confirmed_password"
-                       placeholder="Confirm your password.."
-                       type="password"
-                       errorText="Your password should contain at least 6 characters"
-                       validators={[VALIDATOR_MINLENGTH(6)]}
-                       onInput={onInputHandler}
-                />
-                <label>
-                    <Input
-                        id="checkbox"
-                        onChangeHandler={onChangeCheckboxHandle}
-                        type="checkbox"
-                        name="checked"
-                        validators={[VALIDATOR_CHECKBOX()]}
-                    />
-                    <span className="labeled-text">
-                        {/* todo Ссылки на Terms of service и на Privacy policy*/}
-                        I have read and agree to the <a>Terms of service</a> and <a>Privacy policy</a>
-                    </span>
-                </label>
-                <button className={canSignup ? "sign-up-button" : "unchecked-button"} type="submit">Sign up</button>
-                {confirmedMsg}
-                {alreadyExistsError}
-            </form>
-            <h2 className="divider-h2">
-                <div className="line"/>
-                <span>OR</span>
-                <div className="line"/>
-            </h2>
-            <GoogleLogin
-                uxMode={`popup`}
-                clientId={`718477232651-i09ba8bjtbaqlt7h1i2fq3j4klklth2h.apps.googleusercontent.com`}
-                render={renderProps =>
-                    (
-                        <button
-                            className="oauth"
-                            onClick={renderProps.onClick}
-                            disabled={renderProps.disabled}
-                        >
-                            <img
-                                src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
-                                width="15"
-                                height="15"
-                                alt="Google"
+            {hasRegistered && !userState.error ? <SecondRegistrationStep/> :
+                <>
+                    <h2>Register</h2>
+                    <form onBlur={() => setTouched(true)}
+                          className="email-login-form"
+                          onSubmit={onUserSignupHandler}
+                    >
+                        <p className={`caption`}>Your username</p>
+                        <Input id="username"
+                               name="username"
+                               placeholder="Set a username for your profile"
+                               type="text"
+                               errorText="Please, enter at least 1 character as your username"
+                               validators={[VALIDATOR_MINLENGTH(1)]}
+                               onInput={onInputHandler}
+                        />
+                        <p className={`caption`}>Your email</p>
+                        <Input id="email"
+                               name="email"
+                               placeholder="Type your email.."
+                               type="text"
+                               errorText="Please enter correct email"
+                               validators={[VALIDATOR_EMAIL()]}
+                               onInput={onInputHandler}
+                        />
+                        <p className={`caption`}>Password</p>
+                        <Input id="password"
+                               name="password"
+                               placeholder="Type your password.."
+                               type="password"
+                               errorText="Your password should contain at least 6 characters"
+                               validators={[VALIDATOR_MINLENGTH(6)]}
+                               onInput={onInputHandler}
+                        />
+                        <p className={`caption`}>Confirmed password</p>
+                        <Input id="confirmedPassword"
+                               name="confirmed_password"
+                               placeholder="Confirm your password.."
+                               type="password"
+                               errorText="Your password should contain at least 6 characters"
+                               validators={[VALIDATOR_MINLENGTH(6)]}
+                               onInput={onInputHandler}
+                        />
+                        <label>
+                            <Input
+                                id="checkbox"
+                                onChangeHandler={onChangeCheckboxHandle}
+                                type="checkbox"
+                                name="checked"
+                                validators={[VALIDATOR_CHECKBOX()]}
                             />
-                            Sign up with Google
+                            <span className="labeled-text">
+                        {/* todo Ссылки на Terms of service и на Privacy policy*/}
+                                I have read and agree to the <a>Terms of service</a> and <a>Privacy policy</a>
+                    </span>
+                        </label>
+                        <button className={canSignup ? "sign-up-button" : "unchecked-button"} type="submit">Sign up
                         </button>
-                    )
-                }
-                onSuccess={googleSuccess}
-                onFailure={googleFailure}
-                cookiePolicy={`single_host_origin`}
-            />
-            <p className={`transfer-to-login`}>Already have an account?
-                <Link to="/auth/login"
-                      onClick={e => dispatch(userErrorCleared())}
-                >
-                     &nbsp;Sign in
-                </Link>
-            </p>
+                        {confirmedMsg}
+                        {alreadyExistsError}
+                    </form>
+                    <h2 className="divider-h2">
+                        <div className="line"/>
+                        <span>OR</span>
+                        <div className="line"/>
+                    </h2>
+                    <GoogleLogin
+                        uxMode={`popup`}
+                        clientId={`718477232651-i09ba8bjtbaqlt7h1i2fq3j4klklth2h.apps.googleusercontent.com`}
+                        render={renderProps =>
+                            (
+                                <button
+                                    className="oauth"
+                                    onClick={renderProps.onClick}
+                                    disabled={renderProps.disabled}
+                                >
+                                    <img
+                                        src="https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Google_%22G%22_Logo.svg/512px-Google_%22G%22_Logo.svg.png"
+                                        width="15"
+                                        height="15"
+                                        alt="Google"
+                                    />
+                                    Sign up with Google
+                                </button>
+                            )
+                        }
+                        onSuccess={googleSuccess}
+                        onFailure={googleFailure}
+                        cookiePolicy={`single_host_origin`}
+                    />
+                    <p className={`transfer-to-login`}>Already have an account?
+                        <Link to="/auth/login"
+                              onClick={e => dispatch(userErrorCleared())}
+                        >
+                            &nbsp;Sign in
+                        </Link>
+                    </p>
+                </>}
+
         </div>
     );
 };

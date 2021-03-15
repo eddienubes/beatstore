@@ -5,6 +5,8 @@ import {useHistory} from "react-router-dom";
 import box from './box.png'
 import './purchases-table.scss';
 import useAudio from "../../hooks/audio-hook";
+import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
+import {faAngleDown, faAngleUp, faFileDownload} from "@fortawesome/free-solid-svg-icons";
 
 
 const PurchasesTable = () => {
@@ -62,7 +64,8 @@ const PurchasesTable = () => {
                                 <Table.Cell textAlign="center">
                                     <Dropdown
                                         className={`drop-down`}
-                                        text='Links'
+                                        text='Files'
+                                        icon={<FontAwesomeIcon className={`icon`} icon={faAngleDown}/>}
                                         direction="left"
                                         key={item.beatId + item.licenseId + item.orderId + index + 'menu'}
                                     >
@@ -73,7 +76,7 @@ const PurchasesTable = () => {
                                                     return (
                                                         <Dropdown.Item
                                                             key={link.label + lIndex + item.beatId + item.licenseId + item.orderId}
-                                                            icon="folder"
+                                                            icon={<FontAwesomeIcon className={`icon`} icon={faFileDownload}/>}
                                                             text={link.label}
                                                             onClick={() => history.push(link.url)}
                                                         />

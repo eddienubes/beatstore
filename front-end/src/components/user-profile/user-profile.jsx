@@ -1,5 +1,5 @@
 import React, {useMemo, useState} from 'react';
-import PlaceholderAnimatedButton from "../placeholder-animated-button";
+import PlaceholderAnimatedInput from "../placeholder-animated-input";
 import Input from "../../pages/auth-pages/input";
 import Spinner from "../spinner";
 import {useDispatch, useSelector} from "react-redux";
@@ -94,9 +94,9 @@ const UserProfile = ({authService}) => {
                 </div>
                 <div className="settings">
                     <Input
-                        component={<PlaceholderAnimatedButton text="E-mail"
-                                                              className="input-set"
-                                                              wrapper="wrapper"/>}
+                        component={<PlaceholderAnimatedInput text="E-mail"
+                                                             className="input-set"
+                                                             wrapper="wrapper"/>}
                         id="email"
                         name="email"
                         type="text"
@@ -107,9 +107,9 @@ const UserProfile = ({authService}) => {
                         initialValid={formState.inputs.email.isValid}
                     />
                     <Input
-                        component={<PlaceholderAnimatedButton text="Username"
-                                                              className="input-set"
-                                                              wrapper="wrapper"/>}
+                        component={<PlaceholderAnimatedInput text="Username"
+                                                             className="input-set"
+                                                             wrapper="wrapper"/>}
                         id="username"
                         name="username"
                         type="text"
@@ -120,9 +120,9 @@ const UserProfile = ({authService}) => {
                         initialValid={formState.inputs.username.isValid}
                     />
                     <Input
-                        component={<PlaceholderAnimatedButton text="Current password"
-                                                              className="input-set"
-                                                              wrapper="wrapper"
+                        component={<PlaceholderAnimatedInput text="Current password"
+                                                             className="input-set"
+                                                             wrapper="wrapper"
                         />}
                         id="password"
                         name="password"
@@ -139,9 +139,9 @@ const UserProfile = ({authService}) => {
 
                     <div className="new-password-container">
                         <Input
-                            component={<PlaceholderAnimatedButton text="New password"
-                                                                  className="input-set"
-                                                                  wrapper="wrapper"
+                            component={<PlaceholderAnimatedInput text="New password"
+                                                                 className="input-set"
+                                                                 wrapper="wrapper"
 
                             />}
                             id="newPassword"
@@ -153,9 +153,9 @@ const UserProfile = ({authService}) => {
                             onInput={onInputHandler}
                         />
                         <Input
-                            component={<PlaceholderAnimatedButton text="Confirm new password"
-                                                                  className="input-set"
-                                                                  wrapper="wrapper"
+                            component={<PlaceholderAnimatedInput text="Confirm new password"
+                                                                 className="input-set"
+                                                                 wrapper="wrapper"
 
                             />}
                             id="newPasswordConfirmed"

@@ -16,8 +16,18 @@ const Footer = () => {
                         href="#">Terms of use</a></span>
                 </div>
                 <div className="footer__links">
-                    <a href="#" className="footer__youtube"><img width="40" src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1200px-YouTube_full-color_icon_%282017%29.svg.png" alt="asd"/></a>
-                    <a href="#" className="footer__instagram"><img width="30" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1024px-Instagram_icon.png" alt="asd"/></a>
+                    <a href="youtube" target="_blank" className="youtube"><img width="40"
+                                                                               src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1200px-YouTube_full-color_icon_%282017%29.svg.png"
+                                                                               alt="asd"/>&nbsp; /cherriesby</a>
+                    <a href="instagram" className="instagram"><img width="30"
+                                                                   src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1024px-Instagram_icon.png"
+                                                                   alt="asd"/>&nbsp; /cherriesby</a>
+                    <a href="instagram" className="instagram"><img width="30"
+                                                                   src="https://img.icons8.com/color/48/000000/twitter--v1.png"
+                                                                   alt="twitter"/>&nbsp; /cherriesby</a>
+                    <a href="instagram" className="instagram"><img width="30"
+                                                                   src="https://img.icons8.com/fluent/48/000000/facebook-new.png"
+                                                                   alt="twitter"/>&nbsp; /cherriesby</a>
                 </div>
             </div>
         </footer>

@@ -2,11 +2,31 @@
     display: flex;
     padding: 40px 0 80px 0;
     justify-content: space-around;
+
+    .description {
+        background: black;
+        color: white;
+        max-width: 300px;
+        padding: 20px!important;
+        a {
+            display: block;
+            margin-top: 10px;
+            color: #929292;
+            transition: .18s ease-in-out;
+            &:hover {
+                letter-spacing: 1.2px;
+                color: #c1c1c1;
+            }
+        }
+    }
 }
 
 @media screen and (max-width: 960px) {
     .main-page-contact {
         flex-direction: column;
-        align-items: center;
+
+        & div:not(:first-child) {
+            align-items: center;
+        }
     }
 }

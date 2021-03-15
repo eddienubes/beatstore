@@ -11,95 +11,10 @@ const User = require('../models/user');
 const License = require('../models/license');
 const RefreshToken = require('../models/refresh-token');
 const Beat = require('../models/beat');
-
-const populateUserCart = async (user, next) => {
-    await user.populate([
-        {
-            path: 'cart.items.beatId',
-            select: 'title imgUrl'
-        },
-        {path: "cart.items.licenseId"}]).execPopulate();
-}
-
-const populateUserPurchases = async (user, next) => {
-    const baseSelect = 'previewAudioUrl imgUrl title scale bpm';
-
-    const beatProjectionsToLicenseTypes = [
-        {
-            labels: ['MP3 audio'],
-            type: 1,
-            select: 'mp3Url ' + baseSelect
-        },
-        {
-            labels: ['MP3 audio', 'WAV audio'],
-            type: 2,
-            select: 'mp3Url wavUrl ' + baseSelect
-        },
-        {
-            labels: ['MP3 audio', 'WAV audio', 'STEMS'],
-            type: 3,
-            select: 'mp3Url wavUrl stemsUrl ' + baseSelect
-        },
-        {
-            labels: ['MP3 audio', 'WAV audio', 'STEMS'],
-            type: 4,
-            select: 'mp3Url wavUrl stemsUrl ' + baseSelect
-        }
-    ];
-
-    let normalizedPurchasesList = [];
-
-    // fucking javascript below
-    await user.populate({path: 'purchased'}).execPopulate();
-
-    await Promise.all(user.purchased.map(async (order, orderIndex) => {
-        await Promise.all(order.products.map(async (product, productIndex) => {
-            await Promise.all(beatProjectionsToLicenseTypes.map(async proj => {
-                if (product.licenseId.type === proj.type) {
-                    await user.populate({
-                        path: `purchased.${orderIndex}.products.${productIndex}.beatId`,
-                        select: proj.select
-                    })
-                        .execPopulate()
-                        .then(data => {
-                            let links = [];
-
-                            const licenseUrlKeys = proj.select
-                                .replace(new RegExp('\\s' + baseSelect), '')
-                                .split(/\s+/);
-
-                            licenseUrlKeys.map((l, index) => {
-                                links.push({
-                                    label: proj.labels[index],
-                                    url: data.purchased[orderIndex].products[productIndex].beatId[l]
-                                });
-                            });
-
-                            normalizedPurchasesList.push({
-                                beatId: user.purchased[orderIndex].products[productIndex].beatId._id.toString(),
-                                licenseId: user.purchased[orderIndex].products[productIndex].licenseId._id.toString(),
-                                orderId: user.purchased[orderIndex]._id.toString(),
-                                licenseType: user.purchased[orderIndex].products[productIndex].licenseId.type,
-                                label: user.purchased[orderIndex].products[productIndex].licenseId.label,
-                                title: user.purchased[orderIndex].products[productIndex].beatId.title,
-                                bpm: user.purchased[orderIndex].products[productIndex].beatId.bpm,
-                                scale: user.purchased[orderIndex].products[productIndex].beatId.scale,
-                                imgUrl: user.purchased[orderIndex].products[productIndex].beatId.imgUrl,
-                                previewAudioUrl: user.purchased[orderIndex].products[productIndex].beatId.previewAudioUrl,
-                                links: links,
-                                price: user.purchased[orderIndex].products[productIndex].licenseId.price,
-                                date: user.purchased[orderIndex].date
-                            });
-                        });
-                }
-            }));
-        }));
-    }));
-    return normalizedPurchasesList;
-}
+const {populateUserCart, populateUserPurchases} = require('../shared/products');
+const mailer = require('../shared/nodemailer');
 
 const getUserById = (req, res, next) => {
-
     const userId = Number.parseInt(req.params.uid);
     const user = DUMMY_USERS.find(u => u.id === userId);
 
@@ -136,7 +51,7 @@ const signup = async (req, res, next) => {
         return next(new HttpError('Invalid inputs passed, please, check your data'));
     }
 
-    const {username, email, password} = req.body;
+    const {username, email, password, clientIP} = req.body;
 
     let existingUser;
     try {
@@ -173,16 +88,19 @@ const signup = async (req, res, next) => {
         return next(new HttpError('Something went wrong while finding orders with such email!', 500));
     }
 
+
     const newUser = new User({
         username,
         email,
         password: hashedPassword,
-        purchased: [...orders]
-        // cart: {
-        //     items: [],
-        //     total: 0
-        // }
+        purchased: [...orders],
     });
+
+    const confirmationToken = jwt.sign(
+        {email, username},
+        config.confirmationTokenSecret + newUser._id.toString());
+
+    newUser.confirmationCode = confirmationToken;
 
     try {
         await newUser.save();
@@ -192,59 +110,21 @@ const signup = async (req, res, next) => {
         );
     }
 
-    userToSend = newUser;
-    messageToSend = 'New user has been successfully created!';
+    messageToSend = 'Check your email to verify your account';
 
-    let token;
-    let refreshToken;
-    let refreshTokenExpirationDate;
+
     try {
-        token = jwt.sign(
-            {userId: userToSend.id, email: userToSend.email},
-            config.secret,
-            {expiresIn: config.tokenExpireTime}
-        );
-        refreshToken = jwt.sign(
-            {userId: userToSend.id, email: userToSend.email},
-            config.refreshTokenSecret,
-            {expiresIn: config.refreshTokenExpireTime}
-        );
-        const newRefreshToken = new RefreshToken({
-            refreshToken,
-            email: email,
-            expirationDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
+        await mailer.sendEmail(email, 'Cherries By Beatstore purchase', 'user-verification', {
+            username,
+            confirmationUrl: clientIP + `/${confirmationToken}`
         });
-        await newRefreshToken.save();
-        refreshTokenExpirationDate = newRefreshToken.expirationDate;
     } catch (e) {
-        return next(
-            new HttpError('Could not create a user, please try again.', 500)
-        );
-    }
-    let normalizedPurchasesList;
-    try {
-        normalizedPurchasesList = await populateUserPurchases(userToSend, next);
-    } catch (e) {
-        return next(new HttpError('Error while populating user purchased list', 500));
+        return next(new HttpError('Something went wrong while sending email', 500));
     }
 
     res.status(201);
-    res.json({
-        message: messageToSend,
-        user: {
-            id: userToSend.id,
-            email: userToSend.email,
-            username: userToSend.username,
-            cart: {
-                items: userToSend.cart.items,
-                total: Math.round((userToSend.cart.total + Number.EPSILON) * 100) / 100
-            },
-            purchased: normalizedPurchasesList,
-            token: token,
-            refreshToken: refreshToken,
-            refreshTokenExpiration: refreshTokenExpirationDate
-        }
-    });
+    res.json({message: messageToSend});
+
 };
 
 const login = async (req, res, next) => {
@@ -268,8 +148,8 @@ const login = async (req, res, next) => {
             new HttpError('Logging in has failed..', 500)
         );
     }
-
-    if (!existingUser || !existingUser?.password) {
+    console.log(existingUser);
+    if (!existingUser || !existingUser?.password || existingUser.status !== 'Active') {
         return next(
             new HttpError('Invalid credentials..', 401)
         );
@@ -786,8 +666,7 @@ const appendToCartOffline = async (req, res, next) => {
         try {
             beat = await Beat.findById(product.beatId, {'mp3Url': 0, 'wavUrl': 0, 'stemsUrl': 0});
             license = await License.findById(product.licenseId)
-        }
-        catch (e) {
+        } catch (e) {
             return next(new HttpError('Something went wring while finding license and beat in db..', 500));
         }
         if (!beat || !license) {
@@ -795,7 +674,7 @@ const appendToCartOffline = async (req, res, next) => {
         }
 
         cart.total += license.price;
-        cart.items.push({id: uuid(), beatId: beat, licenseId: license});
+        cart.items.push({_id: uuid(), beatId: beat, licenseId: license});
     } else {
         let existingLicense;
         try {
@@ -825,7 +704,7 @@ const removeFromCartOffline = async (req, res, next) => {
     try {
 
         const productIndex = cart.items.findIndex(p => {
-            return p.id === productId;
+            return p._id === productId;
         });
         const license = await License.findById(cart.items[productIndex].licenseId._id);
         cart.total -= license.price;
@@ -843,6 +722,103 @@ const removeFromCartOffline = async (req, res, next) => {
     })
 }
 
+const verifyUser = async (req, res, next) => {
+    const confirmationCode = req.params.confirmationCode;
+
+    let user;
+    try {
+        user = await User.findOne({confirmationCode});
+    } catch (e) {
+        console.log(e.message);
+        return next(new HttpError('Error while trying to find a user..', 500));
+    }
+    if (!user || user.status === 'Active') {
+        return next(new HttpError('Wrong confirmation code..', 301));
+    }
+
+    user.status = 'Active';
+
+    try {
+        await user.save();
+    } catch (e) {
+        return next(new HttpError('Error while saving user..', 500));
+    }
+    let token;
+    let refreshToken;
+    let refreshTokenExpirationDate;
+
+    try {
+        token = jwt.sign(
+            {userId: user.id.toString(), email: user.email},
+            config.secret,
+            {expiresIn: config.tokenExpireTime}
+        );
+        refreshToken = jwt.sign(
+            {userId: user._id.toString(), email: user.email},
+            config.refreshTokenSecret,
+            {expiresIn: config.refreshTokenExpireTime}
+        );
+        const newRefreshToken = new RefreshToken({
+            refreshToken,
+            email: user.email,
+            expirationDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
+        });
+        await newRefreshToken.save();
+        refreshTokenExpirationDate = newRefreshToken.expirationDate;
+    } catch (e) {
+        console.log(e.message);
+        return next(
+            new HttpError('Could not create a user, please try again.', 500)
+        );
+    }
+    let normalizedPurchasesList;
+    try {
+        normalizedPurchasesList = await populateUserPurchases(user, next);
+    } catch (e) {
+        console.log(e.message);
+        return next(new HttpError('Error while populating user purchased list', 500));
+    }
+
+    res.status(201);
+    res.json({
+        message: 'Successfully activated new user',
+        user: {
+            id: user._id.toString(),
+            email: user.email,
+            username: user.username,
+            cart: {
+                items: user.cart.items,
+                total: Math.round((user.cart.total + Number.EPSILON) * 100) / 100
+            },
+            purchased: normalizedPurchasesList,
+            token: token,
+            refreshToken: refreshToken,
+            refreshTokenExpiration: refreshTokenExpirationDate
+        }
+    });
+
+
+}
+
+const contact = async (req, res, next) => {
+    const {name, email, subject, message} = req.body;
+
+    try {
+        await mailer.sendEmail(config.gmailOwner, subject, 'contact', {
+            name,
+            email,
+            subject,
+            message
+        });
+    }
+    catch (e) {
+        return next(new HttpError('Something went wrong while sending contact email', 500));
+    }
+
+    res.status(200);
+    res.json({message: 'Successfully sent. I will read your message in 1 day, thank you.'});
+}
+
 module.exports = {
     getUserById,
     getAllUsers,
@@ -856,5 +832,7 @@ module.exports = {
     token,
     logout,
     appendToCartOffline,
-    removeFromCartOffline
+    removeFromCartOffline,
+    verifyUser,
+    contact
 };
