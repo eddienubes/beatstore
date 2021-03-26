@@ -113,7 +113,8 @@ class PaypalButtons extends React.Component {
         return (
             <>
                 {loading && <SpinnerAudio/>}
-                <div className={`paypal-buttons ${this.props.disabled ? 'disabled-paypal-button': null}`} ref={this.paypalRef}/>
+                <div className={`paypal-buttons ${this.props.disabled ? 'disabled-paypal-button' : null}`}
+                     ref={this.paypalRef}/>
             </>
         )
     }
@@ -122,11 +123,9 @@ class PaypalButtons extends React.Component {
 
 const mapStateToProps = (state) => {
     const {
-    userReducer
-}
-
-= state;
-return {cart: userReducer.cart, email: userReducer.email}
+        userReducer
+    } = state;
+    return {cart: userReducer.cart, email: userReducer.email}
 }
 
 export default scriptLoader

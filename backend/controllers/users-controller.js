@@ -14,24 +14,56 @@ const Beat = require('../models/beat');
 const {populateUserCart, populateUserPurchases} = require('../shared/products');
 const mailer = require('../shared/nodemailer');
 
-const getUserById = (req, res, next) => {
-    const userId = Number.parseInt(req.params.uid);
-    const user = DUMMY_USERS.find(u => u.id === userId);
+const getUserById = async (req, res, next) => {
+    const userId = req.params.uid;
+
+    let user;
+    try {
+        user = await User.findById(userId, {
+            password: false
+        });
+    }
+    catch (e) {
+        return next(new HttpError('An error occurred while trying to find user..', 500));
+    }
 
     if (!user) {
         return next(
-            new HttpError('Couldn\'nt find a user for specified id!', 404)
+            new HttpError('Couldn\'t find a user with specified id!', 404)
         );
     }
 
-    res.json(user);
+    let purchased;
+    try {
+        purchased = await populateUserPurchases(user, next);
+    }
+    catch (e) {
+        return next(new HttpError('An error occurred while trying to populate user..', 500));
+    }
+
+
+
+    res.status(200);
+    res.json({
+        message: 'Successfully retrieved a user',
+        user: {
+            ...user.toObject({getters: true}),
+            purchased
+        }
+    });
 };
 
 const getAllUsers = async (req, res, next) => {
     let users;
+    let {skip, limit} = req.query;
 
     try {
-        users = await User.find({}, '-password');
+        skip = skip && /^\d+$/.test(skip) ? Number(skip) : 0;
+        limit = limit && /^\d+$/.test(limit) ? Number(limit) : 10;
+
+        users = await User
+            .find({}, '-password', {skip})
+            .limit(limit);
     } catch (e) {
         return next(
             new HttpError('Invalid inputs passed, please, check your data'),
@@ -148,7 +180,7 @@ const login = async (req, res, next) => {
             new HttpError('Logging in has failed..', 500)
         );
     }
-    console.log(existingUser);
+
     if (!existingUser || !existingUser?.password || existingUser.status !== 'Active') {
         return next(
             new HttpError('Invalid credentials..', 401)
@@ -213,12 +245,13 @@ const login = async (req, res, next) => {
         normalisedPurchases = await populateUserPurchases(existingUser, next);
         await populateUserCart(existingUser, next);
     } catch (e) {
+        console.log(e.message);
         return next(new HttpError('Error while populating user purchases or user cart...', 500));
     }
 
     res.status(200);
     res.json({
-        message: 'successfully logged in',
+        message: 'Successfully logged in',
         user: {
             id: existingUser.id,
             email: existingUser.email,

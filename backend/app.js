@@ -13,13 +13,13 @@ const beatsRoutes = require('./routes/beats-routes');
 const usersRoutes = require('./routes/users-routes');
 const ordersRoutes = require('./routes/order-routes');
 const licensesRoutes = require('./routes/licenses-routes');
+const botRoutes = require('./routes/bot-routes');
 
 const HttpError = require('./models/http-error');
 
 const app = express();
 const server = http.createServer(app);
 
-const url = 'mongodb+srv://eddienubes:L1srThVA8KpVMYp8@cluster0.5u9ib.mongodb.net/beatstore?retryWrites=true&w=majority';
 
 // default and supported routes
 app.use(bodyParser.json());
@@ -39,6 +39,7 @@ app.use('/api/beats', beatsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/licenses', licensesRoutes);
+app.use('/api/bots', botRoutes);
 
 // audio stream handling
 // app.get('/api/data/beats/:bid', async (req, res, next) => {
@@ -127,7 +128,7 @@ app.use((error, req, res, next) => {
 
 // port configuration and connection to database
 mongoose
-    .connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
+    .connect(config.mongoDBUrl, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(async () => {
         server.listen(config.port);
         console.log('Server is up and running on port ' + config.port);

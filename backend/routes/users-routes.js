@@ -6,12 +6,13 @@ const checkStandardAuth = require('../middleware/check-standard-auth');
 const checkGoogleAuth = require('../middleware/check-google-auth');
 const checkRefreshToken = require('../middleware/check-refresh-token');
 const usersControllers = require('../controllers/users-controller')
+const checkBot = require('../middleware/check-bot-token');
 
 const router = Router();
 
-// router.get('/', usersControllers.getAllUsers);
-//
-// router.get('/:uid', usersControllers.getUserById);
+router.get('/', checkBot, usersControllers.getAllUsers);
+
+router.get('/:uid', checkBot, usersControllers.getUserById);
 
 router.post('/login', usersControllers.login);
 

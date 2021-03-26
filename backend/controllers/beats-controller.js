@@ -5,9 +5,21 @@ const {getAudioDurationInSeconds} = require('get-audio-duration');
 const fs = require('fs');
 const path = require('path');
 const config = require('../config');
-
 const Beat = require('../models/beat');
+const User = require('../models/user');
+const {promisify} = require('util');
+const upload = require('../middleware/file-upload').single('previewAudio');
+const mongoose = require('mongoose');
 
+const getBeatDuration = (totalSeconds) => {
+    const minutesInt = Math.floor(totalSeconds / 60);
+    const secondsInt = Math.floor(totalSeconds % 60);
+
+    const formattedMinutes = minutesInt < 10 ? '0' + String(minutesInt) : String(minutesInt);
+    const formattedSeconds = secondsInt < 10 ? '0' + String(secondsInt) : String(secondsInt);
+
+    return formattedMinutes + ':' + formattedSeconds;
+}
 
 const getBeatById = async (req, res, next) => {
     const beatId = req.params.bid;
@@ -34,8 +46,10 @@ const getBeatById = async (req, res, next) => {
 };
 
 const createBeat = async (req, res, next) => {
+    console.log(req.body);
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    if (!errors.isEmpty() || !req.files) {
+        console.log(errors);
         return next(new HttpError('Invalid inputs passed, please check your data', 422));
     }
 
@@ -49,11 +63,6 @@ const createBeat = async (req, res, next) => {
 
     const totalSeconds = await getAudioDurationInSeconds(filePath);
 
-    const minutesInt = Math.floor(totalSeconds / 60);
-    const secondsInt = Math.floor(totalSeconds % 60);
-
-    const formattedMinutes = minutesInt < 10 ? '0' + String(minutesInt) : String(minutesInt);
-    const formattedSeconds = secondsInt < 10 ? '0' + String(secondsInt) : String(secondsInt);
 
     const loadTime = new Date();
 
@@ -66,11 +75,11 @@ const createBeat = async (req, res, next) => {
         stemsUrl,
         bpm: bpm,
         scale,
-        tags,
         loadTime,
-        moods,
-        genres,
-        duration: formattedMinutes + ':' + formattedSeconds
+        tags: tags.replace(/\s/g, '').split(','),
+        moods: moods.replace(/\s/g, '').split(','),
+        genres: genres.replace(/\s/g, '').split(','),
+        duration: getBeatDuration(totalSeconds)
     });
 
     try {
@@ -85,15 +94,20 @@ const createBeat = async (req, res, next) => {
 };
 
 const updateBeatById = async (req, res, next) => {
+
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return next(new HttpError('Invalid inputs passed, please, check your data'));
     }
+    let fields = {};
 
-    const {title, audioUrl, imgUrl, bpm, scale, tags, moods, genres} = req.body;
+    for (const prop in req.body) {
+        if (Object.prototype.hasOwnProperty.call(req.body, prop)) {
+            fields[prop] = req.body[prop];
+        }
+    }
+
     const beatId = req.params.bid;
-
-    const duration = "3:00"; // Again DUMMY duration logic // TODO
 
     let updatedBeat;
     try {
@@ -105,14 +119,48 @@ const updateBeatById = async (req, res, next) => {
         );
     }
 
-    updatedBeat.title = title;
-    updatedBeat.audioUrl = audioUrl;
-    updatedBeat.imgUrl = imgUrl;
-    updatedBeat.bpm = bpm;
-    updatedBeat.scale = scale;
-    updatedBeat.tags = tags;
-    updatedBeat.moods = moods;
-    updatedBeat.genres = genres;
+    if (!updatedBeat) {
+        return next(
+            new HttpError('Such beat hasn\'t been found!'),
+            403
+        );
+    }
+
+    for (const prop in fields) {
+        updatedBeat[prop] = fields[prop];
+    }
+
+    if (req?.files?.previewAudio) {
+        const unlink = promisify(fs.unlink);
+
+        try {
+            await unlink(path.join(updatedBeat.previewAudioUrl))
+        } catch (e) {
+            console.log(e.message + ' from audio deletion on backend');
+        }
+
+        const filePath = path.join(req.files.previewAudio[0].path);
+        let totalSeconds;
+        try {
+            totalSeconds = await getAudioDurationInSeconds(filePath);
+        } catch (e) {
+            return next(new HttpError('Error while calculating duration..'), 500);
+        }
+        updatedBeat.duration = getBeatDuration(totalSeconds);
+        updatedBeat.previewAudioUrl = path.normalize(req.files.previewAudio[0].path);
+    }
+
+    if (req?.files?.cover) {
+        const unlink = promisify(fs.unlink);
+
+        try {
+            await unlink(path.join(updatedBeat.imgUrl))
+        } catch (e) {
+            console.log(e.message);
+            // return next(new HttpError('Something went wrong while deleting existing img..', 500));
+        }
+        updatedBeat.imgUrl = path.normalize(req.files.cover[0].path);
+    }
 
     try {
         await updatedBeat.save();
@@ -124,7 +172,12 @@ const updateBeatById = async (req, res, next) => {
     }
 
     res.status(200);
-    res.json({message: 'Successfully updated a beat..', updatedBeat: updatedBeat.toObject({getters: true})});
+    res.json(
+        {
+            message: 'Successfully updated a beat..',
+            updatedBeat: updatedBeat.toObject({getters: true})
+        }
+    );
 };
 
 const deleteBeat = async (req, res, next) => {
@@ -138,6 +191,19 @@ const deleteBeat = async (req, res, next) => {
             new HttpError('Couldn\'t find a beat with this id..'),
             500
         );
+    }
+
+    try {
+        await User.updateMany({
+            'cart.items': {$elemMatch: {beatId: beatId}}
+        }, {
+            $pull: {
+                'cart.items': {beatId}
+            }
+        });
+
+    } catch (e) {
+        return next(new HttpError('An error occurred while trying to find users with such beat in the cart..'), 500);
     }
 
     try {
@@ -163,7 +229,6 @@ const getAllBeats = async (req, res, next) => {
 
     if (filter) {
         jsonFilter = JSON.parse(filter);
-
 
         if (jsonFilter.bpm) {
             mongooseFilter.bpm = jsonFilter.bpm;

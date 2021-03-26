@@ -419,7 +419,7 @@ const login = (formState, userDataLocalStorage) => async (dispatch, getState) =>
             ...userDataLocalStorage,
             expiration: tokenExpirationDate
         }));
-
+        // TODO FETCH USER'S CART
         localStorage.setItem('userData', JSON.stringify({
             ...userDataLocalStorage,
             expiration: tokenExpirationDate.toISOString()
@@ -427,7 +427,6 @@ const login = (formState, userDataLocalStorage) => async (dispatch, getState) =>
         localStorage.removeItem('cartData');
 
         return;
-
     }
 
     const {email, password} = formState;

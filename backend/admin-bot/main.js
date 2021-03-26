@@ -1,78 +1,120 @@
-const {Telegraf, Markup} = require('telegraf');
+const {Telegraf, session, Stage} = require('telegraf');
+const WizardScene = require('telegraf/scenes/wizard');
 const botConfig = require('./config.json');
 const generalConfig = require('../config.json');
-const axios = require('axios');
-const url = require('url');
+const actions = require('./actions');
+const actionNames = require('./constants/action-constants');
+const commands = require('./commands');
+const hears = require('./hears');
+const scenes = require('./scenes');
+const sceneNames = require('./constants/wizard-scenes-constants');
 
 module.exports = async () => {
     const bot = new Telegraf(botConfig.token);
 
-    // bot.use(Telegraf.log());
-
-    bot.on('text', (ctx, next) => {
-        if (ctx.update.message.from.id.toString() !== botConfig.adminId) {
-            ctx.reply('🔒 You are not allowed to use admin panel! 🔒');
-        } else {
-            return next();
+    bot.on(["message"], async (ctx, next) => {
+        if (ctx.message.from.id.toString() !== botConfig.adminId) {
+            return await ctx.reply('Your not allowed to use this bot!');
         }
+        return await next();
     });
 
-    bot.start(ctx => {
-        ctx.reply('Welcome to admin panel',
-            Markup.keyboard([
-                Markup.button.callback('Beats'),
-                Markup.button.callback('Licenses'),
-                Markup.button.callback('Orders'),
-                Markup.button.callback('Users')
-            ])
-        );
-    });
+    const stage = new Stage([
+        scenes.editTitleScene,
+        scenes.editBPMScene,
+        scenes.editScaleScene,
+        scenes.editImageScene,
+        scenes.editPreviewAudioScene,
+        scenes.editMP3UrlScene,
+        scenes.editWavUrlScene,
+        scenes.editSTEMSUrlScene,
+        scenes.editTagsScene,
+        scenes.editMoodsScene,
+        scenes.editGenresScene,
+        scenes.beatDeletionConfirmationScene,
+        scenes.createNewBeatScene,
+        scenes.editLicensePrice,
+        scenes.editLicenseLabel
+    ]);
 
-    bot.hears('Beats', async (ctx, next) => {
-        const baseUrl = 'http://localhost:5000/api/beats';
-        const requestUrl = new url.URL(baseUrl);
-        requestUrl.searchParams.append('skip', '0');
-        requestUrl.searchParams.append('limit', '5');
+    bot.use(session());
+    bot.use(stage.middleware());
 
-        console.log(requestUrl.href);
+    bot.start(commands.mainMenu);
+    bot.command('register', commands.register);
+    bot.command('update', commands.updateBotToken);
 
-        let beats;
-        try {
-            const response = await axios.get(requestUrl.href);
-            beats = response.data.beats;
-        } catch (e) {
-            ctx.reply(e.message);
-            return next();
-        }
+    bot.action(new RegExp(actionNames.GET_BEAT_BY_ID), actions.getBeatById);
+    bot.action([actionNames.MOVE_BEATS_NEXT_PAGE, actionNames.MOVE_BEATS_PREVIOUS_PAGE], actions.controlButtons);
+    bot.action(actionNames.BACK_TO_ALL_BEATS_MENU, hears.allBeatsMenu);
+    bot.action(actionNames.EDIT_CURRENT_BEAT, actions.editBeatMenu);
+    bot.action(actionNames.BACK_FROM_EDITING_BEAT_TO_BEAT, actions.backFromEditingToBeat);
+    bot.action([
+        actionNames.EDIT_BEAT_TITLE,
+        actionNames.EDIT_BEAT_BPM,
+        actionNames.EDIT_BEAT_SCALE,
+        actionNames.EDIT_BEAT_TAGS,
+        actionNames.EDIT_BEAT_MP3_URL,
+        actionNames.EDIT_BEAT_WAV_URL,
+        actionNames.EDIT_BEAT_STEMS_URL,
+        actionNames.EDIT_BEAT_PREVIEW_AUDIO_URL,
+        actionNames.EDIT_BEAT_IMG_URL,
+        actionNames.EDIT_BEAT_GENRES,
+        actionNames.EDIT_BEAT_MOODS
+    ], actions.editBeat);
+    bot.action(actionNames.DELETE_CURRENT_BEAT, actions.deleteCurrentBeat);
+    bot.action(actionNames.LISTEN_TO_CURRENT_BEAT, actions.listenToCurrentBeat);
+    bot.action(actionNames.ADD_NEW_BEAT, actions.createNewBeat);
+    bot.action(new RegExp(actionNames.GET_LICENSE_BY_ID, 'gi'), actions.getLicenseById);
+    bot.action(actionNames.EDIT_CURRENT_LICENSE, actions.editLicenseMenu);
+    bot.action(actionNames.BACK_FROM_EDITING_LICENSE_TO_LICENSE, actions.backFromEditingLicenseToLicense);
+    bot.action(actionNames.BACK_FROM_LICENSE_TO_ALL_LICENSES_MENU, hears.allLicensesMenu);
+    bot.action([
+        actionNames.EDIT_LICENSE_LABEL,
+        actionNames.EDIT_LICENSE_PRICE
+    ], actions.editLicense);
+    bot.action([actionNames.MOVE_ORDERS_NEXT_PAGE, actionNames.MOVE_ORDERS_PREVIOUS_PAGE], actions.controlOrdersButtons);
+    bot.action(new RegExp(actionNames.GET_ORDER_BY_ID, 'gi'), actions.getOrderById);
+    bot.action(actionNames.GET_ORDER_CUSTOMER, actions.getOrderCustomer);
+    bot.action(actionNames.GET_ORDER_PRODUCTS, actions.getOrderProducts);
+    bot.action([
+        actionNames.MOVE_ORDER_PRODUCTS_PREVIOUS_PAGE,
+        actionNames.MOVE_ORDER_PRODUCTS_NEXT_PAGE
+    ], actions.controlOrderProductsButtons);
+    bot.action(actionNames.BACK_TO_ORDER, actions.backToOrder);
+    bot.action(actionNames.BACK_FROM_ORDER_TO_ORDER_MENU, actions.backFromOrderToOrderMenu);
+    bot.action(new RegExp(actionNames.GET_PRODUCT_BY_ID, 'gi'), actions.getProductById);
+    bot.action(actionNames.BACK_TO_PRODUCTS, actions.backToProducts);
+    bot.action([
+        actionNames.MOVE_USERS_NEXT_PAGE,
+        actionNames.MOVE_USERS_PREVIOUS_PAGE
+    ], actions.controlUserButtons);
+    bot.action(new RegExp(actionNames.GET_USER_BY_ID, 'gi'), actions.getUserById);
+    bot.action(actionNames.GET_PURCHASED_LIST, actions.getAllPurchases);
+    bot.action(actionNames.BACK_TO_ALL_USERS_MENU, actions.backToAllUsersMenu);
+    bot.action(actionNames.BACK_TO_USER, actions.backToUserDetails);
+    bot.action([
+        actionNames.MOVE_PURCHASES_NEXT_PAGE,
+        actionNames.MOVE_PURCHASES_PREVIOUS_PAGE
+    ], actions.controlButtonsPurchases);
+    bot.action(actionNames.BACK_TO_PURCHASES_LIST, actions.backToAllUsersPurchases);
+    bot.action(new RegExp(actionNames.GET_PURCHASE_BY_ID, 'gi'), actions.getPurchaseById);
 
-        // [[button], [button]]
+    bot.hears(new RegExp('Beats', 'gi'), hears.allBeatsMenu)
+    bot.hears(new RegExp('Licenses', 'gi'), hears.allLicensesMenu);
+    bot.hears(new RegExp('Orders', 'gi'), hears.allOrdersMenu);
+    bot.hears(new RegExp('Users', 'gi'), hears.allUsersMenu);
 
-        ctx.reply(
-            '🎵Beats list: ',
-            Markup.inlineKeyboard([
-                ...beats.map(b => {
-                    let dd = new Date(b.loadTime).getDate();
-                    let mm = new Date(b.loadTime).getMonth() + 1;
-                    let yyyy = new Date(b.loadTime).getFullYear();
+    bot.telegram.callApi('getUpdates', { offset: -1 })
+        .then(updates => updates.length && updates[0].update_id + 1)
+        .catch(e => console.log(e))
+        .then(offset => { if (offset) return bot.telegram.callApi('getUpdates', { offset }) })
+        .then(() => bot.launch())
+        .then(() => console.info('Bot is up and running on port ' + generalConfig.port))
+        .catch(err => console.error(err + ' by BOT'));
 
-                    if (dd < 10) {
-                        dd = '0' + dd;
-                    }
-                    if (mm < 10) {
-                        mm = '0' + mm;
-                    }
-                    const today = dd + '/' + mm + '/' + yyyy;
-
-                    const buttonText = '📋 ' + b.title + ' | 📅 Date: ' + today;
-                    return [Markup.button.callback(buttonText, b.title)];
-                }), [Markup.button.callback('<', '<'), Markup.button.callback('1 of 1', '1 of 1'), Markup.button.callback('>', '>')]])
-        );
-    });
-    
-    await bot.launch();
-
-    process.once('SIGINT', () => bot.stop('SIGINT'))
-    process.once('SIGTERM', () => bot.stop('SIGTERM'))
-
-    console.log('Bot is up and running on port ' + generalConfig.port);
+    process.once('SIGINT', async () => await bot.stop());
+    process.once('SIGTERM', async () => await bot.stop());
 }
+
+

@@ -10,7 +10,7 @@ const {paypalClient, paypalEnvironment} = require('../shared/paypal');
 const jwt = require('jsonwebtoken');
 const mailer = require('../shared/nodemailer');
 const {v4: uuid} = require('uuid');
-const {populateUserCart, populateUserPurchases, projectionForPopulation, baseSelect} = require('../shared/products');
+const {populateUserCart, populateUserPurchases, projectionForPopulation, baseSelect, populateOrder} = require('../shared/products');
 const axios = require('axios');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
@@ -72,10 +72,12 @@ const createOrderWithPaypal = async (req, res, next) => {
                 }),
             }
         ],
-        // 'application_content': {
-        //     'brand_name': 'Cherries By',
-        //     'landing_page': 'NO_PREFERENCE'
-        // },
+        'application_content': {
+            'brand_name': 'Cherries By',
+            'landing_page': 'NO_PREFERENCE',
+            'return_url': 'http://localhost:5000/api/orders/order-approved',
+            'cancel_url': 'http://localhost:5000/api/orders/order-failed'
+        },
     });
 
     let order;
@@ -281,10 +283,18 @@ const captureOrderWithWayforpay = async (req, res, next) => {
 
 
 const getAllOrders = async (req, res, next) => {
+    let {skip, limit} = req.query;
+
     let orders;
 
     try {
-        orders = await Order.find({});
+        skip = skip && /^\d+$/.test(skip) ? Number(skip) : 0;
+        limit = limit && /^\d+$/.test(limit) ? Number(limit) : 10;
+
+        orders = await Order
+            .find({}, {}, {skip})
+            .sort({date: -1})
+            .limit(limit);
     } catch (e) {
         return next(
             new HttpError('Getting all orders went wrong..'),
@@ -331,11 +341,71 @@ const getOrdersByUserId = async (req, res, next) => {
     });
 }
 
+const getOrderById = async (req, res, next) => {
+    const orderId = req.params.oid;
+
+    let order;
+    try {
+        order = await Order.findById(orderId);
+    }
+    catch (e) {
+        return next(new HttpError('An error occurred while trying to find order..', 500));
+    }
+
+    if (!order) {
+        return next(new HttpError('Order with specified id does not exist!', 402));
+    }
+
+    let customer;
+    try {
+        customer = await User.findOne({email: order.email}, {
+            password: false,
+            confirmationCode: false,
+            cart: false,
+            purchased: false
+        });
+    }
+    catch (e) {
+        return next(new HttpError('An error occurred while trying to find customer..', 500));
+    }
+
+    let normalizedProducts;
+    try {
+        normalizedProducts = await populateOrder(order);
+    }
+    catch (e) {
+        console.log(e.message, 'populating');
+        return next(new HttpError('An error occurred while populating order..', 500));
+    }
+
+    res.status(200);
+    res.json({
+        message: 'Successfully found order!',
+        order: {
+            ...order.toObject({getters: true}),
+            products: normalizedProducts,
+            customer: customer
+        }
+    })
+}
+
+const orderApproved = async (req, res, next) => {
+    console.log(req.body);
+
+}
+
+const orderFailed = async (req, res, next) => {
+    console.log(req.body);
+}
+
 module.exports = {
     createOrderWithPaypal,
     captureOrderWithPaypal,
     createOrderWithWayforpay,
     captureOrderWithWayforpay,
     getAllOrders,
-    getOrdersByUserId
+    getOrdersByUserId,
+    getOrderById,
+    orderApproved,
+    orderFailed
 };
