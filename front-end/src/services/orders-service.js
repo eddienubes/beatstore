@@ -10,4 +10,8 @@ export default class OrdersService {
     async capturePaypalOrder(orderId, token) {
         return axios.post(this.baseUrl + '/paypal-capture', {orderId, token});
     }
+
+    async createOrderWithWayforpay(email, cartItems) {
+        return axios.post(this.baseUrl + '/wayforpay-create', {email, cartItems});
+    }
 }

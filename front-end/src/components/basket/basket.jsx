@@ -9,6 +9,7 @@ import BrowseAllButton from "../browse-all-button";
 import AnimationContainer from "../../containers/animation-container";
 import SpinnerAudio from "../spinner-audio";
 import PaypalButtons from "../paypal-buttons/paypal-buttons";
+import WayforpayButtons from "../wayforpay-buttons/wayforpay-buttons";
 
 const Basket = () => {
     const [isDisabled, setDisabled] = React.useState(true);
@@ -139,9 +140,7 @@ const Basket = () => {
                                     pay via paypal or wayforpay
                                 </span>
                                     <PaypalButtons disabled={isDisabled}/>
-                                <button className={`wayforpay ${isDisabled ? 'disabled-wayforpay-button' : null}`} type="submit">
-                                    <span>Checkout</span>
-                                </button>
+                                    <WayforpayButtons disabled={isDisabled}/>
                             </div>
                         </div>
                     </form>

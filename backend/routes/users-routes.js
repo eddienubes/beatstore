@@ -14,6 +14,8 @@ router.get('/', checkBot, usersControllers.getAllUsers);
 
 router.get('/:uid', checkBot, usersControllers.getUserById);
 
+router.get('/cart/:uid', checkStandardAuth, usersControllers.getUserCartById);
+
 router.post('/login', usersControllers.login);
 
 router.post('/verify/:confirmationCode', usersControllers.verifyUser);

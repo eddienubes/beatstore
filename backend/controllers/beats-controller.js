@@ -10,6 +10,7 @@ const User = require('../models/user');
 const {promisify} = require('util');
 const upload = require('../middleware/file-upload').single('previewAudio');
 const mongoose = require('mongoose');
+const {populateUserCart} = require('../shared/products');
 
 const getBeatDuration = (totalSeconds) => {
     const minutesInt = Math.floor(totalSeconds / 60);
@@ -97,7 +98,7 @@ const updateBeatById = async (req, res, next) => {
 
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return next(new HttpError('Invalid inputs passed, please, check your data'));
+        return next(new HttpError('Invalid inputs passed, please, check your data', 403));
     }
     let fields = {};
 
@@ -186,11 +187,28 @@ const deleteBeat = async (req, res, next) => {
     let beat;
     try {
         beat = await Beat.findById(beatId);
+
     } catch (e) {
         return next(
             new HttpError('Couldn\'t find a beat with this id..'),
             500
         );
+    }
+
+    let users;
+    try {
+        users = await User.find({'cart.items': {$elemMatch: {beatId: beatId}}});
+        await Promise.all(users.map(async u => {
+            await populateUserCart(u, next);
+            const priceToSubtract = u.cart.items.find(i => i.beatId._id.toString() === beatId).licenseId.price;
+
+            u.cart.total -= priceToSubtract;
+            await u.save();
+        }));
+    }
+    catch (e) {
+        console.log(e.message);
+        return next(new HttpError('An error occurred while trying to populate users with such beat in the cart..'), 500);
     }
 
     try {
@@ -201,7 +219,6 @@ const deleteBeat = async (req, res, next) => {
                 'cart.items': {beatId}
             }
         });
-
     } catch (e) {
         return next(new HttpError('An error occurred while trying to find users with such beat in the cart..'), 500);
     }

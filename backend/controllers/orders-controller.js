@@ -10,7 +10,13 @@ const {paypalClient, paypalEnvironment} = require('../shared/paypal');
 const jwt = require('jsonwebtoken');
 const mailer = require('../shared/nodemailer');
 const {v4: uuid} = require('uuid');
-const {populateUserCart, populateUserPurchases, projectionForPopulation, baseSelect, populateOrder} = require('../shared/products');
+const {
+    populateUserCart,
+    populateUserPurchases,
+    projectionForPopulation,
+    baseSelect,
+    populateOrder
+} = require('../shared/products');
 const axios = require('axios');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
@@ -44,6 +50,9 @@ const createOrderWithPaypal = async (req, res, next) => {
 
     request.requestBody({
         'intent': 'CAPTURE',
+        'application_context': {
+            'brand_name': 'Cherries By',
+        },
         'purchase_units': [
             {
                 'amount': {
@@ -72,12 +81,7 @@ const createOrderWithPaypal = async (req, res, next) => {
                 }),
             }
         ],
-        'application_content': {
-            'brand_name': 'Cherries By',
-            'landing_page': 'NO_PREFERENCE',
-            'return_url': 'http://localhost:5000/api/orders/order-approved',
-            'cancel_url': 'http://localhost:5000/api/orders/order-failed'
-        },
+
     });
 
     let order;
@@ -164,6 +168,7 @@ const captureOrderWithPaypal = async (req, res, next) => {
         paypalOrderId: orderId,
         captureId: capture.result.id,
         orderId: uuid(),
+        payed: true
     });
 
     try {
@@ -173,7 +178,7 @@ const captureOrderWithPaypal = async (req, res, next) => {
         if (hasUser) {
             user.purchased.push(order);
             user.cart = [];
-            await user.save();
+            await user.save({session: sess});
             order.customerId = user._id;
         }
 
@@ -243,34 +248,102 @@ const captureOrderWithPaypal = async (req, res, next) => {
 const createOrderWithWayforpay = async (req, res, next) => {
     const {email, cartItems} = req.body;
 
+    let licenses;
+    let beats;
+    try {
+        const licensePromises = cartItems.map(async p => {
+            return License.findById(p.licenseId._id);
+        });
+        const beatsPromises = cartItems.map(async p => {
+            return Beat.findById(p.beatId._id);
+        });
+        licenses = await Promise.all(licensePromises);
+        beats = await Promise.all(beatsPromises);
+    } catch (e) {
+        return next(
+            new HttpError('Searching for a license or beat went wrong..'),
+            500
+        );
+    }
 
-    const md5Hasher = crypto.createHmac('md5', 'flk3409refn54t54t*FNJRET');
-    const hash = md5Hasher
-        .update('test_merch_n1;http://localhost:3000/;qwe123;1615559108837;1;USD;qwe;123qweqweasd;1;1;0.5;0.5')
-        .digest('hex');
+    const total = licenses.reduce((sum, {price}) => sum += price, 0);
 
-    const response = await axios.post('https://secure.wayforpay.com/pay?behavior=offline', {
-            "merchantAccount": "test_merch_n1",
-            "merchantAuthType": "SimpleSignature",
-            "merchantDomainName": "http://localhost:3000/",
-            "merchantTransactionSecureType": "AUTO",
-            "merchantSignature": hash,
-            "language": "AUTO",
-            "serviceUrl": "http://localhost:5000/api/orders/wayforpay-capture",
-            "orderReference": "qwe123",
-            "orderDate": "1615559108837",
-            "amount": 1,
-            "currency": "USD",
-            "productName": ["qwe", "123qweqweasd"],
-            "productPrice": [0.5, 0.5],
-            "productCount": [1, 1]
-        }
-    );
+    let orderProducts = [];
 
-    console.log(response.data);
+    for (let i = 0; i < cartItems.length; ++i) {
+        orderProducts.push({beatId: cartItems[i].beatId._id, licenseId: cartItems[i].licenseId._id});
+    }
+
+    const order = new Order({
+        email,
+        products: orderProducts,
+        date: new Date(),
+        total,
+        orderId: uuid(),
+    });
+
+    let productName;
+    try {
+        productName = licenses.map((l, i) => {
+            return beats[i].title + ' ' + l.label;
+        });
+    }
+    catch (e) {
+        return next(new HttpError('An error occurred while trying to create order! Please, reload your page and try again', 500));
+    }
+
+    const productPrice = licenses.map((l, i) => l.price.toFixed(2));
+
+    const purchaseObj = {
+        "merchantAccount": config.wayforpayMerchantAccount,
+        "merchantAuthType": "SimpleSignature",
+        "merchantDomainName": config.wayforpayMerchantDomainName,
+        "merchantTransactionSecureType": "AUTO",
+        "language": "AUTO",
+        "serviceUrl": "http://localhost:5000/api/orders/wayforpay-capture",
+        "orderReference": order._id.toString(),
+        "orderDate": order.date.getTime(),
+        "amount": total,
+        "currency": "USD",
+        "productName": productName,
+        "productPrice": productPrice,
+        "productCount": Array(licenses.length).fill(1),
+    }
+
+    const baseSignature =
+        purchaseObj.merchantAccount + ';' +
+        purchaseObj.merchantDomainName + ';' +
+        purchaseObj.orderReference + ';' +
+        purchaseObj.orderDate + ';' +
+        purchaseObj.amount + ';' +
+        purchaseObj.currency + ';' +
+        purchaseObj.productName.join(';') + ';' +
+        purchaseObj.productCount.join(';') + ';' +
+        purchaseObj.productPrice.join(';');
+
+    const md5Hasher = crypto.createHmac('md5', config.wayforpayMerchantSecretKey);
+
+    purchaseObj['merchantSignature'] = md5Hasher.update(baseSignature).digest('hex');
+
+    // try {
+    //     const response = await axios.post('https://secure.wayforpay.com/pay?behavior=offline', purchaseObj);
+    //     console.log(response.data);
+    // }
+    // catch (e) {
+    //     console.log(e.message);
+    //     return next(new HttpError('An error occurred while trying to create wayfoypay order!', 500));
+    // }
+
+    // try {
+    //     await order.save();
+    // }
+    // catch (e) {
+    //     console.log(e.message);
+    //     return next(new HttpError('An error occurred while trying to save order!', 500));
+    // }
 
     res.status(200);
-    res.json({});
+    res.json({message: 'Successfully created order!', order: purchaseObj});
 }
 
 const captureOrderWithWayforpay = async (req, res, next) => {
@@ -347,8 +420,7 @@ const getOrderById = async (req, res, next) => {
     let order;
     try {
         order = await Order.findById(orderId);
-    }
-    catch (e) {
+    } catch (e) {
         return next(new HttpError('An error occurred while trying to find order..', 500));
     }
 
@@ -364,16 +436,14 @@ const getOrderById = async (req, res, next) => {
             cart: false,
             purchased: false
         });
-    }
-    catch (e) {
+    } catch (e) {
         return next(new HttpError('An error occurred while trying to find customer..', 500));
     }
 
     let normalizedProducts;
     try {
         normalizedProducts = await populateOrder(order);
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e.message, 'populating');
         return next(new HttpError('An error occurred while populating order..', 500));
     }
@@ -391,11 +461,12 @@ const getOrderById = async (req, res, next) => {
 
 const orderApproved = async (req, res, next) => {
     console.log(req.body);
-
+    res.status(200);
 }
 
 const orderFailed = async (req, res, next) => {
     console.log(req.body);
+    res.status(200);
 }
 
 module.exports = {

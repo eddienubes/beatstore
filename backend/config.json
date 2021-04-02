@@ -13,5 +13,9 @@
     "paypalTokenSecret": "beatstore_secret_of_client_id_that I WILL NOT EXPOSE HERE!!!!!!!!!!!",
     "gmail": "cherriesbybeatstore@gmail.com",
     "gmailOwner": "cool.gegeg@gmail.com",
-    "gmailAppPass": "shtehabvbpatgxkg"
+    "gmailAppPass": "shtehabvbpatgxkg",
+    "wayforpayMerchantSecretKey": "flk3409refn54t54t*FNJRET",
+    "wayforpayMerchantDomainName": "www.market.ua",
+    "wayforpayMerchantAccount": "test_merch_n1"
+
 }

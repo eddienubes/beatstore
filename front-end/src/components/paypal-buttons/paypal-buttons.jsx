@@ -7,8 +7,6 @@ import scriptLoader from 'react-async-script-loader';
 
 import './paypal-buttons.scss';
 
-let PayPalButton = null;
-
 class PaypalButtons extends React.Component {
     constructor(props) {
         super(props);
@@ -51,10 +49,6 @@ class PaypalButtons extends React.Component {
 
         if (scriptJustLoaded) {
             if (isScriptLoadSucceed) {
-                // PayPalButton = window.paypal.Buttons.driver("react", {
-                //     React,
-                //     ReactDOM
-                // });
                 window.paypal.Buttons({
                     createOrder: this.createOrder,
                     onApprove: this.handleApprove,

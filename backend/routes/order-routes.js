@@ -27,7 +27,14 @@ router.post('/paypal-capture', [
     ordersController.captureOrderWithPaypal);
 
 router.post('/wayforpay-capture', ordersController.captureOrderWithWayforpay);
-router.get('/wayforpay-create', ordersController.createOrderWithWayforpay);
+router.post('/wayforpay-create', [
+        check('email')
+            .isEmail()
+            .not()
+            .isEmpty(),
+        check('cartItems').isArray()
+    ],
+    ordersController.createOrderWithWayforpay);
 
 router.post('/order-approved', ordersController.orderApproved);
 router.post('/order-failed', ordersController.orderFailed);

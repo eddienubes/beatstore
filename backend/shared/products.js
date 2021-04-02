@@ -1,5 +1,7 @@
 const baseSelect = 'previewAudioUrl imgUrl title scale bpm';
 const {v4: uuid} = require('uuid');
+const HttpError = require('../models/http-error');
+const User = require('../models/user');
 
 const beatProjectionsToLicenseTypes = [
     {
@@ -58,7 +60,14 @@ const populateUserCart = async (user, next) => {
         },
         {path: "cart.items.licenseId"}]).execPopulate();
 
-    user.cart.total = user.cart.items.reduce((t, i) => t += i.licenseId.price, 0);;
+    user.cart.total = user.cart.items.reduce((t, i) => t += i.licenseId.price, 0);
+
+    try {
+        await user.save();
+    }
+    catch (e) {
+        return next(new HttpError('Error while saving user to db!', 500));
+    }
 }
 
 const populateUserPurchases = async (user, next) => {

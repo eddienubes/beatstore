@@ -7,7 +7,7 @@ const path = require('path');
 const stream = require('stream');
 const {promisify} = require('util');
 const config = require('./config.json');
-const adminBot = require('./admin-bot/main');
+const adminBot = require('../admin-bot/main');
 
 const beatsRoutes = require('./routes/beats-routes');
 const usersRoutes = require('./routes/users-routes');

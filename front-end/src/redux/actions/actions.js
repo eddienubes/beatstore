@@ -415,13 +415,26 @@ const login = (formState, userDataLocalStorage) => async (dispatch, getState) =>
 
     if (!formState) {
         const tokenExpirationDate = new Date(userDataLocalStorage.expiration) || new Date(new Date().getTime() + 1000 * 60 * 60);
+
+
+        let cart;
+        try {
+            const response = await authService.getUserCartById(userDataLocalStorage.id, userDataLocalStorage.token);
+            cart = response.data.cart;
+        }
+        catch (e) {
+            dispatch(logInFailure(e.response.data));
+        }
+
         dispatch(logInSuccess({
             ...userDataLocalStorage,
+            cart: cart,
             expiration: tokenExpirationDate
         }));
-        // TODO FETCH USER'S CART
+
         localStorage.setItem('userData', JSON.stringify({
             ...userDataLocalStorage,
+            cart: cart,
             expiration: tokenExpirationDate.toISOString()
         }));
         localStorage.removeItem('cartData');

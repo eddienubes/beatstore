@@ -20,9 +20,10 @@ const orderSchema = new mongoose.Schema({
     },
     date: {type: Date, required: true},
     total: {type: Number, required: true},
-    captureId: {type: String, required: false, unique: true},
-    paypalOrderId: {type: String, required: false, unique: true},
-    orderId: {type: String, required: true, unique: true}
+    captureId: {type: String, required: false},
+    paypalOrderId: {type: String, required: false},
+    orderId: {type: String, required: true, unique: true},
+    payed: {type: Boolean, required: true, default: false}
 });
 
 module.exports = mongoose.model('Order', orderSchema);

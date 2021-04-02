@@ -15,11 +15,12 @@ $heightForNotLarge: 50px;
         //margin-top: 10px!important;
         color: white!important;
         overflow: hidden;
-        white-space: nowrap;
+        //white-space: nowrap;
         text-overflow: ellipsis;
         border: none !important;
         min-height: 40px !important;
         font-weight: 400;
+        word-break: break-word;
     }
     .button {
         border-radius: 0 !important;
@@ -43,11 +44,12 @@ $heightForNotLarge: 50px;
     }
     .img-container {
         height: $heightForNotLarge !important;
-        width: $heightForNotLarge !important;
+        max-width: $heightForNotLarge !important;
         padding: 5px!important;
         position: relative;
         .img-cart {
-            height: 100%;
+            height: $heightForNotLarge;
+            width: $heightForNotLarge;
             object-fit: cover;
             text-align: center;
         }
@@ -149,3 +151,4 @@ $heightForNotLarge: 50px;
         transform: translateX(-100%);
     }
 }
+

@@ -43,7 +43,6 @@ class AuthService {
     }
 
     async appendToCart(userId, product, token) {
-        console.log(token);
         return axios.post(this.baseUrl + `/${userId}` + '/cart', product, {
             headers: {
                 Authorization: 'Bearer ' + token
@@ -93,6 +92,14 @@ class AuthService {
             subject,
             name,
             message
+        });
+    }
+
+    async getUserCartById(id, token) {
+        return axios.get(this.baseUrl + '/cart/' + id, {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
         });
     }
 }

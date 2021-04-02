@@ -1,0 +1,31 @@
+.wayforpay {
+    transition: .2s ease-in-out;
+    display: inline-block !important;
+    background: #2B3160 url('https://s3.eu-central-1.amazonaws.com/w4p-merch/button/bg5x2.png') no-repeat center right;
+    background-size: cover;
+    width: 100% !important;
+    height: 46px !important;
+    border: none !important;
+    border-radius: 4px !important;
+    padding: 18px !important;
+    text-decoration: none !important;
+    box-shadow: 3px 2px 8px rgba(71, 66, 66, 0.22) !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+    &:hover {
+
+    }
+    &:hover span {
+        letter-spacing: 1.2px;
+    }
+    span {
+        transition: .2s ease-in-out;
+        margin-top: -30px;
+        font-weight: bold !important;
+        color: #ffffff !important;
+    }
+}
+.disabled-wayforpay-button {
+    pointer-events: none;
+    filter: brightness(20%);
+}

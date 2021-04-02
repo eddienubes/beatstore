@@ -71,7 +71,7 @@
         display: flex;
         flex-direction: column;
         margin: 0 20px 0;
-        min-width: 330px;
+        min-width: 310px;
         padding: 30px 25px 10px 25px !important;
 
         p {
@@ -162,31 +162,7 @@
                     margin-top: 5px;
                     margin-bottom: 2px;
                 }
-                .wayforpay {
-                    transition: .2s ease-in-out;
-                    display: inline-block !important;
-                    background: #2B3160 url('https://s3.eu-central-1.amazonaws.com/w4p-merch/button/bg5x2.png') no-repeat center right;
-                    background-size: cover;
-                    width: 100% !important;
-                    height: 46px !important;
-                    border: none !important;
-                    border-radius: 4px !important;
-                    padding: 18px !important;
-                    text-decoration: none !important;
-                    box-shadow: 3px 2px 8px rgba(71, 66, 66, 0.22) !important;
-                    text-align: left !important;
-                    box-sizing: border-box !important;
 
-                    span {
-                        margin-top: -30px;
-                        font-weight: bold !important;
-                        color: #ffffff !important;
-                    }
-                }
-                .disabled-wayforpay-button {
-                    pointer-events: none;
-                    filter: brightness(20%);
-                }
             }
         }
 
@@ -370,5 +346,16 @@
     }
     100% {
         transform: translateX(-100%);
+    }
+}
+
+@media screen and (max-width: 450px) {
+    .sidebar {
+        .sidebar-container {
+            margin: 0 0 0 0;
+        }
+    }
+    .basket__container {
+        padding: 0!important;
     }
 }
