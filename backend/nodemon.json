@@ -1,0 +1,22 @@
+{
+    "env": {
+        "secret": "beatstore_cherries_by_SECRET_token_do_not_share",
+        "refreshTokenSecret": "beatstore_cherries_by_SECRET_refresh_token_do_not_share_as_well",
+        "confirmationTokenSecret": "beatstore_email_has_been_sent_token_to_confirm_user_registration_1337",
+        "mainClientIP": "http://localhost:3000/confirmation",
+        "currentIP": "http://localhost:5000/",
+        "port": 5000,
+        "mongoDBUrl": "mongodb+srv://eddienubes:L1srThVA8KpVMYp8@cluster0.5u9ib.mongodb.net/beatstore?retryWrites=true&w=majority",
+        "tokenExpireTime": "1h",
+        "refreshTokenExpireTime": "30d",
+        "paypalClientId": "AYbytmYzSknNDYw7g0Ip917i0u8HSb6i96RgeTAvNlLrSn8YiaIAlvfzV47_EM3ln-4MLOxZBTTltT4x",
+        "paypalClientSecret": "EDagp7_cJ4c_RI2vBkqXmKhBf0JHCSio0uyLwCHc7nGD2gNaRd4o5QBmh5eDyU7uoUeO3N-_JAJ8oxE2",
+        "paypalTokenSecret": "beatstore_secret_of_client_id_that I WILL NOT EXPOSE HERE!!!!!!!!!!!",
+        "gmail": "cherriesbybeatstore@gmail.com",
+        "gmailOwner": "cool.gegeg@gmail.com",
+        "gmailAppPass": "shtehabvbpatgxkg",
+        "wayforpayMerchantSecretKey": "flk3409refn54t54t*FNJRET",
+        "wayforpayMerchantDomainName": "www.market.ua",
+        "wayforpayMerchantAccount": "test_merch_n1"
+    }
+}
