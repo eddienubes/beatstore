@@ -1,7 +1,5 @@
 const {Telegraf, session, Stage} = require('telegraf');
 const WizardScene = require('telegraf/scenes/wizard');
-const botConfig = require('./config.json');
-const generalConfig = require('../backend/config.json');
 const actions = require('./actions');
 const actionNames = require('./constants/action-constants');
 const commands = require('./commands');
@@ -9,10 +7,10 @@ const hears = require('./hears');
 const scenes = require('./scenes');
 const sceneNames = require('./constants/wizard-scenes-constants');
 
-const bot = new Telegraf(botConfig.token);
+const bot = new Telegraf(process.env.token);
 
 bot.on(["message"], async (ctx, next) => {
-    if (ctx.message.from.id.toString() !== botConfig.adminId) {
+    if (ctx.message.from.id.toString() !== process.env.adminId) {
         return await ctx.reply('Your not allowed to use this bot!');
     }
     return await next();
@@ -111,7 +109,7 @@ bot.telegram.callApi('getUpdates', {offset: -1})
         if (offset) return bot.telegram.callApi('getUpdates', {offset})
     })
     .then(() => bot.launch())
-    .then(() => console.info('Bot is up and running on port ' + generalConfig.port))
+    .then(() => console.info('Bot is up and running on port ' + process.env.port))
     .catch(err => console.error(err + ' by BOT'));
 
 process.once('SIGINT', async () => await bot.stop());

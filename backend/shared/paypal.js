@@ -1,4 +1,3 @@
-const config = require('../config.json');
 const paypal = require('@paypal/checkout-server-sdk');
 
 const paypalClient = (environment) => {
@@ -6,7 +5,7 @@ const paypalClient = (environment) => {
 }
 
 const paypalEnvironment = () => {
-    return new paypal.core.SandboxEnvironment(config.paypalClientId, config.paypalClientSecret);
+    return new paypal.core.SandboxEnvironment(process.env.paypalClientId, process.env.paypalClientSecret);
 }
 
 module.exports = {

@@ -4,7 +4,6 @@ const User = require('../models/user');
 const Beat = require('../models/beat');
 const License = require('../models/license');
 const HttpError = require('../models/http-error');
-const config = require('../config.json');
 const paypal = require('@paypal/checkout-server-sdk');
 const {paypalClient, paypalEnvironment} = require('../shared/paypal');
 const jwt = require('jsonwebtoken');
@@ -101,7 +100,7 @@ const createOrderWithPaypal = async (req, res, next) => {
 
     const paypalDataToken = jwt.sign(
         {email: email, products: orderProducts, date: new Date(), total, orderId: order.result.id},
-        config.paypalTokenSecret,
+        process.env.paypalTokenSecret,
         {expiresIn: '1h'});
 
     res.status(200);
@@ -116,7 +115,7 @@ const captureOrderWithPaypal = async (req, res, next) => {
     let tokenPayload;
 
     try {
-        tokenPayload = jwt.verify(token, config.paypalTokenSecret);
+        tokenPayload = jwt.verify(token, process.env.paypalTokenSecret);
     } catch (e) {
         console.log(e.message);
         return next(new HttpError('Capturing order has failed, please try again', 500));
@@ -295,9 +294,9 @@ const createOrderWithWayforpay = async (req, res, next) => {
     const productPrice = licenses.map((l, i) => l.price.toFixed(2));
 
     const purchaseObj = {
-        "merchantAccount": config.wayforpayMerchantAccount,
+        "merchantAccount": process.env.wayforpayMerchantAccount,
         "merchantAuthType": "SimpleSignature",
-        "merchantDomainName": config.wayforpayMerchantDomainName,
+        "merchantDomainName": process.env.wayforpayMerchantDomainName,
         "merchantTransactionSecureType": "AUTO",
         "language": "AUTO",
         "serviceUrl": "http://localhost:5000/api/orders/wayforpay-capture",
@@ -321,7 +320,7 @@ const createOrderWithWayforpay = async (req, res, next) => {
         purchaseObj.productCount.join(';') + ';' +
         purchaseObj.productPrice.join(';');
 
-    const md5Hasher = crypto.createHmac('md5', config.wayforpayMerchantSecretKey);
+    const md5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
 
     purchaseObj['merchantSignature'] = md5Hasher.update(baseSignature).digest('hex');
 

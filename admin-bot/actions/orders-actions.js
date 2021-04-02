@@ -2,7 +2,6 @@ const date = require('../util/date');
 const actions = require('../constants/action-constants');
 const BeatstoreService = require('../services/beatstore-service');
 const beatstoreService = new BeatstoreService();
-const botConfig = require('../config.json');
 const {Markup} = require('telegraf');
 const hears = require('../hears');
 
@@ -52,8 +51,8 @@ const controlOrdersButtons = async (ctx, next) => {
     let newOrders;
     try {
         const response = await beatstoreService.getAllOrders(
-            (nextPage - 1) * botConfig.maxItemsPerPage,
-            botConfig.maxItemsPerPage);
+            (nextPage - 1) * process.env.maxItemsPerPage,
+            process.env.maxItemsPerPage);
         newOrders = response.data.orders;
     } catch (e) {
         await ctx.reply(e.response.data.message);
@@ -133,9 +132,9 @@ const getOrderProducts = async (ctx, next) => {
     }
     const allProducts = ctx.session.currentOrder.products;
 
-    const limitedProducts = allProducts.slice(0, botConfig.maxItemsPerPage);
+    const limitedProducts = allProducts.slice(0, process.env.maxItemsPerPage);
 
-    const pagesAmount = Math.ceil(allProducts.length / botConfig.maxItemsPerPage);
+    const pagesAmount = Math.ceil(allProducts.length / process.env.maxItemsPerPage);
     await ctx.reply(
         '📦 <b>Products list: </b> \n\n',
         {
@@ -187,8 +186,8 @@ const controlOrderProductsButtons = async (ctx, next) => {
 
     const newProducts = ctx.session.currentOrder.products
         .slice(
-            (nextPage - 1) * botConfig.maxItemsPerPage,
-            (nextPage - 1) * botConfig.maxItemsPerPage + botConfig.maxItemsPerPage);
+            (nextPage - 1) * process.env.maxItemsPerPage,
+            (nextPage - 1) * process.env.maxItemsPerPage + process.env.maxItemsPerPage);
 
 
     try {

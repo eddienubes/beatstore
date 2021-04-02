@@ -4,7 +4,6 @@ const {validationResult} = require('express-validator');
 const {getAudioDurationInSeconds} = require('get-audio-duration');
 const fs = require('fs');
 const path = require('path');
-const config = require('../config');
 const Beat = require('../models/beat');
 const User = require('../models/user');
 const {promisify} = require('util');

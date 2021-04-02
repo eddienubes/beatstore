@@ -1,6 +1,5 @@
 const axios = require('axios');
 const url = require('url');
-const botConfig = require('../config.json');
 
 module.exports = class BeatstoreService {
     baseBeatsUrl = 'http://localhost:5000/api/beats';
@@ -28,7 +27,7 @@ module.exports = class BeatstoreService {
         return axios.patch(requestUrl.href, data, {
             headers: {
                 ...headers,
-                'Authorization': 'Bearer ' + botConfig.token + ' ID: ' + botConfig.botId
+                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
             }
         });
     }
@@ -37,7 +36,7 @@ module.exports = class BeatstoreService {
         const requestUrl = new url.URL(this.baseBeatsUrl + `/${id}`);
         return axios.delete(requestUrl.href, {
             headers: {
-                'Authorization': 'Bearer ' + botConfig.token + ' ID: ' + botConfig.botId
+                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
             }
         });
     }
@@ -46,7 +45,7 @@ module.exports = class BeatstoreService {
         return axios.post(this.baseBeatsUrl, data, {
             headers: {
                 ...headers,
-                'Authorization': 'Bearer ' + botConfig.token + ' ID: ' + botConfig.botId
+                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
             }
         });
     }
@@ -62,7 +61,7 @@ module.exports = class BeatstoreService {
     async updateLicenseById(id, data) {
         return axios.patch(this.baseLicensesUrl + `/${id}`, data, {
             headers: {
-                'Authorization': 'Bearer ' + botConfig.token + ' ID: ' + botConfig.botId
+                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
             }
         });
     }
@@ -75,7 +74,7 @@ module.exports = class BeatstoreService {
 
         return axios.get(requestUrl.href, {
             headers: {
-                'Authorization': 'Bearer ' + botConfig.token + ' ID: ' + botConfig.botId
+                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
             }
         });
     }
@@ -83,7 +82,7 @@ module.exports = class BeatstoreService {
     async getOrderById(id) {
         return axios.get(this.baseOrderUrl + `/${id}`, {
             headers: {
-                'Authorization': 'Bearer ' + botConfig.token + ' ID: ' + botConfig.botId
+                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
             }
         });
     }
@@ -96,7 +95,7 @@ module.exports = class BeatstoreService {
 
         return axios.get(requestUrl.href, {
             headers: {
-                'Authorization': 'Bearer ' + botConfig.token + ' ID: ' + botConfig.botId
+                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
             }
         });
     }
@@ -104,22 +103,22 @@ module.exports = class BeatstoreService {
     async getUserById(id) {
         return axios.get(this.baseUsersUrl + `/${id}`, {
             headers: {
-                'Authorization': 'Bearer ' + botConfig.token + ' ID: ' + botConfig.botId
+                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
             }
         });
     }
 
     async register() {
         return axios.post(this.baseBotsUrl, {
-            botId: botConfig.botId,
-            token: botConfig.token
+            botId: process.env.botId,
+            token: process.env.token
         })
     }
 
     async updateToken(token) {
         return axios.patch(this.baseBotsUrl, {
-            botId: botConfig.botId,
-            newToken: botConfig.token,
+            botId: process.env.botId,
+            newToken: process.env.token,
             token: token
         });
     }

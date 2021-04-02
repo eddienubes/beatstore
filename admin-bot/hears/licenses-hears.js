@@ -1,6 +1,5 @@
 const {Markup} = require('telegraf');
 const BeatstoreService = require('../services/beatstore-service');
-const botConfig = require('../config.json');
 const actions = require('../constants/action-constants');
 const beatstoreService = new BeatstoreService();
 

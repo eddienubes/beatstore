@@ -6,8 +6,6 @@ const fs = require('fs');
 const path = require('path');
 const stream = require('stream');
 const {promisify} = require('util');
-const config = require('./config.json');
-const adminBot = require('../admin-bot/main');
 
 const beatsRoutes = require('./routes/beats-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -128,10 +126,9 @@ app.use((error, req, res, next) => {
 
 // port configuration and connection to database
 mongoose
-    .connect(config.mongoDBUrl, {useNewUrlParser: true, useUnifiedTopology: true})
+    .connect(process.env.mongoDBUrl, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(async () => {
-        server.listen(config.port);
-        console.log('Server is up and running on port ' + config.port);
-        await adminBot();
+        server.listen(process.env.port);
+        console.log('Server is up and running on port ' + process.env.port);
     })
     .catch(async (err) => console.log(err.message));

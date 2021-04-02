@@ -1,4 +1,3 @@
-const config = require('../config.json');
 const HttpError = require('../models/http-error');
 const jwt = require('jsonwebtoken');
 const RefreshToken = require('../models/refresh-token');
@@ -15,7 +14,7 @@ module.exports = async (req, res, next) => {
             return next(new HttpError('Refresh token was not specified!', 403));
         }
 
-        const decodedTokenData = jwt.verify(refreshToken, config.refreshTokenSecret);
+        const decodedTokenData = jwt.verify(refreshToken, process.env.refreshTokenSecret);
         const existingToken  = await RefreshToken.findOne({email: decodedTokenData.email});
 
         if (!existingToken) {

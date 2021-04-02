@@ -1,5 +1,4 @@
 const nodemailer = require('nodemailer');
-const config = require('../config.json');
 const hbs = require('nodemailer-express-handlebars');
 const path = require('path');
 
@@ -7,7 +6,7 @@ const sendEmail = async (receiverEmail, subject = 'Beatstore mail', template, co
     const transporter = createTransporter();
 
     const mailOptions = {
-        from: config.gmail,
+        from: process.env.gmail,
         to: receiverEmail,
         subject: subject,
         template,
@@ -33,8 +32,8 @@ const createTransporter = () => {
     return nodemailer.createTransport({
         service: 'gmail',
         auth: {
-            user: config.gmail,
-            pass: config.gmailAppPass
+            user: process.env.gmail,
+            pass: process.env.gmailAppPass
         }
     });
 }

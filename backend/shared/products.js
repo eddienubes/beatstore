@@ -176,27 +176,40 @@ const populateOrder = async (order) => {
                             .split(/\s+/);
 
                         licenseUrlKeys.map((l, index) => {
-                            links.push({
-                                label: proj.labels[index],
-                                url: order.products[productIndex].beatId[l]
+                            if (!order.products[productIndex].beatId) {
+                                links.push({
+                                    label: 'Beat was deleted, please contact me! Sorry for inconvenience :(',
+                                    url: 'Deleted..'
+                                });
+                            }
+                            else {
+                                links.push({
+                                    label: proj.labels[index],
+                                    url: order.products[productIndex].beatId[l]
+                                });
+                            }
+                        });
+                        if (!order.products[productIndex].beatId) {
+                            normalizedProducts.push(deleteBeatObj);
+                        }
+                        else {
+                            normalizedProducts.push({
+                                id: uuid(),
+                                beatId: order.products[productIndex].beatId._id.toString(),
+                                licenseId: order.products[productIndex].licenseId._id.toString(),
+                                orderId: order._id.toString(),
+                                licenseType: order.products[productIndex].licenseId.type,
+                                label: order.products[productIndex].licenseId.label,
+                                title: order.products[productIndex].beatId.title,
+                                bpm: order.products[productIndex].beatId.bpm,
+                                scale: order.products[productIndex].beatId.scale,
+                                imgUrl: order.products[productIndex].beatId.imgUrl,
+                                previewAudioUrl: order.products[productIndex].beatId.previewAudioUrl,
+                                links: links,
+                                price: order.products[productIndex].licenseId.price,
+                                date: order.date
                             });
-                        });
-                        normalizedProducts.push({
-                            id: uuid(),
-                            beatId: order.products[productIndex].beatId._id.toString(),
-                            licenseId: order.products[productIndex].licenseId._id.toString(),
-                            orderId: order._id.toString(),
-                            licenseType: order.products[productIndex].licenseId.type,
-                            label: order.products[productIndex].licenseId.label,
-                            title: order.products[productIndex].beatId.title,
-                            bpm: order.products[productIndex].beatId.bpm,
-                            scale: order.products[productIndex].beatId.scale,
-                            imgUrl: order.products[productIndex].beatId.imgUrl,
-                            previewAudioUrl: order.products[productIndex].beatId.previewAudioUrl,
-                            links: links,
-                            price: order.products[productIndex].licenseId.price,
-                            date: order.date
-                        });
+                        }
                     });
             }
         }));

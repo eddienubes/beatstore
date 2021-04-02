@@ -1,6 +1,5 @@
 const {Markup} = require('telegraf');
 const BeatstoreService = require('../services/beatstore-service');
-const botConfig = require('../config.json');
 const date = require('../util/date');
 const actions = require('../constants/action-constants');
 const beatstoreService = new BeatstoreService();
@@ -11,7 +10,7 @@ const allBeatsMenu = async (ctx, next) => {
     let beatsCount;
     let beats;
     try {
-        const response = await beatstoreService.getAllBeats(0, botConfig.maxItemsPerPage);
+        const response = await beatstoreService.getAllBeats(0, process.env.maxItemsPerPage);
         const beatsCountResponse = await beatstoreService.getAllBeats(0, 9999);
         beats = response.data.beats;
         beatsCount = beatsCountResponse.data.beats.length;
@@ -20,7 +19,7 @@ const allBeatsMenu = async (ctx, next) => {
         return next();
     }
 
-    const pagesAmount = Math.ceil(beatsCount / botConfig.maxItemsPerPage);
+    const pagesAmount = Math.ceil(beatsCount / process.env.maxItemsPerPage);
 
     await ctx.reply(
         '🎸 <b>Beats list: </b> \n\n' +

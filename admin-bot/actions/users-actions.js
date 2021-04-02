@@ -2,7 +2,6 @@ const date = require('../util/date');
 const actions = require('../constants/action-constants');
 const BeatstoreService = require('../services/beatstore-service');
 const beatstoreService = new BeatstoreService();
-const botConfig = require('../config.json');
 const {Markup} = require('telegraf');
 const hears = require('../hears');
 
@@ -53,8 +52,8 @@ const controlUserButtons = async (ctx, next) => {
     let newUsers;
     try {
         const response = await beatstoreService.getAllUsers(
-            (nextPage - 1) * botConfig.maxItemsPerPage,
-            botConfig.maxItemsPerPage);
+            (nextPage - 1) * process.env.maxItemsPerPage,
+            process.env.maxItemsPerPage);
         newUsers = response.data.users;
     } catch (e) {
         await ctx.reply(e.response.data.message);
@@ -117,9 +116,9 @@ const getAllPurchases = async (ctx, next) => {
 
     const allPurchases = ctx.session.currentUser.purchased;
 
-    const limitedPurchases = allPurchases.slice(0, botConfig.maxItemsPerPage);
+    const limitedPurchases = allPurchases.slice(0, process.env.maxItemsPerPage);
 
-    const pagesAmount = Math.ceil(allPurchases.length / botConfig.maxItemsPerPage);
+    const pagesAmount = Math.ceil(allPurchases.length / process.env.maxItemsPerPage);
 
     await ctx.reply(
         '📦 <b>Purchases list: </b>',
@@ -172,8 +171,8 @@ const controlButtonsPurchases = async (ctx, next) => {
 
     const newPurchases = ctx.session.currentUser.purchased
         .slice(
-            (nextPage - 1) * botConfig.maxItemsPerPage,
-            (nextPage - 1) * botConfig.maxItemsPerPage + botConfig.maxItemsPerPage);
+            (nextPage - 1) * process.env.maxItemsPerPage,
+            (nextPage - 1) * process.env.maxItemsPerPage + process.env.maxItemsPerPage);
 
 
     try {
