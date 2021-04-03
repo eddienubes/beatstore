@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default class BeatstoreService {
-    baseUrl = 'http://localhost:5000/api/beats';
+    baseUrl = process.env.REACT_APP_BACKEND_ASSET_URL + 'beats';
     // getBeats = () => {
     //     return [{
     //         "id": 1,

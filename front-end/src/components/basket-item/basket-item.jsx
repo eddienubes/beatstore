@@ -12,7 +12,7 @@ import useAudio from "../../hooks/audio-hook";
 const BasketItem = ({id, product, amount, licenseType, imgUrl, className, setShow, beatId, isPlaying, currentId, previousId, type}) => {
     const dispatch = useDispatch();
 
-    const imageUrl = useMemo(() => 'http://localhost:5000/api/' + imgUrl, [imgUrl]);
+    const imageUrl = useMemo(() => process.env.REACT_APP_BACKEND_ASSET_URL + imgUrl, [imgUrl]);
 
     const onClick = (e) => {
         e.stopPropagation();

@@ -123,5 +123,5 @@ const mapStateToProps = (state) => {
 }
 
 export default scriptLoader
-('https://www.paypal.com/sdk/js?client-id=AYbytmYzSknNDYw7g0Ip917i0u8HSb6i96RgeTAvNlLrSn8YiaIAlvfzV47_EM3ln-4MLOxZBTTltT4x')
+(`https://www.paypal.com/sdk/js?client-id=${process.env.REACT_APP_PAYPAL_CLIENT_ID}`)
 (connect(mapStateToProps)(PaypalButtons));

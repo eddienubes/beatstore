@@ -42,7 +42,7 @@ const LicenseTypeModal = (props) => {
     'VIA CONTACT FORM OR USING' +
     'EMAIL/INSTAGRAM'], []);
     const popups = useMemo(() => ['CLICK TO ADD IN YOUR CART', 'CLICK TO GO TO CONTACT PAGE'], []);
-    const imageUrl = useMemo(() => 'http://localhost:5000/api/' + props.track.imgUrl, [props.track]);
+    const imageUrl = useMemo(() => process.env.REACT_APP_BACKEND_ASSET_URL + props.track.imgUrl, [props.track]);
 
     if (isLoading) {
         return (<SpinnerAudio/>);

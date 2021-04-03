@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default class LicensesService {
-    baseUrl = 'http://localhost:5000/api/licenses';
+    baseUrl = process.env.REACT_APP_BACKEND_ASSET_URL + 'licenses';
 
     async getAllLicenses() {
         return axios.get(this.baseUrl);

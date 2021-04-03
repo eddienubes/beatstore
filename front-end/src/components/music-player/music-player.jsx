@@ -273,7 +273,7 @@ const MusicPlayer = () => {
     }
 
     useEffect(() => {
-        const baseUrl = 'http://localhost:5000/api/';
+        const baseUrl = process.env.REACT_APP_BACKEND_ASSET_URL;
         const beatstoreService = new BeatstoreService();
 
         if (beatList.length > 0 && id) {
@@ -297,7 +297,7 @@ const MusicPlayer = () => {
             });
             beatstoreService.getBeatById(id).then(({data}) => {
                 const itsUrl = baseUrl + data.beat.previewAudioUrl.replaceAll('\\', '/');
-                const imageUrl = 'http://localhost:5000/api/' + data.beat.imgUrl;
+                const imageUrl = process.env.REACT_APP_BACKEND_ASSET_URL + data.beat.imgUrl;
 
                 setPlayerState(playerState => {
                     return {

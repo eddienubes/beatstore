@@ -86,7 +86,7 @@ const LoginPage = ({loggedIn}) => {
             {/* todo add google oauth */}
             <GoogleLogin
                 uxMode={`popup`}
-                clientId={`718477232651-i09ba8bjtbaqlt7h1i2fq3j4klklth2h.apps.googleusercontent.com`}
+                clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
                 render={renderProps =>
                     (
                         <button

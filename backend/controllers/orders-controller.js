@@ -299,7 +299,7 @@ const createOrderWithWayforpay = async (req, res, next) => {
         "merchantDomainName": process.env.wayforpayMerchantDomainName,
         "merchantTransactionSecureType": "AUTO",
         "language": "AUTO",
-        "serviceUrl": "http://localhost:5000/api/orders/wayforpay-capture",
+        "serviceUrl": process.env.currentIP + "api/orders/wayforpay-capture",
         "orderReference": order._id.toString(),
         "orderDate": order.date.getTime(),
         "amount": total,

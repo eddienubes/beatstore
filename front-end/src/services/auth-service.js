@@ -1,7 +1,7 @@
 import axios from "axios";
 
 class AuthService {
-    baseUrl = 'http://localhost:5000/api/users';
+    baseUrl = process.env.REACT_APP_BACKEND_ASSET_URL + 'users';
 
     async signup(data) {
         return axios.post(

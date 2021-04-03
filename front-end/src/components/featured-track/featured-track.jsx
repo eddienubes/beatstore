@@ -54,7 +54,7 @@ const FeaturedTrack = (props) => {
             dispatch(audioPlayed());
         }
     }
-    const imageUrl = 'http://localhost:5000/api/' + track.imgUrl;
+    const imageUrl = process.env.REACT_APP_BACKEND_ASSET_URL + track.imgUrl;
 
     return (
         <div className={`featured-track-container`}>

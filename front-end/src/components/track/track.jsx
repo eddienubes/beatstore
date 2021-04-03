@@ -49,7 +49,7 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying, cartItems})
         }
     };
 
-    const imageUrl = useMemo(() => 'http://localhost:5000/api/' + track.imgUrl, [track]);
+    const imageUrl = useMemo(() => process.env.REACT_APP_BACKEND_ASSET_URL + track.imgUrl, [track]);
 
     // useTraceUpdate({track, id, previousId, isPlaying});
 

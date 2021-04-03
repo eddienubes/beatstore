@@ -47,7 +47,7 @@ const PurchasesTable = () => {
 
                         const date = year + "/" + month + "/" + day;
 
-                        const imageUrl = 'http://localhost:5000/api/' + item.imgUrl;
+                        const imageUrl = process.env.REACT_APP_BACKEND_ASSET_URL + item.imgUrl;
 
                         return (
                             <Table.Row key={item.beatId + item.licenseId + item.orderId + index}

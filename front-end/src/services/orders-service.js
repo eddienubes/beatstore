@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export default class OrdersService {
-    baseUrl = 'http://localhost:5000/api/orders';
+    baseUrl = process.env.REACT_APP_BACKEND_ASSET_URL + 'orders';
 
     async createPaypalOrder(email, cartItems, successUrl, cancelUrl) {
         return axios.post(this.baseUrl + '/paypal-create', {email, cartItems, cancelUrl, successUrl});
