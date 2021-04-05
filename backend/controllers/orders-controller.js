@@ -315,8 +315,10 @@ const createOrderWithWayforpay = async (req, res, next) => {
 }
 
 const captureOrderWithWayforpay = async (req, res, next) => {
-    const body = JSON.parse(Object.getOwnPropertyNames(req.body)[0]);
+    console.log(Object.getOwnPropertyNames(req.body)[0]);
 
+    const body = JSON.parse(Object.getOwnPropertyNames(req.body)[0]);
+    console.log(body);
     if (!body || !Object.getOwnPropertyNames(req.body)[0]) {
         return next(new HttpError('Invalid data specified!', 403));
     }
@@ -329,14 +331,17 @@ const captureOrderWithWayforpay = async (req, res, next) => {
         order = await Order.findById(orderReference);
     }
     catch (e) {
+        console.log(e.message);
         return next(new HttpError('An error occurred while trying to find such order in db!', 500));
     }
     
     if (!order) {
+        console.log('!order');
         return next(new HttpError('No order with such id in db!', 404));
     }
 
     if (order.amount !== amount || order.merchantSignature !== merchantSignature) {
+        console.log('order.amount !== amount || order.merchantSignature !== merchantSignature');
         return next(new HttpError('Invalid data specified!', 403));
     }
 
@@ -359,20 +364,21 @@ const captureOrderWithWayforpay = async (req, res, next) => {
         order.payed = true;
     }
     else {
-        return next(new HttpError('Invalid transaction status!', 403));
-    }
-
-    let populatedProducts;
-    try {
         try {
             await order.remove();
         }
         catch (e) {
             return next(new HttpError('Deletion order process has failed..', 500))
         }
+        return next(new HttpError('Invalid transaction status!', 403));
+    }
+
+    let populatedProducts;
+    try {
         populatedProducts = await populateOrderProductsToSendEmail(order.products);
     }
     catch (e) {
+        console.log(e.message);
         return next(new HttpError('Error while populating order products to send email!', 500));
     }
 
