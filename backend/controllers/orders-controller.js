@@ -315,13 +315,13 @@ const createOrderWithWayforpay = async (req, res, next) => {
 }
 
 const captureOrderWithWayforpay = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty() || !req.files) {
-        console.log(errors);
-        return next(new HttpError('Invalid inputs passed, please check your data', 422));
+    const body = JSON.parse(Object.getOwnPropertyNames(req.body)[0]);
+
+    if (!body || !Object.getOwnPropertyNames(req.body)[0]) {
+        return next(new HttpError('Invalid data specified!', 403));
     }
 
-    const {amount, transactionStatus, orderReference, merchantSignature, clientName} = req.body;
+    const {amount, transactionStatus, orderReference, merchantSignature, clientName} = body;
 
     let order;
     
