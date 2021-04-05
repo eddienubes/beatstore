@@ -20,6 +20,7 @@ const {
 const axios = require('axios');
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const {validationResult} = require('express-validator');
 
 const createOrderWithPaypal = async (req, res, next) => {
     const {email, cartItems} = req.body;
@@ -270,8 +271,6 @@ const createOrderWithWayforpay = async (req, res, next) => {
 
     const productPrice = licenses.map((l, i) => l.price.toFixed(2));
 
-    console.log(process.env.currentIP);
-
     const purchaseObj = {
         "merchantAccount": process.env.wayforpayMerchantAccount,
         "merchantAuthType": "SimpleSignature",
@@ -303,30 +302,27 @@ const createOrderWithWayforpay = async (req, res, next) => {
 
     purchaseObj['merchantSignature'] = md5Hasher.update(baseSignature).digest('hex');
 
-    // try {
-    //     const response = await axios.post('https://secure.wayforpay.com/pay?behavior=offline', purchaseObj);
-    //     console.log(response.data);
-    // }
-    // catch (e) {
-    //     console.log(e.message);
-    //     return next(new HttpError('An error occurred while trying to create wayfoypay order!', 500));
-    // }
-
-    // try {
-    //     await order.save();
-    // }
-    // catch (e) {
-    //     console.log(e.message);
-    //     return next(new HttpError('An error occurred while trying to save order!', 500));
-    // }
+    try {
+        await order.save();
+    }
+    catch (e) {
+        console.log(e.message);
+        return next(new HttpError('An error occurred while trying to save order!', 500));
+    }
 
     res.status(200);
     res.json({message: 'Successfully created order!', order: purchaseObj});
 }
 
 const captureOrderWithWayforpay = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty() || !req.files) {
+        console.log(errors);
+        return next(new HttpError('Invalid inputs passed, please check your data', 422));
+    }
+
     const {amount, transactionStatus, orderReference, merchantSignature, clientName} = req.body;
-    
+
     let order;
     
     try {
@@ -344,10 +340,36 @@ const captureOrderWithWayforpay = async (req, res, next) => {
         return next(new HttpError('Invalid data specified!', 403));
     }
 
-    order.payed = true;
+    if (transactionStatus === 'Declined') {
+        try {
+            await order.remove();
+        }
+        catch (e) {
+            return next(new HttpError('Deletion order process has failed..', 500))
+        }
+        res.status(200);
+        res.json({
+            orderReference,
+            status: 'accept',
+            time: new Date().getTime(),
+            signature: merchantSignature
+        });
+    }
+    else if (transactionStatus === 'Approved') {
+        order.payed = true;
+    }
+    else {
+        return next(new HttpError('Invalid transaction status!', 403));
+    }
 
     let populatedProducts;
     try {
+        try {
+            await order.remove();
+        }
+        catch (e) {
+            return next(new HttpError('Deletion order process has failed..', 500))
+        }
         populatedProducts = await populateOrderProductsToSendEmail(order.products);
     }
     catch (e) {
