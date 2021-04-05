@@ -113,7 +113,6 @@ const captureOrderWithPaypal = async (req, res, next) => {
     const orderId = req.body.orderId;
     const {token} = req.body;
 
-
     let tokenPayload;
 
     try {
@@ -196,8 +195,7 @@ const captureOrderWithPaypal = async (req, res, next) => {
     let populatedProducts;
     try {
         populatedProducts = await populateOrderProductsToSendEmail(products);
-    }
-    catch (e) {
+    } catch (e) {
         return next(new HttpError('Error while populating order products to send email!', 500));
     }
 
@@ -264,8 +262,7 @@ const createOrderWithWayforpay = async (req, res, next) => {
         productName = licenses.map((l, i) => {
             return beats[i].title + ' ' + l.label;
         });
-    }
-    catch (e) {
+    } catch (e) {
         return next(new HttpError('An error occurred while trying to create order! Please, reload your page and try again', 500));
     }
 
@@ -299,13 +296,14 @@ const createOrderWithWayforpay = async (req, res, next) => {
         purchaseObj.productPrice.join(';');
 
     const md5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+    const merchantSignature = md5Hasher.update(baseSignature).digest('hex');
 
-    purchaseObj['merchantSignature'] = md5Hasher.update(baseSignature).digest('hex');
+    purchaseObj['merchantSignature'] = merchantSignature
+    order.merchantSignature = merchantSignature;
 
     try {
         await order.save();
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e.message);
         return next(new HttpError('An error occurred while trying to save order!', 500));
     }
@@ -315,7 +313,6 @@ const createOrderWithWayforpay = async (req, res, next) => {
 }
 
 const captureOrderWithWayforpay = async (req, res, next) => {
-    console.log(Object.getOwnPropertyNames(req.body)[0]);
 
     const body = JSON.parse(Object.getOwnPropertyNames(req.body)[0]);
     console.log(body);
@@ -323,51 +320,96 @@ const captureOrderWithWayforpay = async (req, res, next) => {
         return next(new HttpError('Invalid data specified!', 403));
     }
 
-    const {amount, transactionStatus, orderReference, merchantSignature, clientName} = body;
+    const {
+        amount,
+        transactionStatus,
+        orderReference,
+        authCode,
+        cardPan,
+        merchantSignature,
+        reasonCode,
+        clientName
+    } = body;
 
     let order;
-    
+
     try {
         order = await Order.findById(orderReference);
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e.message);
         return next(new HttpError('An error occurred while trying to find such order in db!', 500));
     }
-    
+
     if (!order) {
         console.log('!order');
         return next(new HttpError('No order with such id in db!', 404));
     }
+    const baseSignature =
+        process.env.wayforpayMerchantAccount + ';' +
+        order._id.toString() + ';' +
+        order.total.toString() + ';' +
+        'USD' + ';' +
+        authCode + ';' +
+        cardPan + ';' +
+        transactionStatus + ';' +
+        reasonCode;
 
-    if (order.amount !== amount || order.merchantSignature !== merchantSignature) {
-        console.log('order.amount !== amount || order.merchantSignature !== merchantSignature');
+    const md5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+    const existingMerchantSignature = md5Hasher.update(baseSignature).digest('hex');
+
+    if (existingMerchantSignature !== merchantSignature) {
+        console.log(order.total !== amount || existingMerchantSignature !== merchantSignature);
         return next(new HttpError('Invalid data specified!', 403));
     }
 
+    const responseTime = new Date().getTime();
     if (transactionStatus === 'Declined') {
         try {
             await order.remove();
-        }
-        catch (e) {
+        } catch (e) {
             return next(new HttpError('Deletion order process has failed..', 500))
         }
+
+        const declinedBaseSignature =
+            orderReference + ';' +
+            'accept' + ';' +
+            responseTime;
+
+        const declinedMerchantSignature = md5Hasher.update(declinedBaseSignature).digest('hex');
+
         res.status(200);
         res.json({
             orderReference,
             status: 'accept',
-            time: new Date().getTime(),
-            signature: merchantSignature
+            time: responseTime,
+            signature: declinedMerchantSignature
         });
-    }
-    else if (transactionStatus === 'Approved') {
+    } else if (transactionStatus === 'Approved') {
         order.payed = true;
-    }
-    else {
+    } else if (transactionStatus === 'Refunded') {
         try {
             await order.remove();
+        } catch (e) {
+            return next(new HttpError('Deletion order process has failed..', 500))
         }
-        catch (e) {
+        const declinedBaseSignature =
+            orderReference + ';' +
+            'refund' + ';' +
+            responseTime;
+
+        const refundMerchantSignature = md5Hasher.update(declinedBaseSignature).digest('hex');
+
+        res.status(200);
+        res.json({
+            orderReference,
+            status: 'refund',
+            time: responseTime,
+            signature: refundMerchantSignature
+        });
+    } else {
+        try {
+            await order.remove();
+        } catch (e) {
             return next(new HttpError('Deletion order process has failed..', 500))
         }
         return next(new HttpError('Invalid transaction status!', 403));
@@ -376,8 +418,7 @@ const captureOrderWithWayforpay = async (req, res, next) => {
     let populatedProducts;
     try {
         populatedProducts = await populateOrderProductsToSendEmail(order.products);
-    }
-    catch (e) {
+    } catch (e) {
         console.log(e.message);
         return next(new HttpError('Error while populating order products to send email!', 500));
     }
@@ -436,12 +477,19 @@ const captureOrderWithWayforpay = async (req, res, next) => {
         return next(new HttpError('Sending order confirmation email has failed', 500));
     }
 
+    const approvedBaseSignature =
+        orderReference + ';' +
+        'approve' + ';' +
+        responseTime;
+
+    const approveMerchantSignature = md5Hasher.update(approvedBaseSignature).digest('hex');
+
     res.status(200);
     res.json({
         orderReference,
-        status: 'accept',
-        time: new Date().getTime(),
-        signature: merchantSignature
+        status: 'approve',
+        time: responseTime,
+        signature: approveMerchantSignature
     });
 }
 

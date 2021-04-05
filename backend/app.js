@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const stream = require('stream');
 const {promisify} = require('util');
+const crypto = require('crypto');
 
 const beatsRoutes = require('./routes/beats-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -123,7 +124,6 @@ app.use((error, req, res, next) => {
     res.status(error.code || 500 );
     res.json({message: error.message || 'An unknown error occurred!'});
 });
-
 
 // port configuration and connection to database
 mongoose
