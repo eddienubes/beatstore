@@ -21,6 +21,8 @@ const initialState = {
     isLoggingOut: false,
     showNotification: false,
     isProcessingPayment: false,
+    payed: true,
+    paymentError: {message: 'hello'},
     isConfirming: false,
     confirmationError: null
 };
@@ -238,22 +240,10 @@ const userReducer = (state = initialState, action) => {
                 error: null,
                 cart: action.payload
             }
-        case actions.PAYPAL_PAYMENT_REQUESTED:
+        case actions.PAYMENT_REQUESTED:
             return {
                 ...state,
                 isProcessingPayment: true
-            }
-        case actions.PAYPAL_PAYMENT_SUCCESS:
-            return {
-                ...state,
-                isProcessingPayment: false,
-                error: null
-            }
-        case actions.PAYPAL_PAYMENT_FAILED:
-            return {
-                ...state,
-                isProcessingPayment: false,
-                error: action.payload
             }
         case actions.CONFIRMATION_REQUESTED:
             return {
@@ -286,6 +276,36 @@ const userReducer = (state = initialState, action) => {
             return {
                 ...state,
                 confirmationError: null
+            }
+        case actions.CART_CLEARED:
+            return {
+                ...state,
+                cart: {
+                    items: [],
+                    total: 0
+                }
+            }
+        case actions.PAYMENT_ACCEPTED:
+            return {
+                ...state,
+                payed: true,
+                isProcessingPayment: false
+            }
+        case actions.PAYMENT_ACCEPTANCE_DROP:
+            return {
+                ...state,
+                payed: false
+            }
+        case actions.PAYMENT_DECLINED:
+            return {
+                ...state,
+                paymentError: action.payload,
+                isProcessingPayment: false
+            }
+        case actions.PAYMENT_DECLINE_DROP:
+            return {
+                ...state,
+                paymentError: null
             }
         default:
             return state;

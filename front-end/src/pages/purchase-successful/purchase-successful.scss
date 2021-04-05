@@ -1,0 +1,63 @@
+.payment-successful-container {
+    display: grid;
+    place-items: center;
+    user-select: none;
+
+    img {
+        animation: success-desc .5s ease-in-out ;
+    }
+
+    h2, h3 {
+        animation: success-desc .5s ease-in-out ;
+    }
+
+    h2 {
+        color: white;
+        font-weight: lighter;
+        letter-spacing: 1.2px;
+    }
+
+    h3 {
+        color: #00cc76;
+    }
+
+    p {
+        color: white;
+        background: black;
+        animation: success-desc .5s ease-in-out ;
+    }
+    .description {
+
+    }
+}
+
+@keyframes success-desc {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0%);
+        opacity: 1;
+    }
+}
+
+@keyframes success-img {
+    0% {
+        filter: blur(15px);
+    }
+    100% {
+        filter: blur(0px);
+    }
+}
+
+@keyframes success-captions {
+    0% {
+        filter: blur(15px);
+        transform: translateY(100%);
+    }
+    100% {
+        filter: blur(0px);
+        transform: translateY(0%);
+    }
+}

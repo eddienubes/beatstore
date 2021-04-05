@@ -339,26 +339,6 @@ const cartItemsSet = (cart) => {
     }
 }
 
-const paypalPaymentRequested = () => {
-    return {
-        type: actions.PAYPAL_PAYMENT_REQUESTED
-    }
-}
-
-const paypalPaymentSuccess = (data) => {
-    return {
-        type: actions.PAYPAL_PAYMENT_SUCCESS,
-        payload: data
-    }
-}
-
-const paypalPaymentFailed = (err) => {
-    return {
-        type: actions.PAYPAL_PAYMENT_FAILED,
-        payload: err
-    }
-}
-
 const confirmationRequested = () => {
     return {type: actions.CONFIRMATION_REQUESTED}
 }
@@ -380,6 +360,44 @@ const confirmationFailed = (err) => {
 const confirmationErrorRemoved = () => {
     return {type: actions.CONFIRMATION_ERROR_REMOVED}
 };
+
+const cartCleared = () => {
+    return {type: actions.CART_CLEARED}
+};
+
+
+const paymentAccepted = () => {
+    return {type: actions.PAYMENT_ACCEPTED}
+};
+
+const paymentAcceptanceDrop = () => {
+    return {type: actions.PAYMENT_ACCEPTANCE_DROP}
+};
+
+const paymentDeclined = (err) => {
+    return {type: actions.PAYMENT_DECLINED, payload: err}
+};
+
+const paymentDeclineDrop = () => {
+    return {type: actions.PAYMENT_DECLINE_DROP}
+}
+
+const paymentRequested = () => {
+    return {type: actions.PAYMENT_REQUESTED}
+};
+
+const paymentDeclinedAndRedirected = (err, history) => (dispatch, getState) => {
+    dispatch(paymentDeclined(err));
+    dispatch(cartCleared());
+    history.replace('checkout/failed');
+}
+const paymentAcceptedAndRedirected = (history) => (dispatch, getState) => {
+    dispatch(paymentAccepted());
+    dispatch(cartCleared());
+    history.replace('checkout/success');
+}
+
+
 
 const signup = (formState) => async (dispatch, getState) => {
     dispatch(signupRequested());
@@ -750,4 +768,10 @@ export {
     confirmationErrorRemoved,
 
     fetchLicenses,
+    cartCleared,
+    paymentAcceptedAndRedirected,
+    paymentAcceptanceDrop,
+    paymentDeclinedAndRedirected,
+    paymentDeclineDrop,
+    paymentRequested
 };

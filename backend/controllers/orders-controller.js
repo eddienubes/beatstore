@@ -296,10 +296,8 @@ const createOrderWithWayforpay = async (req, res, next) => {
         purchaseObj.productPrice.join(';');
 
     const md5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
-    const merchantSignature = md5Hasher.update(baseSignature).digest('hex');
 
-    purchaseObj['merchantSignature'] = merchantSignature
-    order.merchantSignature = merchantSignature;
+    purchaseObj['merchantSignature'] = md5Hasher.update(baseSignature).digest('hex');
 
     try {
         await order.save();
@@ -313,6 +311,7 @@ const createOrderWithWayforpay = async (req, res, next) => {
 }
 
 const captureOrderWithWayforpay = async (req, res, next) => {
+    // TODO: BUG: Add to purchased list
 
     const body = JSON.parse(Object.getOwnPropertyNames(req.body)[0]);
     console.log(body);
@@ -328,7 +327,8 @@ const captureOrderWithWayforpay = async (req, res, next) => {
         cardPan,
         merchantSignature,
         reasonCode,
-        clientName
+        clientName,
+        currency
     } = body;
 
     let order;
@@ -346,19 +346,21 @@ const captureOrderWithWayforpay = async (req, res, next) => {
     }
     const baseSignature =
         process.env.wayforpayMerchantAccount + ';' +
-        order._id.toString() + ';' +
-        order.total.toString() + ';' +
-        'USD' + ';' +
+        orderReference + ';' +
+        amount + ';' +
+        currency + ';' +
         authCode + ';' +
         cardPan + ';' +
         transactionStatus + ';' +
         reasonCode;
 
-    const md5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
-    const existingMerchantSignature = md5Hasher.update(baseSignature).digest('hex');
+    console.log(baseSignature);
+
+    const existingMd5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+    const existingMerchantSignature = existingMd5Hasher.update(baseSignature).digest('hex');
 
     if (existingMerchantSignature !== merchantSignature) {
-        console.log(order.total !== amount || existingMerchantSignature !== merchantSignature);
+        console.log('existingMerchantSignature !== merchantSignature');
         return next(new HttpError('Invalid data specified!', 403));
     }
 
@@ -372,15 +374,17 @@ const captureOrderWithWayforpay = async (req, res, next) => {
 
         const declinedBaseSignature =
             orderReference + ';' +
-            'accept' + ';' +
+            'decline' + ';' +
             responseTime;
 
-        const declinedMerchantSignature = md5Hasher.update(declinedBaseSignature).digest('hex');
+        const declinedMd5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+
+        const declinedMerchantSignature = declinedMd5Hasher.update(declinedBaseSignature).digest('hex');
 
         res.status(200);
-        res.json({
+        return res.json({
             orderReference,
-            status: 'accept',
+            status: 'decline',
             time: responseTime,
             signature: declinedMerchantSignature
         });
@@ -392,15 +396,17 @@ const captureOrderWithWayforpay = async (req, res, next) => {
         } catch (e) {
             return next(new HttpError('Deletion order process has failed..', 500))
         }
-        const declinedBaseSignature =
+        const refundedBaseSignature =
             orderReference + ';' +
             'refund' + ';' +
             responseTime;
 
-        const refundMerchantSignature = md5Hasher.update(declinedBaseSignature).digest('hex');
+        const refundMd5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+
+        const refundMerchantSignature = refundMd5Hasher.update(refundedBaseSignature).digest('hex');
 
         res.status(200);
-        res.json({
+        return res.json({
             orderReference,
             status: 'refund',
             time: responseTime,
@@ -482,7 +488,9 @@ const captureOrderWithWayforpay = async (req, res, next) => {
         'approve' + ';' +
         responseTime;
 
-    const approveMerchantSignature = md5Hasher.update(approvedBaseSignature).digest('hex');
+    const approvedMd5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+
+    const approveMerchantSignature = approvedMd5Hasher.update(approvedBaseSignature).digest('hex');
 
     res.status(200);
     res.json({

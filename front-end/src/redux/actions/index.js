@@ -22,7 +22,13 @@ import {
     refreshToken,
     userErrorCleared,
     cartItemsSet,
-    confirmationErrorRemoved
+    confirmationErrorRemoved,
+    cartCleared,
+    paymentDeclineDrop,
+    paymentAcceptedAndRedirected,
+    paymentAcceptanceDrop,
+    paymentDeclinedAndRedirected,
+    paymentRequested
 } from './actions';
 
 export {
@@ -52,5 +58,11 @@ export {
     refreshToken,
     userErrorCleared,
     cartItemsSet,
-    confirmationErrorRemoved
+    confirmationErrorRemoved,
+    cartCleared,
+    paymentDeclineDrop,
+    paymentAcceptedAndRedirected,
+    paymentAcceptanceDrop,
+    paymentDeclinedAndRedirected,
+    paymentRequested
 };

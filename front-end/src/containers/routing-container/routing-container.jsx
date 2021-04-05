@@ -18,6 +18,8 @@ import {useDispatch, useSelector} from "react-redux";
 import {appendToCart, fetchLicenses} from "../../redux/actions";
 import BlurredSpinner from "../../components/blurred-spinner";
 import ConfirmationPage from "../../pages/confirmation-page";
+import PurchaseSuccessful from "../../pages/purchase-successful";
+import PurchaseFailed from "../../pages/purchase-failed";
 
 const RoutingContainer = () => {
     const [checking] = useAuth();
@@ -28,13 +30,13 @@ const RoutingContainer = () => {
     }, []);
 
 
-    if (checking || isLoggingOut || isProcessingPayment) {
+    if (checking || isLoggingOut) {
         return <Spinner/>
     }
 
     return (
         <Router>
-            {isLoadingAppendToCart ? <BlurredSpinner/> : null}
+            {isLoadingAppendToCart || isProcessingPayment ? <BlurredSpinner/> : null}
             <Header/>
                 <main>
                     <MusicPlayer/>
@@ -46,8 +48,8 @@ const RoutingContainer = () => {
                         <Route exact path="/beats/:id" component={BeatsPage}/>
                         <Route path="/auth" component={AuthContainer}/>
                         <Route path="/account" component={AccountPage}/>
-                        <Route path="/checkout/success" exact render={history => <h1>Success</h1>}/>
-                        <Route path="/checkout/failed" exact render={history => <h1>Failed</h1>}/>
+                        <Route path="/checkout/success" exact component={PurchaseSuccessful}/>
+                        <Route path="/checkout/failed" exact component={PurchaseFailed}/>
                         <Route path="/confirmation/:confirmationCode" exact component={ConfirmationPage}/>
                         <Route component={PageNotFound}/>
                     </Switch>

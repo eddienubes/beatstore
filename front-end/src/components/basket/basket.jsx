@@ -3,7 +3,7 @@ import './basket.scss';
 import BasketItem from "../basket-item";
 import {Table} from "semantic-ui-react";
 import PlaceholderAnimatedInput from "../placeholder-animated-input";
-import {Link} from "react-router-dom";
+import {Link, useHistory} from "react-router-dom";
 import {useSelector} from "react-redux";
 import BrowseAllButton from "../browse-all-button";
 import AnimationContainer from "../../containers/animation-container";
@@ -16,6 +16,7 @@ const Basket = () => {
     const [modalShow, setModalShow] = React.useState(false);
     const {cart, isLoadingRemoveFromCart, loggedIn, email} = useSelector(state => state.userReducer);
     const {id, isPlaying, previousId} = useSelector(state => state.audioReducer);
+    const history = useHistory();
 
     if (cart.items.length === 0) {
         return (
@@ -139,8 +140,8 @@ const Basket = () => {
                                 <span className="paypal-payment-desc">
                                     pay via paypal or wayforpay
                                 </span>
-                                    <PaypalButtons disabled={isDisabled || isLoadingRemoveFromCart}/>
-                                    <WayforpayButtons disabled={isDisabled || isLoadingRemoveFromCart}/>
+                                    <PaypalButtons disabled={isDisabled || isLoadingRemoveFromCart} history={history}/>
+                                    <WayforpayButtons disabled={isDisabled || isLoadingRemoveFromCart} history={history}/>
                             </div>
                         </div>
                     </form>

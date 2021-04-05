@@ -6,6 +6,7 @@ import {connect} from 'react-redux';
 import scriptLoader from 'react-async-script-loader';
 
 import './paypal-buttons.scss';
+import {paymentAcceptedAndRedirected, paymentDeclinedAndRedirected, paymentRequested} from "../../redux/actions";
 
 class PaypalButtons extends React.Component {
     constructor(props) {
@@ -75,12 +76,16 @@ class PaypalButtons extends React.Component {
                         token: data.token
                     }
                 });
-                return data.orderId
+                return data.orderId;
+            })
+            .catch(e => {
+                this.props.paymentDeclined(e, this.props.history);
             });
     }
 
     handleApprove = (data, actions) => {
         const ordersService = new OrdersService();
+        this.props.paymentRequested();
         return ordersService.capturePaypalOrder(data.orderID, this.state.token)
             .then(res => {
                 this.setState(state => {
@@ -89,7 +94,10 @@ class PaypalButtons extends React.Component {
                         token: null
                     }
                 });
-            }).catch(e => console.log(e.message));
+                this.props.paymentAccepted(this.props.history);
+            }).catch(e => {
+                this.props.paymentDeclined(e, this.props.history);
+            });
     }
 
     handleError = (err) => {
@@ -99,6 +107,7 @@ class PaypalButtons extends React.Component {
                 token: null
             }
         });
+        this.props.paymentDeclined(err, this.props.history);
     }
 
     render() {
@@ -112,7 +121,6 @@ class PaypalButtons extends React.Component {
             </>
         )
     }
-
 }
 
 const mapStateToProps = (state) => {
@@ -122,6 +130,14 @@ const mapStateToProps = (state) => {
     return {cart: userReducer.cart, email: userReducer.email}
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        paymentRequested: () => dispatch(paymentRequested()),
+        paymentAccepted: (history) => dispatch(paymentAcceptedAndRedirected(history)),
+        paymentDeclined: (err, history) => dispatch(paymentDeclinedAndRedirected(err, history))
+    }
+}
+
 export default scriptLoader
 (`https://www.paypal.com/sdk/js?client-id=${process.env.REACT_APP_PAYPAL_CLIENT_ID}`)
-(connect(mapStateToProps)(PaypalButtons));
+(connect(mapStateToProps, mapDispatchToProps)(PaypalButtons));

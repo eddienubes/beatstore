@@ -4,6 +4,7 @@ import './wayforpay-buttons.scss';
 import scriptLoader from 'react-async-script-loader';
 import OrdersService from "../../services/orders-service";
 import SpinnerAudio from "../spinner-audio";
+import {paymentAcceptedAndRedirected, paymentDeclinedAndRedirected, paymentRequested} from "../../redux/actions";
 
 class WayforpayButtons extends Component {
 
@@ -45,6 +46,7 @@ class WayforpayButtons extends Component {
     createOrder = (e) => {
         e.preventDefault();
         const ordersService = new OrdersService();
+        this.props.paymentRequested();
 
         ordersService.createOrderWithWayforpay(this.props.email, this.props.cart.items)
             .then(res => {
@@ -52,27 +54,22 @@ class WayforpayButtons extends Component {
                 console.log(res.data.order);
                 (new window.Wayforpay()).run(
                     res.data.order,
-                    (res) => {
-                        console.log(res);
-                        console.log('On approved!');
-                    },
-                    (res) => {
-                        console.log(res);
-                        console.log('On declined!');
-                    },
+                    this.handleApprove,
+                    this.handleError
                 )
             })
             .catch(e => {
                 console.log(e.message);
-            })
+
+            });
     }
 
-    handleApprove = () => {
-
+    handleApprove = (res) => {
+        this.props.paymentAccepted(this.props.history);
     }
 
-    handleError = () => {
-
+    handleError = (err) => {
+        this.props.paymentDeclined(err, this.props.history);
     }
 
     render() {
@@ -99,9 +96,17 @@ const mapStateToProps = (state) => {
     }
 }
 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        paymentRequested: () => dispatch(paymentRequested()),
+        paymentAccepted: (history) => dispatch(paymentAcceptedAndRedirected(history)),
+        paymentDeclined: (err, history) => dispatch(paymentDeclinedAndRedirected(err, history))
+    }
+}
+
 export default scriptLoader
 ('https://secure.wayforpay.com/server/pay-widget.js')
-(connect(mapStateToProps)(WayforpayButtons))
+(connect(mapStateToProps, mapDispatchToProps)(WayforpayButtons))
 
 
 
