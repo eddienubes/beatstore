@@ -26,7 +26,22 @@ router.post('/paypal-capture', [
     ],
     ordersController.captureOrderWithPaypal);
 
-router.post('/wayforpay-capture', ordersController.captureOrderWithWayforpay);
+router.post('/wayforpay-capture', [
+    check('amount')
+        .isNumeric()
+        .not()
+        .isEmpty(),
+    check('transactionStatus')
+        .isLength({min: 4}),
+    check('orderReference')
+        .isLength({min: 6}),
+    check('merchantSignature')
+        .isLength({min: 6}),
+    check('clientName')
+        .not()
+        .isEmpty()
+], ordersController.captureOrderWithWayforpay);
+
 router.post('/wayforpay-create', [
         check('email')
             .isEmail()
@@ -35,8 +50,5 @@ router.post('/wayforpay-create', [
         check('cartItems').isArray()
     ],
     ordersController.createOrderWithWayforpay);
-
-router.post('/order-approved', ordersController.orderApproved);
-router.post('/order-failed', ordersController.orderFailed);
 
 module.exports = router;

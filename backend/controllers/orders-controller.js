@@ -14,7 +14,8 @@ const {
     populateUserPurchases,
     projectionForPopulation,
     baseSelect,
-    populateOrder
+    populateOrder,
+    populateOrderProductsToSendEmail
 } = require('../shared/products');
 const axios = require('axios');
 const bcrypt = require('bcryptjs');
@@ -166,7 +167,6 @@ const captureOrderWithPaypal = async (req, res, next) => {
         total,
         paypalOrderId: orderId,
         captureId: capture.result.id,
-        orderId: uuid(),
         payed: true
     });
 
@@ -192,47 +192,24 @@ const captureOrderWithPaypal = async (req, res, next) => {
         );
     }
 
-    const populatedProducts = [];
-    await Promise.all(products.map(async (p, pIndex) => {
-        const license = await License.findById(p.licenseId);
-        await Promise.all(projectionForPopulation.map(async proj => {
-            if (license.type === proj.type) {
-                const beat = await Beat.findById(p.beatId, proj.projection);
-                let links = [];
-
-                const licenseUrlKeys = proj.select
-                    .replace(new RegExp('\\s' + baseSelect), '')
-                    .split(/\s+/);
-
-                licenseUrlKeys.map((l, index) => {
-                    links.push({
-                        label: proj.labels[index],
-                        url: beat[l]
-                    });
-                });
-
-                populatedProducts.push(
-                    {
-                        title: beat.title,
-                        price: license.price.toFixed(2),
-                        licenseType: license.label,
-                        links
-                    }
-                );
-            }
-        }));
-    }));
+    let populatedProducts;
+    try {
+        populatedProducts = await populateOrderProductsToSendEmail(products);
+    }
+    catch (e) {
+        return next(new HttpError('Error while populating order products to send email!', 500));
+    }
 
     try {
         await mailer.sendEmail(email, 'Cherries By Beatstore purchase', 'order-details', {
             email,
-            orderId,
+            orderId: order._id.toString(),
             total: total.toFixed(2),
             gross: total.toFixed(2),
             discount: 0.00.toFixed(2),
             date: order.date.toISOString().split('T')[0],
             username: capture.result.payer.name.given_name,
-            identifier: order.orderId,
+            identifier: order._id.toString(),
             products: populatedProducts
         });
     } catch (e) {
@@ -293,6 +270,8 @@ const createOrderWithWayforpay = async (req, res, next) => {
 
     const productPrice = licenses.map((l, i) => l.price.toFixed(2));
 
+    console.log(process.env.currentIP);
+
     const purchaseObj = {
         "merchantAccount": process.env.wayforpayMerchantAccount,
         "merchantAuthType": "SimpleSignature",
@@ -346,11 +325,96 @@ const createOrderWithWayforpay = async (req, res, next) => {
 }
 
 const captureOrderWithWayforpay = async (req, res, next) => {
-    const body = req.body;
-    console.log(body);
+    const {amount, transactionStatus, orderReference, merchantSignature, clientName} = req.body;
+    
+    let order;
+    
+    try {
+        order = await Order.findById(orderReference);
+    }
+    catch (e) {
+        return next(new HttpError('An error occurred while trying to find such order in db!', 500));
+    }
+    
+    if (!order) {
+        return next(new HttpError('No order with such id in db!', 404));
+    }
+
+    if (order.amount !== amount || order.merchantSignature !== merchantSignature) {
+        return next(new HttpError('Invalid data specified!', 403));
+    }
+
+    order.payed = true;
+
+    let populatedProducts;
+    try {
+        populatedProducts = await populateOrderProductsToSendEmail(order.products);
+    }
+    catch (e) {
+        return next(new HttpError('Error while populating order products to send email!', 500));
+    }
+
+    let user;
+    try {
+        user = await User.findOne({email: order.email});
+    } catch (e) {
+        console.log(e.message);
+
+        return next(
+            new HttpError('Searching for a user went wrong..'),
+            500
+        );
+    }
+
+    const hasUser = !!user;
+
+    try {
+        const sess = await mongoose.startSession();
+        sess.startTransaction();
+
+        if (hasUser) {
+            user.purchased.push(order);
+            user.cart = [];
+            await user.save({session: sess});
+            order.customerId = user._id;
+        }
+
+        await order.save({session: sess});
+        await sess.commitTransaction();
+
+    } catch (e) {
+        console.log(e.message);
+        return next(
+            new HttpError('Creation order process has failed..'),
+            500
+        );
+    }
+
+
+    try {
+        await mailer.sendEmail(order.email, 'Cherries By Beatstore purchase', 'order-details', {
+            email: order.email,
+            orderId: orderReference,
+            total: order.total.toFixed(2),
+            gross: order.total.toFixed(2),
+            discount: 0.00.toFixed(2),
+            date: order.date.toISOString().split('T')[0],
+            username: clientName,
+            identifier: orderReference,
+            products: populatedProducts
+        });
+    } catch (e) {
+        console.log(e.message);
+        return next(new HttpError('Sending order confirmation email has failed', 500));
+    }
 
     res.status(200);
-    res.json({});
+    res.json({
+        orderReference,
+        status: 'accept',
+        time: new Date().getTime(),
+        signature: merchantSignature
+    });
 }
 
 
@@ -458,16 +522,6 @@ const getOrderById = async (req, res, next) => {
     })
 }
 
-const orderApproved = async (req, res, next) => {
-    console.log(req.body);
-    res.status(200);
-}
-
-const orderFailed = async (req, res, next) => {
-    console.log(req.body);
-    res.status(200);
-}
-
 module.exports = {
     createOrderWithPaypal,
     captureOrderWithPaypal,
@@ -476,6 +530,4 @@ module.exports = {
     getAllOrders,
     getOrdersByUserId,
     getOrderById,
-    orderApproved,
-    orderFailed
 };

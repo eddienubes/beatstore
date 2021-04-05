@@ -2,6 +2,8 @@ const baseSelect = 'previewAudioUrl imgUrl title scale bpm';
 const {v4: uuid} = require('uuid');
 const HttpError = require('../models/http-error');
 const User = require('../models/user');
+const License = require('../models/license');
+const Beat = require('../models/beat');
 
 const beatProjectionsToLicenseTypes = [
     {
@@ -218,10 +220,47 @@ const populateOrder = async (order) => {
     return normalizedProducts;
 }
 
+const populateOrderProductsToSendEmail = async (products) => {
+
+    const populatedProducts = [];
+    await Promise.all(products.map(async (p, pIndex) => {
+        const license = await License.findById(p.licenseId);
+        await Promise.all(beatProjectionsToLicenseTypes.map(async proj => {
+            if (license.type === proj.type) {
+                const beat = await Beat.findById(p.beatId, proj.projection);
+                let links = [];
+
+                const licenseUrlKeys = proj.select
+                    .replace(new RegExp('\\s' + baseSelect), '')
+                    .split(/\s+/);
+
+                licenseUrlKeys.map((l, index) => {
+                    links.push({
+                        label: proj.labels[index],
+                        url: beat[l]
+                    });
+                });
+
+                populatedProducts.push(
+                    {
+                        title: beat.title,
+                        price: license.price.toFixed(2),
+                        licenseType: license.label,
+                        links
+                    }
+                );
+            }
+        }));
+    }));
+
+    return populatedProducts;
+}
+
 module.exports = {
     populateUserCart,
     populateUserPurchases,
     projectionForPopulation: beatProjectionsToLicenseTypes,
     baseSelect,
-    populateOrder
+    populateOrder,
+    populateOrderProductsToSendEmail
 }

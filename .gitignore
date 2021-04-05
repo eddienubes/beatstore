@@ -36,4 +36,4 @@ yarn-error.log*
 admin-bot/.idea
 backend/.idea
 front-end/.idea
-front-end/.env
+

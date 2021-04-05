@@ -139,8 +139,8 @@ const Basket = () => {
                                 <span className="paypal-payment-desc">
                                     pay via paypal or wayforpay
                                 </span>
-                                    <PaypalButtons disabled={isDisabled}/>
-                                    <WayforpayButtons disabled={isDisabled}/>
+                                    <PaypalButtons disabled={isDisabled && isLoadingRemoveFromCart}/>
+                                    <WayforpayButtons disabled={isDisabled && isLoadingRemoveFromCart}/>
                             </div>
                         </div>
                     </form>

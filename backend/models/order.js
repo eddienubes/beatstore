@@ -22,8 +22,8 @@ const orderSchema = new mongoose.Schema({
     total: {type: Number, required: true},
     captureId: {type: String, required: false},
     paypalOrderId: {type: String, required: false},
-    orderId: {type: String, required: true, unique: true},
-    payed: {type: Boolean, required: true, default: false}
+    payed: {type: Boolean, required: true, default: false},
+    merchantSignature: {type: String, required: false}
 });
 
 module.exports = mongoose.model('Order', orderSchema);

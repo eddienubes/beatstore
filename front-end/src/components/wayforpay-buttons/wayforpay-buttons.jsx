@@ -49,6 +49,7 @@ class WayforpayButtons extends Component {
         ordersService.createOrderWithWayforpay(this.props.email, this.props.cart.items)
             .then(res => {
                 console.log('Run wayforpay payment!');
+                console.log(res.data.order);
                 (new window.Wayforpay()).run(
                     res.data.order,
                     (res) => {
