@@ -22,6 +22,8 @@ const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
 const {validationResult} = require('express-validator');
 
+// i hate js
+
 const createOrderWithPaypal = async (req, res, next) => {
     const errors = validationResult(req);
 
