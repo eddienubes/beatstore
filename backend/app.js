@@ -7,6 +7,7 @@ const path = require('path');
 const stream = require('stream');
 const {promisify} = require('util');
 const crypto = require('crypto');
+require('dotenv').config();
 
 const beatsRoutes = require('./routes/beats-routes');
 const usersRoutes = require('./routes/users-routes');
