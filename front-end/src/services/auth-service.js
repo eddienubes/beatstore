@@ -102,6 +102,14 @@ class AuthService {
             }
         });
     }
+
+    async getUserPurchasesById(id, token) {
+        return axios.get(this.baseUrl + '/purchases/' + id, {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+    }
 }
 
 export default AuthService;

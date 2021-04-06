@@ -386,8 +386,16 @@ const paymentRequested = () => {
     return {type: actions.PAYMENT_REQUESTED}
 };
 
-const paymentCanceled =() => {
+const paymentCanceled = () => {
     return {type: actions.PAYMENT_CANCELED}
+};
+
+const userPurchasesUpdateSuccessful = (purchases) => {
+    return {type: actions.USER_PURCHASES_UPDATE_SUCCESSFUL, payload: purchases}
+};
+
+const userPurchasesUpdateFailed = (err) => {
+    return {type: actions.USER_PURCHASES_UPDATE_FAILED, payload: err}
 };
 
 const paymentDeclinedAndRedirected = (err, history) => (dispatch, getState) => {
@@ -395,6 +403,19 @@ const paymentDeclinedAndRedirected = (err, history) => (dispatch, getState) => {
     history.replace('checkout/failed');
 }
 const paymentAcceptedAndRedirected = (history) => (dispatch, getState) => {
+    const {loggedIn, id, token} = getState().userReducer;
+
+    if (loggedIn) {
+        try {
+            const response = authService.getUserPurchasesById(id, token);
+            dispatch(userPurchasesUpdateSuccessful(response.data.purchases))
+        }
+        catch (e) {
+            console.log(e.response.data);
+            dispatch(userPurchasesUpdateFailed(e));
+        }
+    }
+
     dispatch(paymentAccepted());
     dispatch(cartCleared());
     history.replace('checkout/success');

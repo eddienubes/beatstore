@@ -162,7 +162,7 @@ const Basket = () => {
                         I reviewed and agree to the Track(s) License Agreements
                     </span>
                             </label>
-                            <div className={`payment-buttons ${!formState.isValid ? 'disabled-payment-buttons' : null}`}>
+                            <div className={`payment-buttons ${!formState.isValid && !loggedIn ? 'disabled-payment-buttons' : null}`}>
                                 <span className="paypal-payment-desc">
                                 </span>
                                 <PaypalButtons disabled={isDisabled || isLoadingRemoveFromCart}

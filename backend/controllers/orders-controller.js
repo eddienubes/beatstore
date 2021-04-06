@@ -179,7 +179,9 @@ const captureOrderWithPaypal = async (req, res, next) => {
     try {
         const sess = await mongoose.startSession();
         sess.startTransaction();
-
+        console.log('hasUser', hasUser)
+        console.log('order', order)
+        console.log('user', user)
         if (hasUser) {
             user.purchased.push(order);
             user.cart = [];
@@ -458,7 +460,9 @@ const captureOrderWithWayforpay = async (req, res, next) => {
     try {
         const sess = await mongoose.startSession();
         sess.startTransaction();
-
+        console.log('hasUser', hasUser)
+        console.log('order', order)
+        console.log('user', user)
         if (hasUser) {
             user.purchased.push(order);
             user.cart = [];

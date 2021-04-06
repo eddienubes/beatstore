@@ -24,7 +24,8 @@ const initialState = {
     payed: true,
     paymentError: {message: 'hello'},
     isConfirming: false,
-    confirmationError: null
+    confirmationError: null,
+    purchasesUpdateError: null
 };
 
 const userReducer = (state = initialState, action) => {
@@ -83,7 +84,8 @@ const userReducer = (state = initialState, action) => {
                 refreshToken: action.payload.refreshToken,
                 refreshTokenExpiration: action.payload.refreshTokenExpiration,
                 expiration: action.payload.expiration,
-                error: null
+                error: null,
+                purchasesUpdateError: null
             }
         case actions.LOG_IN_FAILURE:
             return {
@@ -102,7 +104,8 @@ const userReducer = (state = initialState, action) => {
                 username: action.payload.username,
                 email: action.payload.email,
                 processing: false,
-                error: null
+                error: null,
+                purchasesUpdateError: null
             }
         case actions.USER_UPDATE_FAILURE:
             return {
@@ -205,7 +208,8 @@ const userReducer = (state = initialState, action) => {
                 refreshToken: action.payload.refreshToken,
                 refreshTokenExpiration: action.payload.refreshTokenExpiration,
                 expiration: action.payload.expiration,
-                error: null
+                error: null,
+                purchasesUpdateError: null
             }
         case actions.GOOGLE_LOG_IN_FAILED:
             return {

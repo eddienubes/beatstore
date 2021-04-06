@@ -877,6 +877,33 @@ const getUserCartById = async (req, res, next) => {
     res.json({message: 'Successfully retrieved user cart!', cart: user.cart});
 }
 
+const getUserPurchasesById = async (req, res, next) => {
+    const userId = req.params.uid;
+
+    let user;
+    try {
+        user = await User.findById(userId);
+    }
+    catch (e) {
+        return next(new HttpError('An occurred while trying to find user', 500));
+    }
+
+    if (!user) {
+        return next(new HttpError('No user found with such id', 403));
+    }
+
+    let purchases;
+    try {
+        purchases = await populateUserPurchases(user, next);
+    }
+    catch (e) {
+        return next(new HttpError('An occurred while trying to populate user purchases', 500));
+    }
+
+    res.status(200);
+    res.json({message: 'Successfully retrieved user purchases!', purchases})
+}
+
 module.exports = {
     getUserById,
     getAllUsers,
@@ -893,5 +920,6 @@ module.exports = {
     removeFromCartOffline,
     verifyUser,
     contact,
-    getUserCartById
+    getUserCartById,
+    getUserPurchasesById
 };
