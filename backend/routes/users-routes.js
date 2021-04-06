@@ -58,6 +58,6 @@ router.delete('/:uid/cart/:pid', checkStandardAuth, usersControllers.removeFromU
 router.post('/cart', usersControllers.appendToCartOffline);
 router.patch('/cart/:pid', usersControllers.removeFromCartOffline);
 
-router.patch('/:uid', usersControllers.updateUser)
+router.patch('/:uid', checkStandardAuth, usersControllers.updateUser)
 
 module.exports = router;

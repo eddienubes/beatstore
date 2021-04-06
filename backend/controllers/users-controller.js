@@ -279,6 +279,10 @@ const updateUser = async (req, res, next) => {
         return next(new HttpError('User has not been found..', 401));
     }
 
+    if (!user.password) {
+        return next(new HttpError('You are logged in with google hence you can\'t change your data..', 403));
+    }
+
     let existingUser;
     try {
         existingUser = await User.findOne({email});
@@ -480,6 +484,7 @@ const googleContinue = async (req, res, next) => {
     }
 
     if (!user) {
+        console.log('no user here');
         let orders;
 
         try {
@@ -518,11 +523,12 @@ const googleContinue = async (req, res, next) => {
             const newRefreshToken = new RefreshToken({
                 refreshToken: refreshToken,
                 email: newUser.email,
-                expirationDate: new Date(new Date().getTime() * 1000 * 60 * 60 * 24 * 30)
+                expirationDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
             });
             await newRefreshToken.save();
             refreshTokenExpirationDate = newRefreshToken.expirationDate.toISOString();
         } catch (e) {
+            console.log(e.message);
             return next(
                 new HttpError('Could not log in, please try again.', 500)
             );
@@ -554,6 +560,8 @@ const googleContinue = async (req, res, next) => {
             }
         });
     } else {
+        console.log('there is a user!');
+
         let token;
         let refreshToken;
         let refreshTokenExpirationDate;
@@ -587,6 +595,7 @@ const googleContinue = async (req, res, next) => {
                 refreshTokenExpirationDate = existingRefreshToken.expirationDate;
             }
         } catch (e) {
+            console.log(e.message);
             return next(
                 new HttpError('Could not log in, please try again.', 500)
             );
@@ -600,19 +609,7 @@ const googleContinue = async (req, res, next) => {
             console.log(e.message);
             return next(new HttpError('Error while populating..', 500));
         }
-        console.log({
-            id: user.id,
-            email: user.email,
-            username: user.username,
-            cart: {
-                items: user.cart.items,
-                total: Math.round((user.cart.total + Number.EPSILON) * 100) / 100
-            },
-            purchased: normalizedPurchases,
-            token: token,
-            refreshToken: refreshToken,
-            refreshTokenExpiration: refreshTokenExpirationDate
-        });
+
         res.status(200);
         return res.json({
             message: 'Google login was successful',

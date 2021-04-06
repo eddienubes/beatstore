@@ -39,7 +39,11 @@ class AuthService {
     }
 
     async updateUser(id, newUserData, token) {
-        return axios.patch(this.baseUrl + `/${id}`, newUserData);
+        return axios.patch(this.baseUrl + `/${id}`, newUserData, {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
     }
 
     async appendToCart(userId, product, token) {

@@ -567,10 +567,11 @@ const logOut = () => async (dispatch, getState) => {
 const updateUser = (id, userData) => async (dispatch, getState) => {
     dispatch(userUpdateRequested());
 
-    const {expiration} = getState().userReducer;
+
+    const {expiration, token} = getState().userReducer;
 
     try {
-        const response = await authService.updateUser(id, userData);
+        const response = await authService.updateUser(id, userData, token);
         localStorage.setItem('userData', JSON.stringify({
             ...response.data.user,
             expiration

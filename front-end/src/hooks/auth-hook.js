@@ -21,7 +21,7 @@ const useAuth = () => {
             setChecking(false);
         }
         else if (cartData) {
-            dispatch(userDataFetchSuccessful({cart: userData}));
+            dispatch(userDataFetchSuccessful({cart: cartData}));
             setChecking(false);
         }
         else {
