@@ -354,9 +354,25 @@ const captureOrderWithWayforpay = async (req, res, next) => {
         return next(new HttpError('An error occurred while trying to find such order in db!', 500));
     }
 
+    const responseTime = new Date().getTime();
+
     if (!order) {
-        console.log('!order');
-        return next(new HttpError('No order with such id in db!', 404));
+        const declinedBaseSignature =
+            orderReference + ';' +
+            'decline' + ';' +
+            responseTime;
+
+        const declinedMd5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+
+        const declinedMerchantSignature = declinedMd5Hasher.update(declinedBaseSignature).digest('hex');
+
+        res.status(200);
+        return res.json({
+            orderReference,
+            status: 'decline',
+            time: responseTime,
+            signature: declinedMerchantSignature
+        });
     }
     const baseSignature =
         process.env.wayforpayMerchantAccount + ';' +
@@ -378,7 +394,6 @@ const captureOrderWithWayforpay = async (req, res, next) => {
         return next(new HttpError('Invalid data specified!', 403));
     }
 
-    const responseTime = new Date().getTime();
     if (transactionStatus === 'Declined') {
         try {
             await order.remove();
