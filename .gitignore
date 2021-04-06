@@ -27,6 +27,7 @@ front-end/build
 .env.production.local
 
 front-end/.env
+front-end/.env.production
 backend/.env
 admin-bot/.env
 
