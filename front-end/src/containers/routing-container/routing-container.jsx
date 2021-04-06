@@ -1,30 +1,36 @@
-import React, {useEffect, useState} from "react";
+import React, {Suspense, useEffect} from "react";
 
 import Header from "../../components/header";
-import PageNotFound from "../../components/page-not-found";
-import MainPage from "../../pages/main-page";
-import ContactPage from "../../pages/contact-page";
-import CheckoutPage from "../../pages/checkout-page";
 
 import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
 import MusicPlayer from "../../components/music-player";
-import BeatsPage from "../../pages/beats-page";
-import AuthContainer from "../auth-container";
-import AccountPage from "../../pages/account-page";
 import Footer from "../../components/footer";
 import Spinner from "../../components/spinner";
 import useAuth from "../../hooks/auth-hook";
 import {useDispatch, useSelector} from "react-redux";
-import {appendToCart, fetchLicenses} from "../../redux/actions";
+import {fetchLicenses} from "../../redux/actions";
 import BlurredSpinner from "../../components/blurred-spinner";
-import ConfirmationPage from "../../pages/confirmation-page";
-import PurchaseSuccessful from "../../pages/purchase-successful";
-import PurchaseFailed from "../../pages/purchase-failed";
+
+const ContactPage = React.lazy(() => import('../../pages/contact-page'));
+const CheckoutPage = React.lazy(() => import('../../pages/checkout-page'));
+const BeatsPage = React.lazy(() => import('../../pages/beats-page'));
+const AuthContainer = React.lazy(() => import('../auth-container'));
+const AccountPage = React.lazy(() => import('../../pages/account-page'));
+const ConfirmationPage = React.lazy(() => import('../../pages/confirmation-page'));
+const PurchaseSuccessful = React.lazy(() => import('../../pages/purchase-successful'));
+const PurchaseFailed = React.lazy(() => import('../../pages/purchase-failed'));
+const MainPage = React.lazy(() => import('../../pages/main-page'));
+const PageNotFound = React.lazy(() => import('../../components/page-not-found'));
 
 const RoutingContainer = () => {
     const [checking] = useAuth();
     const dispatch = useDispatch();
-    const {isLoadingAppendToCart, isLoggingOut, isProcessingPayment, processing} = useSelector(state => state.userReducer);
+    const {
+        isLoadingAppendToCart,
+        isLoggingOut,
+        isProcessingPayment,
+        processing
+    } = useSelector(state => state.userReducer);
     useEffect(() => {
         dispatch(fetchLicenses());
     }, []);
@@ -38,7 +44,8 @@ const RoutingContainer = () => {
         <Router>
             {isLoadingAppendToCart || isProcessingPayment ? <BlurredSpinner/> : null}
             <Header/>
-                <main>
+            <main>
+                <Suspense fallback={<Spinner/>}>
                     <MusicPlayer/>
                     <Switch>
                         <Route exact path="/" component={MainPage}/>
@@ -53,7 +60,8 @@ const RoutingContainer = () => {
                         <Route path="/confirmation/:confirmationCode" exact component={ConfirmationPage}/>
                         <Route component={PageNotFound}/>
                     </Switch>
-                </main>
+                </Suspense>
+            </main>
             <Footer/>
         </Router>
     );

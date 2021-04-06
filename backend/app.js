@@ -35,12 +35,13 @@ app.use((req, res, next) => {
 
 app.use('/api/data/beats', express.static(path.join(__dirname, 'data', 'beats')));
 app.use('/api/data/covers', express.static(path.join(__dirname, 'data', 'covers')));
-app.use(express.static(path.join(__dirname, '/public')));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/api/beats', beatsRoutes);
 app.use('/api/users', usersRoutes);
 app.use('/api/orders', ordersRoutes);
 app.use('/api/licenses', licensesRoutes);
 app.use('/api/bots', botRoutes);
+
 
 // audio stream handling
 // app.get('/api/data/beats/:bid', async (req, res, next) => {
@@ -105,9 +106,14 @@ app.use('/api/bots', botRoutes);
 // });
 
 // router in case none of above haven't been reached
-app.use((req, res) => {
-    throw new HttpError('Couldn\'t find this route...');
+
+app.use((req, res, next) => {
+    res.sendFile(path.resolve(__dirname, 'public', 'index.html'));
 });
+
+// app.use((req, res) => {
+//     throw new HttpError('Couldn\'t find this route...');
+// });
 
 // error handler
 app.use((error, req, res, next) => {
