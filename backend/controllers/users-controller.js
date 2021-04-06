@@ -493,7 +493,8 @@ const googleContinue = async (req, res, next) => {
             newUser = new User({
                 email: userData.email,
                 username: userData.name,
-                purchased: [...orders]
+                purchased: [...orders],
+                status: 'Active'
             });
             await newUser.save();
         } catch (e) {
@@ -599,7 +600,19 @@ const googleContinue = async (req, res, next) => {
             console.log(e.message);
             return next(new HttpError('Error while populating..', 500));
         }
-
+        console.log({
+            id: user.id,
+            email: user.email,
+            username: user.username,
+            cart: {
+                items: user.cart.items,
+                total: Math.round((user.cart.total + Number.EPSILON) * 100) / 100
+            },
+            purchased: normalizedPurchases,
+            token: token,
+            refreshToken: refreshToken,
+            refreshTokenExpiration: refreshTokenExpirationDate
+        });
         res.status(200);
         return res.json({
             message: 'Google login was successful',
