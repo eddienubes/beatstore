@@ -332,10 +332,17 @@ const userErrorCleared = () => {
     }
 }
 
-const cartItemsSet = (cart) => {
+const userDataFetchSuccessful = (data) => {
     return {
-        type: actions.CART_ITEMS_SET,
-        payload: cart
+        type: actions.USER_DATA_FETCH_SUCCESSFUL,
+        payload: data
+    }
+}
+
+const userDataFetchFailed = (err) => {
+    return {
+        type: actions.USER_DATA_FETCH_FAILED,
+        payload: err
     }
 }
 
@@ -459,10 +466,10 @@ const login = (formState, userDataLocalStorage) => async (dispatch, getState) =>
         const tokenExpirationDate = new Date(userDataLocalStorage.expiration) || new Date(new Date().getTime() + 1000 * 60 * 60);
 
 
-        let cart;
+        let user;
         try {
-            const response = await authService.getUserCartById(userDataLocalStorage.id, userDataLocalStorage.token);
-            cart = response.data.cart;
+            const response = await authService.getUserDataById(userDataLocalStorage.id, userDataLocalStorage.token);
+            user = response.data.user;
         }
         catch (e) {
             dispatch(logInFailure(e.response.data));
@@ -470,13 +477,14 @@ const login = (formState, userDataLocalStorage) => async (dispatch, getState) =>
 
         dispatch(logInSuccess({
             ...userDataLocalStorage,
-            cart: cart,
+            cart: user.cart,
+            purchased: user.purchased,
             expiration: tokenExpirationDate
         }));
 
         localStorage.setItem('userData', JSON.stringify({
             ...userDataLocalStorage,
-            cart: cart,
+            cart: user.cart,
             expiration: tokenExpirationDate.toISOString()
         }));
         localStorage.removeItem('cartData');
@@ -503,7 +511,7 @@ const login = (formState, userDataLocalStorage) => async (dispatch, getState) =>
             ...response.data.user,
             expiration: tokenExpirationDate.toISOString()
         }));
-
+        localStorage.removeItem('cartData');
     } catch (e) {
         console.log(e.response)
         dispatch(logInFailure(e.response.data))
@@ -787,7 +795,8 @@ export {
     refreshToken,
     logOut,
     userErrorCleared,
-    cartItemsSet,
+    userDataFetchFailed,
+    userDataFetchSuccessful,
     confirmUser,
     confirmationErrorRemoved,
 

@@ -95,8 +95,8 @@ class AuthService {
         });
     }
 
-    async getUserCartById(id, token) {
-        return axios.get(this.baseUrl + '/cart/' + id, {
+    async getUserDataById(id, token) {
+        return axios.get(this.baseUrl + '/data/' + id, {
             headers: {
                 'Authorization': 'Bearer ' + token
             }

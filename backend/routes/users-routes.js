@@ -14,7 +14,7 @@ router.get('/', checkBot, usersControllers.getAllUsers);
 
 router.get('/:uid', checkBot, usersControllers.getUserById);
 
-router.get('/cart/:uid', checkStandardAuth, usersControllers.getUserCartById);
+router.get('/data/:uid', checkStandardAuth, usersControllers.getUserDataById);
 
 router.get('/purchases/:uid', checkStandardAuth, usersControllers.getUserPurchasesById);
 

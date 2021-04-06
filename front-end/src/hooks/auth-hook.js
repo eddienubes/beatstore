@@ -1,6 +1,6 @@
 import {useDispatch, useSelector} from "react-redux";
 import {useEffect, useState} from "react";
-import {cartItemsSet, login, logOut, refreshToken} from "../redux/actions";
+import {userDataFetchSuccessful, login, logOut, refreshToken} from "../redux/actions";
 
 let refreshTokenTimer;
 let logoutTimer;
@@ -21,7 +21,7 @@ const useAuth = () => {
             setChecking(false);
         }
         else if (cartData) {
-            dispatch(cartItemsSet(cartData));
+            dispatch(userDataFetchSuccessful({cart: userData}));
             setChecking(false);
         }
         else {

@@ -238,11 +238,16 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 error: null
             }
-        case actions.CART_ITEMS_SET:
+        case actions.USER_DATA_FETCH_FAILED:
+            return {
+                ...state,
+                error: action.payload,
+            }
+        case actions.USER_DATA_FETCH_SUCCESSFUL:
             return {
                 ...state,
                 error: null,
-                cart: action.payload
+                cart: action.payload.cart,
             }
         case actions.PAYMENT_REQUESTED:
             return {

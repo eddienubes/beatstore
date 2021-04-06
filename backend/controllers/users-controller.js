@@ -21,8 +21,7 @@ const getUserById = async (req, res, next) => {
         user = await User.findById(userId, {
             password: false
         });
-    }
-    catch (e) {
+    } catch (e) {
         return next(new HttpError('An error occurred while trying to find user..', 500));
     }
 
@@ -35,11 +34,9 @@ const getUserById = async (req, res, next) => {
     let purchased;
     try {
         purchased = await populateUserPurchases(user, next);
-    }
-    catch (e) {
+    } catch (e) {
         return next(new HttpError('An error occurred while trying to populate user..', 500));
     }
-
 
 
     res.status(200);
@@ -842,8 +839,7 @@ const contact = async (req, res, next) => {
             subject,
             message
         });
-    }
-    catch (e) {
+    } catch (e) {
         return next(new HttpError('Something went wrong while sending contact email', 500));
     }
 
@@ -851,14 +847,13 @@ const contact = async (req, res, next) => {
     res.json({message: 'Successfully sent. I will read your message in 1 day, thank you.'});
 }
 
-const getUserCartById = async (req, res, next) => {
+const getUserDataById = async (req, res, next) => {
     const userId = req.params.uid;
 
     let user;
     try {
         user = await User.findById(userId);
-    }
-    catch (e) {
+    } catch (e) {
         return next(new HttpError('An error occurred while trying to find user with such id..', 500));
     }
 
@@ -868,13 +863,24 @@ const getUserCartById = async (req, res, next) => {
 
     try {
         await populateUserCart(user, next);
-    }
-    catch (e) {
+    } catch (e) {
         return next(new HttpError('An error occurred while populating user cart', 500));
     }
 
+    let purchased;
+    try {
+        purchased = await populateUserPurchases(user, next);
+    } catch (e) {
+        return next(new HttpError('An error occurred while populating user purchases', 500));
+    }
+
     res.status(200);
-    res.json({message: 'Successfully retrieved user cart!', cart: user.cart});
+    res.json({
+        message: 'Successfully retrieved user cart!', user: {
+            cart: user.cart,
+            purchased
+        }
+    });
 }
 
 const getUserPurchasesById = async (req, res, next) => {
@@ -883,8 +889,7 @@ const getUserPurchasesById = async (req, res, next) => {
     let user;
     try {
         user = await User.findById(userId);
-    }
-    catch (e) {
+    } catch (e) {
         return next(new HttpError('An occurred while trying to find user', 500));
     }
 
@@ -895,8 +900,7 @@ const getUserPurchasesById = async (req, res, next) => {
     let purchases;
     try {
         purchases = await populateUserPurchases(user, next);
-    }
-    catch (e) {
+    } catch (e) {
         return next(new HttpError('An occurred while trying to populate user purchases', 500));
     }
 
@@ -920,6 +924,6 @@ module.exports = {
     removeFromCartOffline,
     verifyUser,
     contact,
-    getUserCartById,
+    getUserDataById,
     getUserPurchasesById
 };
