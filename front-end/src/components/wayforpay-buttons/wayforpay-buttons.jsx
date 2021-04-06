@@ -4,7 +4,7 @@ import './wayforpay-buttons.scss';
 import scriptLoader from 'react-async-script-loader';
 import OrdersService from "../../services/orders-service";
 import SpinnerAudio from "../spinner-audio";
-import {paymentAcceptedAndRedirected, paymentDeclinedAndRedirected, paymentRequested} from "../../redux/actions";
+import {paymentAcceptedAndRedirected, paymentDeclinedAndRedirected, paymentRequested, paymentCanceled} from "../../redux/actions";
 
 class WayforpayButtons extends Component {
 
@@ -44,15 +44,15 @@ class WayforpayButtons extends Component {
     }
 
     createOrder = (e) => {
+
         e.preventDefault();
         const ordersService = new OrdersService();
-        this.props.paymentRequested();
-
-        ordersService.createOrderWithWayforpay(this.props.email, this.props.cart.items)
+        const wayforpay = new window.Wayforpay();
+        ordersService.createOrderWithWayforpay(this.props.loggedIn ? this.props.email : this.props.formState.inputs.email.value, this.props.cart.items)
             .then(res => {
                 console.log('Run wayforpay payment!');
                 console.log(res.data.order);
-                (new window.Wayforpay()).run(
+                wayforpay.run(
                     res.data.order,
                     this.handleApprove,
                     this.handleError
@@ -60,7 +60,7 @@ class WayforpayButtons extends Component {
             })
             .catch(e => {
                 console.log(e.message);
-
+                this.handleError(e);
             });
     }
 
@@ -91,6 +91,7 @@ const mapStateToProps = (state) => {
         userReducer
     } = state;
     return {
+        loggedIn: userReducer.loggedIn,
         cart: userReducer.cart,
         email: userReducer.email
     }
@@ -98,6 +99,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
+        paymentCanceled: () => dispatch(paymentCanceled()),
         paymentRequested: () => dispatch(paymentRequested()),
         paymentAccepted: (history) => dispatch(paymentAcceptedAndRedirected(history)),
         paymentDeclined: (err, history) => dispatch(paymentDeclinedAndRedirected(err, history))

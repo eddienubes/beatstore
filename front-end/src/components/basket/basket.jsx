@@ -10,6 +10,19 @@ import AnimationContainer from "../../containers/animation-container";
 import SpinnerAudio from "../spinner-audio";
 import PaypalButtons from "../paypal-buttons/paypal-buttons";
 import WayforpayButtons from "../wayforpay-buttons/wayforpay-buttons";
+import useForm from "../../hooks/form-hook";
+import {VALIDATOR_EMAIL, VALIDATOR_REQUIRE} from "../../utils/validators";
+import Input from "../../pages/auth-pages/input";
+
+const initialState = {
+    inputs: {
+        email: {
+            value: '',
+            isValid: false
+        }
+    },
+    isValid: false
+}
 
 const Basket = () => {
     const [isDisabled, setDisabled] = React.useState(true);
@@ -17,6 +30,7 @@ const Basket = () => {
     const {cart, isLoadingRemoveFromCart, loggedIn, email} = useSelector(state => state.userReducer);
     const {id, isPlaying, previousId} = useSelector(state => state.audioReducer);
     const history = useHistory();
+    const [formState, onInputHandler] = useForm(initialState.inputs, initialState.isValid);
 
     if (cart.items.length === 0) {
         return (
@@ -31,7 +45,7 @@ const Basket = () => {
         setDisabled(!isDisabled)
     };
 
-
+    console.log(formState);
     return (
         <div className="basket__container">
             <Table className="cart" celled structured striped unstackable>
@@ -101,7 +115,7 @@ const Basket = () => {
                         </PlaceholderAnimatedInput>
                         <button className="coupon-button" type="submit" disabled>APPLY COUPON</button>
                     </form>
-                    <form >
+                    <form>
                         <div className="numbers-container gross">
                             <div>Gross</div>
                             {/*PUT GROSS VALUE HERE*/}
@@ -120,11 +134,23 @@ const Basket = () => {
                         </div>
 
                         {
-                            !loggedIn ? (<PlaceholderAnimatedInput className={"coupon-input"}
-                                                                   labelStyle={"label-style"}
-                                                                   name="email"
-                                                                   text="Enter your email to send purchases to"
-                                                                   required={true}/>) :
+                            !loggedIn ? (
+
+                                    <Input
+                                        component={<PlaceholderAnimatedInput className={"coupon-input"}
+                                                                             labelStyle={"label-style"}
+                                                                             name="email"
+                                                                             text="Enter your email to send purchases to"
+                                                                             required={true}/>}
+                                        id="email"
+                                        name="email"
+                                        type="text"
+                                        errorText="Enter correct email"
+                                        validators={[VALIDATOR_EMAIL(), VALIDATOR_REQUIRE()]}
+                                        onInput={onInputHandler}
+                                        initialValue={formState.inputs.email.value}
+                                        initialValid={formState.inputs.email.isValid}
+                                    />) :
                                 (<p className={`email-caption-warning`}>Beats will be sent on email your current account
                                     logged in with.</p>)
                         }
@@ -136,12 +162,17 @@ const Basket = () => {
                         I reviewed and agree to the Track(s) License Agreements
                     </span>
                             </label>
-                            <div className={`payment-buttons`}>
+                            <div className={`payment-buttons ${!formState.isValid ? 'disabled-payment-buttons' : null}`}>
                                 <span className="paypal-payment-desc">
-                                    pay via paypal or wayforpay
                                 </span>
-                                    <PaypalButtons disabled={isDisabled || isLoadingRemoveFromCart} history={history}/>
-                                    <WayforpayButtons disabled={isDisabled || isLoadingRemoveFromCart} history={history}/>
+                                <PaypalButtons disabled={isDisabled || isLoadingRemoveFromCart}
+                                               history={history}
+                                               formState={formState}
+                                />
+                                <WayforpayButtons disabled={isDisabled || isLoadingRemoveFromCart}
+                                                  history={history}
+                                                  formState={formState}
+                                />
                             </div>
                         </div>
                     </form>

@@ -34,6 +34,19 @@
     form {
         display: flex;
         flex-direction: column;
+
+        .disabled-payment-buttons {
+            filter: saturate(0);
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .input__error-msg {
+            color: red!important;
+            margin: 5px 0 0!important;
+            text-align: left;
+            animation: error-msg-anim .2s ease-in-out;
+        }
     }
 
     width: 100%;
@@ -144,7 +157,7 @@
         }
 
         .total {
-
+            margin-bottom: 40px;
         }
 
         .number {
@@ -156,6 +169,7 @@
         }
 
         .agreement {
+            margin-top: 40px;
             .payment-buttons {
                 color: white;
                 div {
@@ -357,5 +371,14 @@
     }
     .basket__container {
         padding: 0!important;
+    }
+}
+
+@keyframes error-msg-anim {
+    0% {
+        transform: translateY(-100%);
+    }
+    100% {
+        transform: translateY(0%);
     }
 }

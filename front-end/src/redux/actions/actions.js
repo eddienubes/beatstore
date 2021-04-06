@@ -386,9 +386,12 @@ const paymentRequested = () => {
     return {type: actions.PAYMENT_REQUESTED}
 };
 
+const paymentCanceled =() => {
+    return {type: actions.PAYMENT_CANCELED}
+};
+
 const paymentDeclinedAndRedirected = (err, history) => (dispatch, getState) => {
-    dispatch(paymentDeclined(err));
-    dispatch(cartCleared());
+    dispatch(paymentDeclined(JSON.stringify({...err.response.data, statusText: err.message})));
     history.replace('checkout/failed');
 }
 const paymentAcceptedAndRedirected = (history) => (dispatch, getState) => {
@@ -773,5 +776,6 @@ export {
     paymentAcceptanceDrop,
     paymentDeclinedAndRedirected,
     paymentDeclineDrop,
-    paymentRequested
+    paymentRequested,
+    paymentCanceled
 };

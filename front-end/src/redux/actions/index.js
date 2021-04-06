@@ -28,7 +28,8 @@ import {
     paymentAcceptedAndRedirected,
     paymentAcceptanceDrop,
     paymentDeclinedAndRedirected,
-    paymentRequested
+    paymentRequested,
+    paymentCanceled
 } from './actions';
 
 export {
@@ -64,5 +65,6 @@ export {
     paymentAcceptedAndRedirected,
     paymentAcceptanceDrop,
     paymentDeclinedAndRedirected,
-    paymentRequested
+    paymentRequested,
+    paymentCanceled
 };

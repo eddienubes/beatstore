@@ -23,6 +23,12 @@ const crypto = require('crypto');
 const {validationResult} = require('express-validator');
 
 const createOrderWithPaypal = async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return next(new HttpError('Wrong arguments specified!', 403));
+    }
+
     const {email, cartItems} = req.body;
 
     let licenses;
@@ -221,6 +227,12 @@ const captureOrderWithPaypal = async (req, res, next) => {
 }
 
 const createOrderWithWayforpay = async (req, res, next) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+        return next(new HttpError('Wrong arguments specified!', 403));
+    }
+
     const {email, cartItems} = req.body;
 
     let licenses;

@@ -82,7 +82,7 @@ const RegisterPage = ({authService}) => {
 
     return (
         <div className="auth-page">
-            {/* todo there might be logo*/}
+            {/* todo there might be a logo*/}
             {hasRegistered && !userState.error ? <SecondRegistrationStep/> :
                 <>
                     <h2>Register</h2>

@@ -66,8 +66,9 @@ class PaypalButtons extends React.Component {
     }
 
     createOrder = (data, actions) => {
+
         const ordersService = new OrdersService();
-        return ordersService.createPaypalOrder(this.props.email, this.props.cart.items)
+        return ordersService.createPaypalOrder(this.props.loggedIn ? this.props.email : this.props.formState.inputs.email.value, this.props.cart.items)
             .then(res => res)
             .then(({data}) => {
                 this.setState(state => {
@@ -127,7 +128,11 @@ const mapStateToProps = (state) => {
     const {
         userReducer
     } = state;
-    return {cart: userReducer.cart, email: userReducer.email}
+    return {
+        loggedIn: userReducer.loggedIn,
+        cart: userReducer.cart,
+        email: userReducer.email
+    }
 }
 
 const mapDispatchToProps = (dispatch) => {

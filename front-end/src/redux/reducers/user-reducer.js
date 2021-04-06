@@ -307,6 +307,12 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 paymentError: null
             }
+        case actions.PAYMENT_CANCELED:
+            return {
+                ...state,
+                paymentError: null,
+                isProcessingPayment: false
+            }
         default:
             return state;
     }
