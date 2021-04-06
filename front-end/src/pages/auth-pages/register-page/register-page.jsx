@@ -4,7 +4,12 @@ import Input from "../input";
 import {VALIDATOR_CHECKBOX, VALIDATOR_EMAIL, VALIDATOR_MINLENGTH} from "../../../utils/validators";
 import useForm from "../../../hooks/form-hook";
 import {withAuthService} from '../../../components/hoc';
-import {googleSignup, googleSignupFailed, signup, userErrorCleared} from "../../../redux/actions";
+import {
+    googleContinue,
+    googleContinueFailed,
+    signup,
+    userErrorCleared
+} from "../../../redux/actions";
 import {useDispatch, useSelector} from "react-redux";
 import Spinner from "../../../components/spinner";
 import {GoogleLogin} from 'react-google-login';
@@ -57,11 +62,11 @@ const RegisterPage = ({authService}) => {
     }
 
     const googleSuccess = async (res) => {
-        dispatch(googleSignup(res.tokenId));
+        dispatch(googleContinue(res.tokenId));
     }
 
     const googleFailure = async (err) => {
-        dispatch(googleSignupFailed(err));
+        dispatch(googleContinueFailed(err));
     }
 
     const canSignup = checked && formState.isValid && formState.confirmed;
@@ -165,7 +170,7 @@ const RegisterPage = ({authService}) => {
                                         height="15"
                                         alt="Google"
                                     />
-                                    Sign up with Google
+                                    Continue with Google
                                 </button>
                             )
                         }

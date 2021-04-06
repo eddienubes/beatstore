@@ -58,12 +58,8 @@ class AuthService {
         });
     }
 
-    async googleLogin(tokenId) {
-        return axios.post(this.baseUrl + '/login-google', {tokenId: tokenId});
-    }
-
-    async googleSignup(tokenId) {
-        return axios.post(this.baseUrl + '/signup-google', {tokenId: tokenId});
+    async googleContinue(tokenId) {
+        return axios.post(this.baseUrl + '/continue-google', {tokenId: tokenId});
     }
 
     async logout(token) {

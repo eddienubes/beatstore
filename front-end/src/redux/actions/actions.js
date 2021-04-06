@@ -160,47 +160,17 @@ const logInFailure = (payload) => {
     }
 }
 
+const googleContinueRequested = () => {
+    return {type: actions.GOOGLE_CONTINUE_REQUESTED}
+};
 
-const googleLoginRequested = () => {
-    return {
-        type: actions.GOOGLE_LOG_IN_REQUESTED,
-    };
-}
+const googleContinueSuccess = (user) => {
+    return {type: actions.GOOGLE_CONTINUE_SUCCESS, payload: user}
+};
 
-const googleLoginSuccess = (userData) => {
-    return {
-        type: actions.GOOGLE_LOG_IN_SUCCESS,
-        payload: userData
-    }
-}
-
-const googleLoginFailed = (error) => {
-    return {
-        type: actions.GOOGLE_LOG_IN_FAILED,
-        payload: error
-    }
-}
-
-
-const googleSignupRequested = () => {
-    return {
-        type: actions.GOOGLE_SIGN_UP_REQUESTED,
-    }
-}
-
-const googleSignupSuccess = (userData) => {
-    return {
-        type: actions.GOOGLE_SIGN_UP_SUCCESS,
-        payload: userData
-    }
-}
-
-const googleSignupFailed = (error) => {
-    return {
-        type: actions.GOOGLE_SIGN_UP_FAILED,
-        payload: error
-    }
-}
+const googleContinueFailed = (err) => {
+    return {type: actions.GOOGLE_CONTINUE_FAILED, payload: err}
+};
 
 const userUpdateRequested = () => {
     return {
@@ -406,19 +376,20 @@ const userPurchasesUpdateFailed = (err) => {
 };
 
 const paymentDeclinedAndRedirected = (err, history) => (dispatch, getState) => {
-    dispatch(paymentDeclined(JSON.stringify({...err.response.data, statusText: err.message})));
+    dispatch(paymentDeclined(JSON.stringify({...err?.response?.data, statusText: err.message})));
     history.replace('checkout/failed');
 }
-const paymentAcceptedAndRedirected = (history) => (dispatch, getState) => {
+const paymentAcceptedAndRedirected = (history) => async (dispatch, getState) => {
     const {loggedIn, id, token} = getState().userReducer;
 
     if (loggedIn) {
         try {
-            const response = authService.getUserPurchasesById(id, token);
+            const response = await authService.getUserPurchasesById(id, token);
             dispatch(userPurchasesUpdateSuccessful(response.data.purchases))
         }
         catch (e) {
-            console.log(e.response.data);
+            console.log(e);
+            console.log(e.response?.data);
             dispatch(userPurchasesUpdateFailed(e));
         }
     }
@@ -674,15 +645,15 @@ const removeFromCart = (productId) => async (dispatch, getState) => {
 
 }
 
-const googleLogin = (tokenId) => async (dispatch, getState) => {
+const googleContinue = (tokenId) => async (dispatch, getState) => {
 
-    dispatch(googleLoginRequested());
+    dispatch(googleContinueRequested());
     try {
-        const response = await authService.googleLogin(tokenId);
+        const response = await authService.googleContinue(tokenId);
 
         const tokenExpirationDate = new Date(new Date().getTime() + 1000 * 60 * 60);
 
-        dispatch(googleLoginSuccess({
+        dispatch(googleContinueSuccess({
             ...response.data.user,
             expiration: tokenExpirationDate.toISOString()
         }));
@@ -695,25 +666,7 @@ const googleLogin = (tokenId) => async (dispatch, getState) => {
 
     } catch (e) {
         console.log(e.message);
-        dispatch(googleLoginFailed(e.response.data));
-    }
-}
-
-const googleSignup = (tokenId) => async (dispatch, getState) => {
-    dispatch(googleSignupRequested());
-    try {
-        const response = await authService.googleSignup(tokenId);
-        const tokenExpirationDate = new Date(new Date().getTime() + 1000 * 60 * 60);
-
-        dispatch(googleSignupSuccess({
-            ...response.data.user,
-            expiration: tokenExpirationDate
-        }));
-        localStorage.removeItem('cartData');
-
-    } catch (e) {
-        console.log(e.response.data);
-        dispatch(googleSignupFailed(e.response.data));
+        dispatch(googleContinueFailed(e.response.data));
     }
 }
 
@@ -788,10 +741,8 @@ export {
     appendToCart,
     removeFromCart,
     notificationClosed,
-    googleSignup,
-    googleLogin,
-    googleLoginFailed,
-    googleSignupFailed,
+    googleContinue,
+    googleContinueFailed,
     refreshToken,
     logOut,
     userErrorCleared,

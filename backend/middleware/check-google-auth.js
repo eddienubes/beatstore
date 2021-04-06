@@ -19,9 +19,7 @@ module.exports = async (req, res, next) => {
             idToken: tokenId,
             audience: '718477232651-i09ba8bjtbaqlt7h1i2fq3j4klklth2h.apps.googleusercontent.com'
         });
-        const payload = ticket.getPayload();
-        const userId = payload.sub;
-        req.userData = payload;
+        req.userData = ticket.getPayload();
         return next();
     }
     catch (e) {

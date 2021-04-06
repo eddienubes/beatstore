@@ -23,8 +23,7 @@ router.post('/login', usersControllers.login);
 router.post('/verify/:confirmationCode', usersControllers.verifyUser);
 
 
-router.post('/login-google', checkGoogleAuth, usersControllers.googleLogin)
-router.post('/signup-google', checkGoogleAuth, usersControllers.googleSignup)
+router.post('/continue-google', checkGoogleAuth, usersControllers.googleContinue)
 
 router.post('/token', checkRefreshToken, usersControllers.token)
 router.post('/logout', checkStandardAuth, usersControllers.logout);

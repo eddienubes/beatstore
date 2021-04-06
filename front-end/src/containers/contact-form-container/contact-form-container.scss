@@ -4,6 +4,7 @@
     justify-content: space-around;
 
     .description {
+        animation: social-media-contact .3s ease-in-out;
         background: black;
         color: white;
         max-width: 300px;
@@ -28,5 +29,16 @@
         & div:not(:first-child) {
             align-items: center;
         }
+    }
+}
+
+@keyframes social-media-contact {
+    0% {
+        opacity: 0;
+        transform: translateX(-100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0%);
     }
 }

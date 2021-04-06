@@ -6,7 +6,12 @@ import Input from "../input";
 import useForm from "../../../hooks/form-hook";
 import {useDispatch, useSelector} from "react-redux";
 import Spinner from "../../../components/spinner";
-import {googleLogin, googleLoginFailed, login, userErrorCleared} from "../../../redux/actions";
+import {
+    googleContinue,
+    googleContinueFailed,
+    login,
+    userErrorCleared
+} from "../../../redux/actions";
 import {GoogleLogin} from "react-google-login";
 
 const LoginPage = ({loggedIn}) => {
@@ -42,11 +47,11 @@ const LoginPage = ({loggedIn}) => {
     }
 
     const googleSuccess = async (res) => {
-        dispatch(googleLogin(res.tokenId));
+        dispatch(googleContinue(res.tokenId));
     }
 
     const googleFailure = async (error) => {
-        dispatch(googleLoginFailed(error));
+        dispatch(googleContinueFailed(error));
     }
 
     const invalidCredentialsMsg = userState.error ? (
@@ -100,7 +105,7 @@ const LoginPage = ({loggedIn}) => {
                                 height="15"
                                 alt="Google"
                             />
-                            Log in with Google
+                            Continue with Google
                         </button>
                     )
                 }

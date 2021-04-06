@@ -1,4 +1,5 @@
 .contact-form {
+    animation: social-media-contact-2 .3s ease-in-out;
     position: relative;
     // styles
     display: flex;
@@ -60,5 +61,16 @@
         button {
             align-self: center;
         }
+    }
+}
+
+@keyframes social-media-contact-2 {
+    0% {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0%);
     }
 }

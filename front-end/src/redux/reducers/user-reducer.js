@@ -162,39 +162,12 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 showNotification: false
             }
-        case actions.GOOGLE_SIGN_UP_REQUESTED:
+        case actions.GOOGLE_CONTINUE_REQUESTED:
             return {
                 ...state,
                 processing: true
             }
-        case actions.GOOGLE_SIGN_UP_SUCCESS:
-            return {
-                ...state,
-                id: action.payload.id,
-                loggedIn: true,
-                processing: false,
-                cart: action.payload.cart,
-                purchased: action.payload.purchased,
-                email: action.payload.email,
-                username: action.payload.username,
-                token: action.payload.token,
-                refreshToken: action.payload.refreshToken,
-                refreshTokenExpiration: action.payload.refreshTokenExpiration,
-                expiration: action.payload.expiration,
-                error: null
-            }
-        case actions.GOOGLE_SIGN_UP_FAILED:
-            return {
-                ...state,
-                processing: false,
-                error: action.payload
-            }
-        case actions.GOOGLE_LOG_IN_REQUESTED:
-            return {
-                ...state,
-                processing: true
-            }
-        case actions.GOOGLE_LOG_IN_SUCCESS:
+        case actions.GOOGLE_CONTINUE_SUCCESS:
             return {
                 ...state,
                 id: action.payload.id,
@@ -211,7 +184,7 @@ const userReducer = (state = initialState, action) => {
                 error: null,
                 purchasesUpdateError: null
             }
-        case actions.GOOGLE_LOG_IN_FAILED:
+        case actions.GOOGLE_CONTINUE_FAILED:
             return {
                 ...state,
                 processing: false,
@@ -321,6 +294,17 @@ const userReducer = (state = initialState, action) => {
                 ...state,
                 paymentError: null,
                 isProcessingPayment: false
+            }
+
+        case actions.USER_PURCHASES_UPDATE_SUCCESSFUL:
+            return {
+                ...state,
+                purchased: action.payload
+            }
+        case actions.USER_PURCHASES_UPDATE_FAILED:
+            return {
+                ...state,
+                purchasesUpdateError: action.payload
             }
         default:
             return state;

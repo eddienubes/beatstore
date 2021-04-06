@@ -24,13 +24,13 @@ import PurchaseFailed from "../../pages/purchase-failed";
 const RoutingContainer = () => {
     const [checking] = useAuth();
     const dispatch = useDispatch();
-    const {isLoadingAppendToCart, isLoggingOut, isProcessingPayment} = useSelector(state => state.userReducer);
+    const {isLoadingAppendToCart, isLoggingOut, isProcessingPayment, processing} = useSelector(state => state.userReducer);
     useEffect(() => {
         dispatch(fetchLicenses());
     }, []);
 
 
-    if (checking || isLoggingOut) {
+    if (checking || isLoggingOut || processing) {
         return <Spinner/>
     }
 

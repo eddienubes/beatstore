@@ -21,7 +21,7 @@ const PurchaseFailed = () => {
         <div className={`payment-failed-container`}>
             <img src={err} alt="failed-img"/>
             <h2>Dear customer, something went wrong!</h2>
-            <h3>Your payment has been declined!</h3>
+            <h3>An issue occurred while updating your account and processing payment!</h3>
             <br/>
             <br/>
             <p className={`description`}>

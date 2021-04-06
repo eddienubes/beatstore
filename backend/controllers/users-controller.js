@@ -469,7 +469,7 @@ const removeFromUserCart = async (req, res, next) => {
     });
 }
 
-const googleLogin = async (req, res, next) => {
+const googleContinue = async (req, res, next) => {
     const userData = req.userData;
 
     let user;
@@ -480,160 +480,144 @@ const googleLogin = async (req, res, next) => {
     }
 
     if (!user) {
-        return next(new HttpError('Invalid credentials..', 403));
-    }
+        let orders;
 
-    let token;
-    let refreshToken;
-    let refreshTokenExpirationDate;
-    try {
-        token = jwt.sign(
-            {userId: user._id.toString(), email: user.email},
-            process.env.secret,
-            {expiresIn: process.env.tokenExpireTime}
-        );
-        const existingRefreshToken = await RefreshToken.findOne({email: userData.email});
+        try {
+            orders = await Order.find({email: userData.email});
+        } catch (e) {
+            return next(new HttpError('Something went wrong while finding orders with such email!', 500));
+        }
 
-        if (!existingRefreshToken || existingRefreshToken?.expirationDate.getTime() <= new Date().getTime()) {
+        let newUser;
+        try {
+            newUser = new User({
+                email: userData.email,
+                username: userData.name,
+                purchased: [...orders]
+            });
+            await newUser.save();
+        } catch (e) {
+            return next(new HttpError('Error while saving new user who signed up with oauth..', 500));
+        }
+
+        let token;
+        let refreshToken;
+        let refreshTokenExpirationDate;
+        try {
+            token = jwt.sign(
+                {userId: newUser._id.toString(), email: newUser.email},
+                process.env.secret,
+                {expiresIn: process.env.tokenExpireTime}
+            );
             refreshToken = jwt.sign(
-                {userId: user._id.toString(), email: userData.email},
+                {userId: newUser._id.toString(), email: userData.email},
                 process.env.refreshTokenSecret,
                 {expiresIn: process.env.refreshTokenExpireTime}
             );
-
-            // 1k milliseconds => 1 second => 1 minute => 1 hour => 1 day => 1 month (30 days)
-            await existingRefreshToken?.remove();
-
             const newRefreshToken = new RefreshToken({
-                email: userData.email,
                 refreshToken: refreshToken,
-                expirationDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
+                email: newUser.email,
+                expirationDate: new Date(new Date().getTime() * 1000 * 60 * 60 * 24 * 30)
             });
-            refreshTokenExpirationDate = newRefreshToken.expirationDate;
             await newRefreshToken.save();
-        } else {
-            refreshToken = existingRefreshToken.refreshToken;
-            refreshTokenExpirationDate = existingRefreshToken.expirationDate;
+            refreshTokenExpirationDate = newRefreshToken.expirationDate.toISOString();
+        } catch (e) {
+            return next(
+                new HttpError('Could not log in, please try again.', 500)
+            );
         }
-    } catch (e) {
-        return next(
-            new HttpError('Could not log in, please try again.', 500)
-        );
-    }
 
-    let normalizedPurchases;
-    try {
-        normalizedPurchases = await populateUserPurchases(user, next);
-        await populateUserCart(user, next);
-    } catch (e) {
-        console.log(e.message);
-        return next(new HttpError('Error while populating..', 500));
-    }
-
-    res.status(200);
-    res.json({
-        message: 'Google login was successful',
-        user: {
-            id: user.id,
-            email: user.email,
-            username: user.username,
-            cart: {
-                items: user.cart.items,
-                total: Math.round((user.cart.total + Number.EPSILON) * 100) / 100
-            },
-            purchased: normalizedPurchases,
-            token: token,
-            refreshToken: refreshToken,
-            refreshTokenExpiration: refreshTokenExpirationDate
+        let normalizedPurchases;
+        try {
+            normalizedPurchases = await populateUserPurchases(newUser, next);
+            await populateUserCart(newUser, next);
+        } catch (e) {
+            return next(new HttpError('Error while populating..', 500));
         }
-    });
-}
 
-const googleSignup = async (req, res, next) => {
-    const userData = req.userData;
-
-    let existingUser;
-    try {
-        existingUser = await User.findOne({email: userData.email})
-    } catch (e) {
-        return next(new HttpError('Error while trying to find existing user', 500))
-    }
-
-    if (existingUser) {
-        return next(new HttpError('User with such email already exists..', 403));
-    }
-    let orders;
-
-    try {
-        orders = await Order.find({email: userData.email});
-    } catch (e) {
-        return next(new HttpError('Something went wrong while finding orders with such email!', 500));
-    }
-
-    let newUser;
-    try {
-        newUser = new User({
-            email: userData.email,
-            username: userData.name,
-            purchased: [...orders]
+        res.status(200);
+        return res.json({
+            message: 'Google signup was successful',
+            user: {
+                id: newUser.id,
+                email: newUser.email,
+                username: newUser.username,
+                cart: {
+                    items: newUser.cart.items,
+                    total: Math.round((newUser.cart.total + Number.EPSILON) * 100) / 100
+                },
+                purchased: normalizedPurchases,
+                token: token,
+                refreshToken: refreshToken,
+                refreshTokenExpiration: refreshTokenExpirationDate
+            }
         });
-        await newUser.save();
-    } catch (e) {
-        return next(new HttpError('Error while saving new user who signed up with oauth..', 500));
-    }
+    } else {
+        let token;
+        let refreshToken;
+        let refreshTokenExpirationDate;
+        try {
+            token = jwt.sign(
+                {userId: user._id.toString(), email: user.email},
+                process.env.secret,
+                {expiresIn: process.env.tokenExpireTime}
+            );
+            const existingRefreshToken = await RefreshToken.findOne({email: userData.email});
 
-    let token;
-    let refreshToken;
-    let refreshTokenExpirationDate;
-    try {
-        token = jwt.sign(
-            {userId: newUser._id.toString(), email: newUser.email},
-            process.env.secret,
-            {expiresIn: process.env.tokenExpireTime}
-        );
-        refreshToken = jwt.sign(
-            {userId: newUser._id.toString(), email: userData.email},
-            process.env.refreshTokenSecret,
-            {expiresIn: process.env.refreshTokenExpireTime}
-        );
-        const newRefreshToken = new RefreshToken({
-            refreshToken: refreshToken,
-            email: newUser.email,
-            expirationDate: new Date(new Date().getTime() * 1000 * 60 * 60 * 24 * 30)
-        });
-        await newRefreshToken.save();
-        refreshTokenExpirationDate = newRefreshToken.expirationDate.toISOString();
-    } catch (e) {
-        return next(
-            new HttpError('Could not log in, please try again.', 500)
-        );
-    }
+            if (!existingRefreshToken || existingRefreshToken?.expirationDate.getTime() <= new Date().getTime()) {
+                refreshToken = jwt.sign(
+                    {userId: user._id.toString(), email: userData.email},
+                    process.env.refreshTokenSecret,
+                    {expiresIn: process.env.refreshTokenExpireTime}
+                );
 
-    let normalizedPurchases;
-    try {
-        normalizedPurchases = await populateUserPurchases(newUser, next);
-        await populateUserCart(newUser, next);
-    } catch (e) {
-        return next(new HttpError('Error while populating..', 500));
-    }
+                // 1k milliseconds => 1 second => 1 minute => 1 hour => 1 day => 1 month (30 days)
+                await existingRefreshToken?.remove();
 
-    res.status(200);
-    res.json({
-        message: 'Google signup was successful',
-        user: {
-            id: newUser.id,
-            email: newUser.email,
-            username: newUser.username,
-            cart: {
-                items: newUser.cart.items,
-                total: Math.round((newUser.cart.total + Number.EPSILON) * 100) / 100
-            },
-            purchased: normalizedPurchases,
-            token: token,
-            refreshToken: refreshToken,
-            refreshTokenExpiration: refreshTokenExpirationDate
+                const newRefreshToken = new RefreshToken({
+                    email: userData.email,
+                    refreshToken: refreshToken,
+                    expirationDate: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30)
+                });
+                refreshTokenExpirationDate = newRefreshToken.expirationDate;
+                await newRefreshToken.save();
+            } else {
+                refreshToken = existingRefreshToken.refreshToken;
+                refreshTokenExpirationDate = existingRefreshToken.expirationDate;
+            }
+        } catch (e) {
+            return next(
+                new HttpError('Could not log in, please try again.', 500)
+            );
         }
-    });
+
+        let normalizedPurchases;
+        try {
+            normalizedPurchases = await populateUserPurchases(user, next);
+            await populateUserCart(user, next);
+        } catch (e) {
+            console.log(e.message);
+            return next(new HttpError('Error while populating..', 500));
+        }
+
+        res.status(200);
+        return res.json({
+            message: 'Google login was successful',
+            user: {
+                id: user.id,
+                email: user.email,
+                username: user.username,
+                cart: {
+                    items: user.cart.items,
+                    total: Math.round((user.cart.total + Number.EPSILON) * 100) / 100
+                },
+                purchased: normalizedPurchases,
+                token: token,
+                refreshToken: refreshToken,
+                refreshTokenExpiration: refreshTokenExpirationDate
+            }
+        });
+    }
 }
 
 const token = async (req, res, next) => {
@@ -916,8 +900,7 @@ module.exports = {
     updateUser,
     appendInUserCart,
     removeFromUserCart,
-    googleLogin,
-    googleSignup,
+    googleContinue,
     token,
     logout,
     appendToCartOffline,
