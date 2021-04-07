@@ -688,7 +688,7 @@ const appendToCartOffline = async (req, res, next) => {
     }
 
     const existingProductIndex = cart.items.findIndex(i => i.beatId._id.toString() === product.beatId.toString());
-
+    console.log(!~existingProductIndex);
     if (!~existingProductIndex) {
         let beat;
         let license;
@@ -703,13 +703,13 @@ const appendToCartOffline = async (req, res, next) => {
             console.log('!beat || !license');
             return next(new HttpError('Beat or license with such ids have not been found', 500));
         }
-
+        console.log(license);
         cart.total += license.price;
         cart.items.push({_id: uuid(), beatId: beat, licenseId: license});
     } else {
         let existingLicense;
         try {
-            existingLicense = await License.findById(cart.items[existingProductIndex].licenseId);
+            existingLicense = await License.findById(cart.items[existingProductIndex].licenseId._id);
         } catch (e) {
             console.log(e.message);
             return next(new HttpError('Something went wrong while trying to find license in database..', 500));
@@ -717,9 +717,9 @@ const appendToCartOffline = async (req, res, next) => {
         if (!existingLicense) {
             return next(new HttpError('License with such id does not exist...', 500));
         }
-
+        console.log(license);
         cart.total += -existingLicense.price + license.price;
-        cart.items[existingProductIndex].licenseId = license._id;
+        cart.items[existingProductIndex].licenseId = license;
     }
 
     res.status(200);
