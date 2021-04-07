@@ -736,9 +736,10 @@ const removeFromCartOffline = async (req, res, next) => {
     try {
 
         const productIndex = cart.items.findIndex(p => {
-            return p._id === productId;
+            return p._id.toString() === productId;
         });
-        const license = await License.findById(cart.items[productIndex].licenseId._id);
+        const license = await License.findById(cart.items[productIndex].licenseId);
+
         cart.total -= license.price;
         cart.items.splice(productIndex, 1);
 
