@@ -25,7 +25,8 @@ const initialState = {
     paymentError: {message: 'hello'},
     isConfirming: false,
     confirmationError: null,
-    purchasesUpdateError: null
+    purchasesUpdateError: null,
+    isSigningUp: false
 };
 
 const userReducer = (state = initialState, action) => {
@@ -33,17 +34,17 @@ const userReducer = (state = initialState, action) => {
         case actions.SIGN_UP_REQUESTED:
             return {
                 ...state,
-                processing: true
+                isSigningUp: true
             }
         case actions.SIGN_UP_SUCCESS:
             return {
                 ...state,
-                processing: false
+                isSigningUp: false
             }
         case actions.SIGN_UP_FAILURE:
             return {
                 ...state,
-                processing: false,
+                isSigningUp: false,
                 error: action.payload,
             }
         case actions.LOGGED_OUT_REQUESTED:
@@ -165,14 +166,14 @@ const userReducer = (state = initialState, action) => {
         case actions.GOOGLE_CONTINUE_REQUESTED:
             return {
                 ...state,
-                processing: true
+                isSigningUp: true
             }
         case actions.GOOGLE_CONTINUE_SUCCESS:
             return {
                 ...state,
                 id: action.payload.id,
                 loggedIn: true,
-                processing: false,
+                isSigningUp: false,
                 cart: action.payload.cart,
                 purchased: action.payload.purchased,
                 email: action.payload.email,
@@ -187,7 +188,7 @@ const userReducer = (state = initialState, action) => {
         case actions.GOOGLE_CONTINUE_FAILED:
             return {
                 ...state,
-                processing: false,
+                isSigningUp: false,
                 error: action.payload
             }
         case actions.REFRESH_TOKEN_REQUESTED:

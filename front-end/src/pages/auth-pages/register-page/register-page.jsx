@@ -56,6 +56,7 @@ const RegisterPage = ({authService}) => {
     const onUserSignupHandler = async (e) => {
         e.preventDefault();
         dispatch(signup(formState));
+        console.log('        setRegistered(true);\n');
         setChecked(false);
         setTouched(false);
         setRegistered(true);
@@ -77,15 +78,14 @@ const RegisterPage = ({authService}) => {
         <p className="confirm-pass-error-msg">{userState.error.message}</p>
     ) : null
 
-    if (userState.processing) {
-        return <Spinner/>
+    if (userState.isSigningUp) {
+        return <Spinner/>;
     }
 
     if (userState.loggedIn) {
         return <Redirect to="/"/>;
     }
-    console.log(hasRegistered);
-    console.log(userState.error);
+    console.log(hasRegistered && !userState.error);
     return (
         <div className="auth-page">
             {/* todo there might be a logo*/}

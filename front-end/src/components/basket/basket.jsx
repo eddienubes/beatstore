@@ -106,7 +106,7 @@ const Basket = () => {
                     <p>Coupons are on the stage of development</p>
                     <form className={`bonus-coupon-form`}>
                         <PlaceholderAnimatedInput className={"coupon-input"}
-                                                  labelStyle={"label-style"}
+                                                  labelstyle={"label-style"}
                                                   name="coupon"
                                                   text="Bonus coupon"
                                                   required={true}
@@ -138,7 +138,7 @@ const Basket = () => {
 
                                     <Input
                                         component={<PlaceholderAnimatedInput className={"coupon-input"}
-                                                                             labelStyle={"label-style"}
+                                                                             labelstyle={"label-style"}
                                                                              name="email"
                                                                              text="Enter your email to send purchases to"
                                                                              required={true}/>}

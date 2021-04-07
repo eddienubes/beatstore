@@ -43,7 +43,7 @@ const PlaceholderAnimatedInput = (props) => {
     return (
         <div className={`input-container ${props.wrapper}`}>
             {props.textArea || false ? <textarea onKeyDown={resizeTextArea} style={{resize: 'none', padding: '10px'}} {...itemProps}/> : <input {...itemProps}/>}
-            <label className={`component-label ${props.labelStyle} ${labelClass}`}>{props.text}</label>
+            <label className={`component-label ${props.labelstyle} ${labelClass}`}>{props.text}</label>
         </div>
     );
 };

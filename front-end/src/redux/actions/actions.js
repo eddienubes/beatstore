@@ -410,7 +410,7 @@ const signup = (formState) => async (dispatch, getState) => {
             email: email.value,
             username: username.value,
             password: password.value,
-            clientIP: 'http://localhost:3000/confirmation'
+            clientIP: `${process.env.REACT_APP_BACKEND_BASE_URL}confirmation`
         });
 
         // const tokenExpirationDate = new Date(new Date().getTime() + 1000 * 60 * 60);

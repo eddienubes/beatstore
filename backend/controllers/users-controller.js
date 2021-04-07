@@ -117,37 +117,37 @@ const signup = async (req, res, next) => {
     }
 
 
-    // const newUser = new User({
-    //     username,
-    //     email,
-    //     password: hashedPassword,
-    //     purchased: [...orders],
-    // });
-    //
-    // const confirmationToken = jwt.sign(
-    //     {email, username},
-    //     process.env.confirmationTokenSecret + newUser._id.toString());
-    //
-    // newUser.confirmationCode = confirmationToken;
+    const newUser = new User({
+        username,
+        email,
+        password: hashedPassword,
+        purchased: [...orders],
+    });
 
-    // try {
-    //     await newUser.save();
-    // } catch (e) {
-    //     return next(
-    //         new HttpError('Something went wrong while saving new user to a database..', 500)
-    //     );
-    // }
+    const confirmationToken = jwt.sign(
+        {email, username},
+        process.env.confirmationTokenSecret + newUser._id.toString());
+
+    newUser.confirmationCode = confirmationToken;
+
+    try {
+        await newUser.save();
+    } catch (e) {
+        return next(
+            new HttpError('Something went wrong while saving new user to a database..', 500)
+        );
+    }
 
     messageToSend = 'Check your email to verify your account';
 
-    // try {
-    //     await mailer.sendEmail(email, 'Cherries By Beatstore purchase', 'user-verification', {
-    //         username,
-    //         confirmationUrl: clientIP + `/${confirmationToken}`
-    //     });
-    // } catch (e) {
-    //     return next(new HttpError('Something went wrong while sending email', 500));
-    // }
+    try {
+        await mailer.sendEmail(email, 'Cherries By Beatstore purchase', 'user-verification', {
+            username,
+            confirmationUrl: clientIP + `/${confirmationToken}`
+        });
+    } catch (e) {
+        return next(new HttpError('Something went wrong while sending email', 500));
+    }
 
     res.status(201);
     res.json({message: messageToSend});
@@ -696,9 +696,11 @@ const appendToCartOffline = async (req, res, next) => {
             beat = await Beat.findById(product.beatId, {'mp3Url': 0, 'wavUrl': 0, 'stemsUrl': 0});
             license = await License.findById(product.licenseId)
         } catch (e) {
+            console.log(e.message);
             return next(new HttpError('Something went wring while finding license and beat in db..', 500));
         }
         if (!beat || !license) {
+            console.log('!beat || !license');
             return next(new HttpError('Beat or license with such ids have not been found', 500));
         }
 
@@ -709,6 +711,7 @@ const appendToCartOffline = async (req, res, next) => {
         try {
             existingLicense = await License.findById(cart.items[existingProductIndex].licenseId);
         } catch (e) {
+            console.log(e.message);
             return next(new HttpError('Something went wrong while trying to find license in database..', 500));
         }
         if (!existingLicense) {
@@ -741,7 +744,7 @@ const removeFromCartOffline = async (req, res, next) => {
 
     } catch (e) {
         console.log(e.message);
-        return next(new HttpError('Something went wrong while deleting product from cart', 401));
+        return next(new HttpError('Something went wrong while deleting product from cart', 500));
     }
 
     res.status(200);
