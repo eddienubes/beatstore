@@ -32,7 +32,8 @@ const userSchema = new mongoose.Schema({
     },
     confirmationCode: {
         type: String,
-        unique: true
+        unique: false,
+        required: false
     },
     isAdmin: {type: Boolean, default: false}
 });

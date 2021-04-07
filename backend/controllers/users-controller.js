@@ -503,6 +503,7 @@ const googleContinue = async (req, res, next) => {
             });
             await newUser.save();
         } catch (e) {
+            console.log(e.message);
             return next(new HttpError('Error while saving new user who signed up with oauth..', 500));
         }
 
@@ -539,6 +540,7 @@ const googleContinue = async (req, res, next) => {
             normalizedPurchases = await populateUserPurchases(newUser, next);
             await populateUserCart(newUser, next);
         } catch (e) {
+            console.log(e.message);
             return next(new HttpError('Error while populating..', 500));
         }
 
