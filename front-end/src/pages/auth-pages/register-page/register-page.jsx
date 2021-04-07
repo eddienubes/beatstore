@@ -84,7 +84,8 @@ const RegisterPage = ({authService}) => {
     if (userState.loggedIn) {
         return <Redirect to="/"/>;
     }
-
+    console.log(hasRegistered);
+    console.log(userState.error);
     return (
         <div className="auth-page">
             {/* todo there might be a logo*/}
