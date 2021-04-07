@@ -2,15 +2,16 @@ const axios = require('axios');
 const url = require('url');
 
 module.exports = class BeatstoreService {
-    baseBeatsUrl = 'http://localhost:5000/api/beats';
-    baseLicensesUrl = 'http://localhost:5000/api/licenses';
-    baseOrderUrl = 'http://localhost:5000/api/orders';
-    baseUsersUrl = 'http://localhost:5000/api/users';
-    baseBotsUrl = 'http://localhost:5000/api/bots';
+    baseBeatsUrl = process.env.currentIP + 'api/beats';
+    baseLicensesUrl = process.env.currentIP + 'api/licenses';
+    baseOrderUrl = process.env.currentIP + 'api/orders';
+    baseUsersUrl = process.env.currentIP + 'api/users';
+    baseBotsUrl = process.env.currentIP + 'api/bots';
 
     async getAllBeats(skip, limit) {
-        const requestUrl = new url.URL(this.baseBeatsUrl);
+        console.log(process.env);
 
+        const requestUrl = new url.URL(this.baseBeatsUrl);
         requestUrl.searchParams.append('skip', skip.toString());
         requestUrl.searchParams.append('limit', limit.toString());
 

@@ -1,6 +1,5 @@
 const {Markup} = require('telegraf');
 const BeatstoreService = require('../services/beatstore-service');
-const generalConfig = require('../../backend/config.json');
 const date = require('../util/date');
 const actions = require('../constants/action-constants');
 const path = require('path');
@@ -13,7 +12,7 @@ const fs = require('fs');
 const sendBeatMessage = async (beat, ctx, keyboard) => {
     if (!beat) return;
     await ctx.replyWithPhoto(
-        'https://picsum.photos/200/300', {
+        process.env.currentIP + 'api/' + beat.imgUrl.replace(/\\/g, '/'), {
             caption:
                 `📋 <b>${beat.title}</b>\n\n` +
                 `🎹 <b>BPM:</b> ${beat.bpm}\n` +
@@ -21,9 +20,9 @@ const sendBeatMessage = async (beat, ctx, keyboard) => {
                 `🏷️ <b>Tags:</b> ${beat.tags.map(t => '#' + t).join(' ')}\n` +
                 `🪕 <b>Genres:</b> ${beat.genres.map(t => '#' + t).join(' ')}\n` +
                 `🎨 <b>Moods:</b> ${beat.moods.map(t => '#' + t).join(' ')}\n` +
-                `💽 <b>MP3 Url:</b> <a href="${(generalConfig.currentIP + 'api/' + beat.mp3Url).replace(/\\/g, '/')}">link</a>\n` +
-                `💽 <b>Wav Url</b> <a href="${(generalConfig.currentIP + 'api/' + beat.wavUrl).replace(/\\/g, '/')}">link</a>\n` +
-                `💽 <b>STEMS Url:</b> <a href="${(generalConfig.currentIP + 'api/' + beat.stemsUrl).replace(/\\/g, '/')}">link</a>\n` +
+                `💽 <b>MP3 Url:</b> <a href="${(process.env.currentIP + 'api/' + beat.mp3Url).replace(/\\/g, '/')}">link</a>\n` +
+                `💽 <b>Wav Url</b> <a href="${(process.env.currentIP + 'api/' + beat.wavUrl).replace(/\\/g, '/')}">link</a>\n` +
+                `💽 <b>STEMS Url:</b> <a href="${(process.env.currentIP + 'api/' + beat.stemsUrl).replace(/\\/g, '/')}">link</a>\n` +
                 `⏱️<b>Load time:</b> ${date(beat.loadTime)}\n` +
                 `⌛️<b>Duration:</b> ${beat.duration}\n`,
             reply_markup: {
@@ -205,7 +204,7 @@ const listenToCurrentBeat = async (ctx, next) => {
         await ctx.reply(e.message);
         return next();
     }
-    const audioUrl = new url.URL(beat.previewAudioUrl, generalConfig.currentIP + 'api/');
+    const audioUrl = new url.URL(beat.previewAudioUrl, process.env.currentIP + 'api/');
 
 
     await ctx.replyWithAudio(audioUrl.href, {

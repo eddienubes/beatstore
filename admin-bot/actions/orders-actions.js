@@ -14,6 +14,7 @@ const sendOrderMessage = async (order, ctx, keyboard) => {
         `📬 <b>Email:</b> <i>${order.email}</i>\n` +
         `💰 <b>Total: </b> <i>${order.total.toFixed(2)}</i>\n` +
         `🔑 <b>ID: </b> <code>${order.id}</code>\n`,
+        `💵 <b>Payed: </b> <code>${order.payed}</code>\n`,
         {
             reply_markup: {
                 inline_keyboard: [

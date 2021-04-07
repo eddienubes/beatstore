@@ -6,6 +6,8 @@ const commands = require('./commands');
 const hears = require('./hears');
 const scenes = require('./scenes');
 const sceneNames = require('./constants/wizard-scenes-constants');
+require('dotenv').config();
+
 
 const bot = new Telegraf(process.env.token);
 

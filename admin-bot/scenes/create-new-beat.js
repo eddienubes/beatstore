@@ -1,7 +1,6 @@
 const sceneNames = require('../constants/wizard-scenes-constants');
 const WizardScene = require('telegraf/scenes/wizard');
 const FormData = require('form-data');
-const generalConfig = require('../../backend/config.json');
 const {Markup} = require('telegraf');
 const Composer = require('telegraf/composer');
 const BeatstoreService = require('../services/beatstore-service');
@@ -37,9 +36,9 @@ const sendCurrentBeatState = async (beat, ctx, cursor) => {
         `🎨 <b>Moods:</b> ${beat?.moods?.replace(/\\s/g, '').split(',').map(t => '#' + t).join(' ') || 'Empty'}\n` +
         `🖼️ <b>Image:</b> ${beat?.imgUrl ? ('<b>Specified</b>') : 'Empty'}\n` +
         `🎧 <b>Preview Audio:</b> ${beat?.previewAudioUrl ? ('<b>Specified</b>') : 'Empty'}\n` +
-        `💽 <b>MP3 Url:</b> <a href="${(generalConfig.currentIP + 'api/' + beat?.mp3Url).replace(/\\/g, '/') || 'Empty'}">link</a>\n` +
-        `💽 <b>Wav Url</b> <a href="${(generalConfig.currentIP + 'api/' + beat?.wavUrl).replace(/\\/g, '/') || 'Empty'}">link</a>\n` +
-        `💽 <b>STEMS Url:</b> <a href="${(generalConfig.currentIP + 'api/' + beat?.stemsUrl).replace(/\\/g, '/') || 'Empty'}">link</a>\n\n\n` +
+        `💽 <b>MP3 Url:</b> <a href="${(process.env.currentIP + 'api/' + beat?.mp3Url).replace(/\\/g, '/') || 'Empty'}">link</a>\n` +
+        `💽 <b>Wav Url</b> <a href="${(process.env.currentIP + 'api/' + beat?.wavUrl).replace(/\\/g, '/') || 'Empty'}">link</a>\n` +
+        `💽 <b>STEMS Url:</b> <a href="${(process.env.currentIP + 'api/' + beat?.stemsUrl).replace(/\\/g, '/') || 'Empty'}">link</a>\n\n\n` +
         `${phrases[cursor] || ''}`
 
     let messageId;

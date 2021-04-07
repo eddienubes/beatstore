@@ -15,7 +15,7 @@ const allOrdersMenu = async (ctx, next) => {
         orders = response.data.orders;
         ordersCount = beatsCountResponse.data.orders.length;
     } catch (e) {
-        await ctx.reply(e.response.data.message);
+        await ctx.reply(e.response?.data?.message);
         return next();
     }
 
