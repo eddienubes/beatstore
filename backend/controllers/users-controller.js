@@ -117,38 +117,37 @@ const signup = async (req, res, next) => {
     }
 
 
-    const newUser = new User({
-        username,
-        email,
-        password: hashedPassword,
-        purchased: [...orders],
-    });
+    // const newUser = new User({
+    //     username,
+    //     email,
+    //     password: hashedPassword,
+    //     purchased: [...orders],
+    // });
+    //
+    // const confirmationToken = jwt.sign(
+    //     {email, username},
+    //     process.env.confirmationTokenSecret + newUser._id.toString());
+    //
+    // newUser.confirmationCode = confirmationToken;
 
-    const confirmationToken = jwt.sign(
-        {email, username},
-        process.env.confirmationTokenSecret + newUser._id.toString());
-
-    newUser.confirmationCode = confirmationToken;
-
-    try {
-        await newUser.save();
-    } catch (e) {
-        return next(
-            new HttpError('Something went wrong while saving new user to a database..', 500)
-        );
-    }
+    // try {
+    //     await newUser.save();
+    // } catch (e) {
+    //     return next(
+    //         new HttpError('Something went wrong while saving new user to a database..', 500)
+    //     );
+    // }
 
     messageToSend = 'Check your email to verify your account';
 
-
-    try {
-        await mailer.sendEmail(email, 'Cherries By Beatstore purchase', 'user-verification', {
-            username,
-            confirmationUrl: clientIP + `/${confirmationToken}`
-        });
-    } catch (e) {
-        return next(new HttpError('Something went wrong while sending email', 500));
-    }
+    // try {
+    //     await mailer.sendEmail(email, 'Cherries By Beatstore purchase', 'user-verification', {
+    //         username,
+    //         confirmationUrl: clientIP + `/${confirmationToken}`
+    //     });
+    // } catch (e) {
+    //     return next(new HttpError('Something went wrong while sending email', 500));
+    // }
 
     res.status(201);
     res.json({message: messageToSend});
@@ -563,6 +562,11 @@ const googleContinue = async (req, res, next) => {
         });
     } else {
         console.log('there is a user!');
+
+        if (user.password) {
+            return next(new HttpError('User with such email has already been registered using email and password. ' +
+                'Please consider using this method of signing in.', 403));
+        }
 
         let token;
         let refreshToken;

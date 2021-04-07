@@ -56,9 +56,9 @@ const RegisterPage = ({authService}) => {
     const onUserSignupHandler = async (e) => {
         e.preventDefault();
         dispatch(signup(formState));
-        setRegistered(true);
         setChecked(false);
         setTouched(false);
+        setRegistered(true);
     }
 
     const googleSuccess = async (res) => {
