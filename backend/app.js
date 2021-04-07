@@ -1,13 +1,16 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const stream = require('stream');
 const {promisify} = require('util');
 const crypto = require('crypto');
 require('dotenv').config();
+const privateKey = fs.readFileSync('../../openssl/example.com.key', 'utf-8');
+const certificate = fs.readFileSync('../../openssl/example.com.ssl', 'utf-8');
+const credentials = {key: privateKey, cert: certificate};
 
 const beatsRoutes = require('./routes/beats-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -18,7 +21,7 @@ const botRoutes = require('./routes/bot-routes');
 const HttpError = require('./models/http-error');
 
 const app = express();
-const server = http.createServer(app);
+const server = https.createServer(credentials, app);
 
 
 // default and supported routes
