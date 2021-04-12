@@ -8,8 +8,8 @@ const stream = require('stream');
 const {promisify} = require('util');
 const crypto = require('crypto');
 require('dotenv').config();
-const privateKey = fs.readFileSync('../../openssl/example.com.key', 'utf-8');
-const certificate = fs.readFileSync('../../openssl/example.com.ssl', 'utf-8');
+const privateKey = fs.readFileSync('../sslcert/privkey.pem', 'utf-8');
+const certificate = fs.readFileSync('../sslcert/fullchain.pem', 'utf-8');
 const credentials = {key: privateKey, cert: certificate};
 
 const beatsRoutes = require('./routes/beats-routes');
@@ -21,6 +21,7 @@ const botRoutes = require('./routes/bot-routes');
 const HttpError = require('./models/http-error');
 
 const app = express();
+
 const server = https.createServer(credentials, app);
 
 
@@ -135,11 +136,22 @@ app.use((error, req, res, next) => {
     res.json({message: error.message || 'An unknown error occurred!'});
 });
 
+const http = express();
+
+http.get('*', (req, res) => {
+    res.redirect('https://' + req.headers.host + req.url);
+});
+
+
 // port configuration and connection to database
 mongoose
     .connect(process.env.mongoDBUrl, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(async () => {
         server.listen(process.env.port);
+        http.listen(process.env.redirectPort);
         console.log('Server is up and running on port ' + process.env.port);
+        console.log('Redirect server is up and running on port ' + process.env.redirectPort);
     })
     .catch(async (err) => console.log(err.message));
+
+
