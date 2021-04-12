@@ -8,8 +8,8 @@ const stream = require('stream');
 const {promisify} = require('util');
 const crypto = require('crypto');
 require('dotenv').config();
-const privateKey = fs.readFileSync('../../openssl/example.com.key', 'utf-8');
-const certificate = fs.readFileSync('../../openssl/example.com.ssl', 'utf-8');
+const privateKey = fs.readFileSync('../../../../etc/letsencrypt/live/www.cherriesby.tech/privkey.pem', 'utf-8');
+const certificate = fs.readFileSync('../../../../etc/letsencrypt/live/www.cherriesby.tech/fullchain.pem', 'utf-8');
 const credentials = {key: privateKey, cert: certificate};
 
 const beatsRoutes = require('./routes/beats-routes');
@@ -21,6 +21,7 @@ const botRoutes = require('./routes/bot-routes');
 const HttpError = require('./models/http-error');
 
 const app = express();
+
 const server = https.createServer(credentials, app);
 
 
@@ -143,3 +144,11 @@ mongoose
         console.log('Server is up and running on port ' + process.env.port);
     })
     .catch(async (err) => console.log(err.message));
+
+const http = express();
+
+http.get('*', (req, res) => {
+    res.redirect('https://' + req.headers.host + req.url);
+});
+
+http.listen(80);
