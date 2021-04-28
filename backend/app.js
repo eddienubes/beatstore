@@ -9,9 +9,9 @@ const stream = require('stream');
 const {promisify} = require('util');
 const crypto = require('crypto');
 require('dotenv').config();
-// const privateKey = fs.readFileSync('../sslcert/privkey.pem', 'utf-8');
-// const certificate = fs.readFileSync('../sslcert/fullchain.pem', 'utf-8');
-// const credentials = {key: privateKey, cert: certificate};
+const privateKey = fs.readFileSync('../sslcert/privkey.pem', 'utf-8');
+const certificate = fs.readFileSync('../sslcert/fullchain.pem', 'utf-8');
+const credentials = {key: privateKey, cert: certificate};
 
 const beatsRoutes = require('./routes/beats-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -23,7 +23,7 @@ const HttpError = require('./models/http-error');
 
 const app = express();
 
-const server = http1.createServer(app);
+const server = https.createServer(credentials, app);
 
 
 // default and supported routes
