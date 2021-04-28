@@ -477,9 +477,9 @@ const downloadBeat = async (req, res, next) => {
         );
     }
 
-    const path = path.join(__dirname, '/..', beat.previewAudioUrl).replace(new RegExp('\\\\', 'gi'), '/');
+    const downloadPath = path.join(__dirname, '/..', beat.previewAudioUrl).replace(new RegExp('\\\\', 'gi'), '/');
 
-    res.download(path, beat.title + '.mp3', (err) => {
+    res.download(downloadPath, beat.title + '.mp3', (err) => {
         if (err) {
             return next(new HttpError(err.message, 404));
         }
