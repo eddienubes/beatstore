@@ -5,12 +5,19 @@ import LikeButton from "../like-button";
 import BeatstoreService from "../../services";
 import { useSelector } from "react-redux";
 import getDateAgoText from "../../utils/get-date-ago-text";
+import { useHistory } from "react-router-dom";
 
-const Comment = ({id, text, date, username, likes, isLiked}) => {
+const Comment = ({id, text, date, username, likes, isLiked, isLoggedIn}) => {
     const {id: userId, token} = useSelector(state => state.userReducer);
     const [likesCount, setLikes] = useState(likes);
+    const history = useHistory();
 
     const handleLikeClick = (state) => {
+        if (!isLoggedIn) {
+            history.push('/auth/register');
+            return;
+        }
+
         const beatstoreService = new BeatstoreService();
 
         if (state) {
