@@ -1,0 +1,11 @@
+.track-title-container {
+    a {
+        color: white;
+        transition: .2s ease-in-out;
+        &:hover {
+            text-decoration: underline;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 20px rgb(0, 255, 248);
+        }
+    }
+}
