@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const https = require('https');
-const http1 = require('http');
+const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const stream = require('stream');
@@ -138,9 +138,10 @@ app.use((error, req, res, next) => {
     res.json({message: error.message || 'An unknown error occurred!'});
 });
 
-const http = express();
+const app2 = express();
+const server2 = http.createServer(app2);
 
-http.get('*', (req, res) => {
+app2.get('*', (req, res) => {
     res.redirect('https://' + req.headers.host + req.url);
 });
 
@@ -150,7 +151,7 @@ mongoose
     .connect(process.env.mongoDBUrl, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(async () => {
         server.listen(process.env.port);
-        http.listen(process.env.redirectPort);
+        server2.listen(process.env.redirectPort);
         console.log('Server is up and running on port ' + process.env.port);
         console.log('Redirect server is up and running on port ' + process.env.redirectPort);
     })
@@ -158,6 +159,11 @@ mongoose
         console.log(err.message);
         process.on('exit', () => {
             server.close();
+            server2.close();
+        });
+        process.on('SIGINT', () => {
+            server.close();
+            server2.close();
         });
     });
 
