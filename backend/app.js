@@ -154,6 +154,11 @@ mongoose
         console.log('Server is up and running on port ' + process.env.port);
         console.log('Redirect server is up and running on port ' + process.env.redirectPort);
     })
-    .catch(async (err) => console.log(err.message));
+    .catch(async (err) => {
+        console.log(err.message);
+        process.on('exit', () => {
+            server.close();
+        });
+    });
 
 
