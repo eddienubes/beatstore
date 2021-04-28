@@ -2,15 +2,16 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const https = require('https');
+const http1 = require('http');
 const fs = require('fs');
 const path = require('path');
 const stream = require('stream');
 const {promisify} = require('util');
 const crypto = require('crypto');
 require('dotenv').config();
-const privateKey = fs.readFileSync('../sslcert/privkey.pem', 'utf-8');
-const certificate = fs.readFileSync('../sslcert/fullchain.pem', 'utf-8');
-const credentials = {key: privateKey, cert: certificate};
+// const privateKey = fs.readFileSync('../sslcert/privkey.pem', 'utf-8');
+// const certificate = fs.readFileSync('../sslcert/fullchain.pem', 'utf-8');
+// const credentials = {key: privateKey, cert: certificate};
 
 const beatsRoutes = require('./routes/beats-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -22,7 +23,7 @@ const HttpError = require('./models/http-error');
 
 const app = express();
 
-const server = https.createServer(credentials, app);
+const server = http1.createServer(app);
 
 
 // default and supported routes
@@ -32,8 +33,9 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use((req, res, next) => {
 
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Range, Accept-Ranges',);
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization, Content-Range, Accept-Ranges, Accept-Encoding, Content-Disposition',);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE');
+    res.setHeader('Access-Control-Expose-Headers', 'Content-Disposition')
     next();
 });
 

@@ -4,6 +4,7 @@ class HttpError extends Error {
         super(message); // add message property
         this.code = errorCode || 500;
         this.status = errorCode || 500;
+        this.statusCode = errorCode || 500;
     };
 }
 
