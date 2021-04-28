@@ -77,7 +77,9 @@
         .footer {
             display: flex;
             align-items: center;
-
+            button {
+                max-height: 20px;
+            }
             .tags-container {
                 margin-left: 20px;
                 align-items: center;

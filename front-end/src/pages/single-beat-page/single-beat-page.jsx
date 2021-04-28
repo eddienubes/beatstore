@@ -17,7 +17,7 @@ const SingleBeatPage = () => {
     const [error, setError] = useState(null);
     const [track, setTrack] = useState(null);
     const [color, setColor] = useState(null);
-    const {id, token} = useSelector(state => state.userReducer);
+    const {id, token, loggedIn} = useSelector(state => state.userReducer);
 
     useEffect(() => {
         const beatstoreService = new BeatstoreService();
@@ -54,7 +54,7 @@ const SingleBeatPage = () => {
                 setTrack(state => {
                     return {
                         ...state,
-                        comments: [...track.comments, res.data.comment]
+                        comments: [res.data.comment, ...track.comments]
                     }
                 });
             })
@@ -80,7 +80,7 @@ const SingleBeatPage = () => {
         <div className="single-beat__wrapper">
             <CurrentTrack color={color} track={track}/>
             <CommentInput beatId={track.id} handleSend={handleLeaveComment}/>
-            <CommentSection userId={id} comments={track.comments}/>
+            <CommentSection isLoggedIn={loggedIn} userId={id} comments={track.comments}/>
         </div>
     );
 }

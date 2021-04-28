@@ -6,7 +6,7 @@ import user from './user.png';
 import LikeButton from "../like-button";
 import Comment from "../comment";
 
-const CommentSection = ({comments, userId}) => {
+const CommentSection = ({comments, userId, isLoggedIn}) => {
 
     return (
         <div className="comment-section__wrapper">
@@ -27,6 +27,7 @@ const CommentSection = ({comments, userId}) => {
                         return <Comment
                             key={c._id.toString()}
                             id={c._id.toString()}
+                            isLoggedIn={isLoggedIn}
                             text={c.text}
                             username={c.user[0].username}
                             date={c.date}

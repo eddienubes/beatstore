@@ -476,7 +476,10 @@ const downloadBeat = async (req, res, next) => {
             new HttpError('Couldn\'t find a beat by specified id!', 404)
         );
     }
-    res.download(path.join(__dirname, '/..', beat.previewAudioUrl), beat.title + '.mp3', (err) => {
+
+    const path = path.join(__dirname, '/..', beat.previewAudioUrl).replace(new RegExp('\\\\', 'gi'), '/');
+
+    res.download(path, beat.title + '.mp3', (err) => {
         if (err) {
             return next(new HttpError(err.message, 404));
         }
