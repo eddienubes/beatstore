@@ -1,0 +1,60 @@
+.comment {
+    //hr {
+    //    height: 2px;
+    //    width: 100%;
+    //    background: white;
+    //}
+    display: flex;
+    margin-top: 20px;
+    .side-bar {
+        margin-right: 10px;
+        max-width: 100px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .avatar {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+            min-height: 50px;
+            img {
+                object-fit: cover;
+                height: 100%;
+                width: 100%;
+            }
+        }
+
+        .likes {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            word-break: break-all;
+            .like {
+                margin-top: -15px;
+                color: #afafaf;
+                margin-bottom: 5px;
+            }
+        }
+    }
+
+    .comment-content {
+        .comment-header {
+            color: white;
+            display: flex;
+
+
+
+            .username {
+                font-weight: bold;
+            }
+
+            .time {
+                color: gray;
+            }
+        }
+        .text {
+            color: white;
+        }
+    }
+}

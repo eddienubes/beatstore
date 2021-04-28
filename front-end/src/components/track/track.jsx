@@ -9,16 +9,17 @@ import {audioLoaded, audioPlayed, audioStopped, filterSearchSet} from "../../red
 import AudioInstanceContext from "../audio-instance-context";
 import {useHistory} from "react-router-dom";
 import {filter} from "../../redux/actions/actions";
+import ToCartButton from "../to-cart-button";
+import useTraceUpdate from "../../hooks/trace-updates-hook";
+import {Link} from 'react-router-dom';
+import TrackTitle from "../track-title";
 
 const Track = ({track, onSelected, index, id, previousId, isPlaying, cartItems}) => {
 
-    const [modalShow, setModalShow] = useState(false);
     const [isActive, setActive] = useState(false);
     const dispatch = useDispatch();
     const {audioInstance} = useContext(AudioInstanceContext).state;
     const history = useHistory();
-
-    // useTraceUpdate({isActive, audioInstance, id, previousId, isPlaying});
 
     useEffect(() => {
         if (track.id === id && isPlaying) {
@@ -30,8 +31,6 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying, cartItems})
         }
     }, [id, isPlaying]);
 
-    // TODO MOVE onClick logic to redux
-    // TODO ADD Audio Instance to Redux Store
 
     const isInCart = cartItems.find(i => {
         return i.beatId._id.toString() === track.id.toString()
@@ -51,12 +50,6 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying, cartItems})
 
     const imageUrl = useMemo(() => process.env.REACT_APP_BACKEND_ASSET_URL + track.imgUrl, [track]);
 
-    // useTraceUpdate({track, id, previousId, isPlaying});
-
-    useEffect(() => {
-        console.log('render');
-    })
-
     return (
         <Table.Row className={`main-row-track ${isActive ? "selected_tr" : null}`}
                    onClick={onClick}>
@@ -64,7 +57,7 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying, cartItems})
                 <div className="track__td-img">
                     <img className="td-img-main" src={imageUrl} alt="beat image"/>
                 </div>
-                {track.title}
+                <TrackTitle title={track.title} id={track.id}/>
             </Table.Cell>
             <Table.Cell>
                 {track.duration}
@@ -91,19 +84,7 @@ const Track = ({track, onSelected, index, id, previousId, isPlaying, cartItems})
                 </div>
             </Table.Cell>
             <Table.Cell className={`tracks__button-buy`}>
-                <button className={`track__to-cart-button ${isInCart ? "in-cart-button" : null}`}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setModalShow(true);
-                        }}>
-                    {isInCart ? 'IN CART' : (<><FontAwesomeIcon icon={faShoppingCart}/> ADD</>)}
-                </button>
-                <LicenseTypeModal key={track.id}
-                                  isInCart={isInCart}
-                                  track={track}
-                                  buttonClass="cart_button"
-                                  show={modalShow}
-                                  setOpen={setModalShow}/>
+                <ToCartButton isInCart={isInCart} track={track}/>
             </Table.Cell>
         </Table.Row>
 

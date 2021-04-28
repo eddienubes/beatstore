@@ -1,0 +1,29 @@
+.to-cart-button__wrapper {
+    .in-cart-button {
+        background: #db00ac !important;
+        &:hover {
+            color: white!important;
+            background: black!important;
+            border: 1px solid white;
+        }
+    }
+    .track__to-cart-button {
+        margin: 0 auto;
+        z-index: 9999999 !important;
+        font-weight: 400;
+        white-space: nowrap;
+        color: white;
+        border: white 1px solid;
+        padding: 7px;
+        background: black;
+        transition: .25s ease-in-out;
+        border-radius: 3px;
+
+        &:hover {
+            border: black 1px solid;
+            color: black;
+            background: white;
+        }
+    }
+}
+

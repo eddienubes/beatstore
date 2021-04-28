@@ -10,7 +10,6 @@ const BeatsPage = () => {
     return (
         <>
             <Filter/>
-            <CurrentTrack/>
             <TracksTable isMain={false}/>
         </>
         // <AudioSpectrumContainer/>

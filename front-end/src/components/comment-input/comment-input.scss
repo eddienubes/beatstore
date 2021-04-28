@@ -1,0 +1,95 @@
+.comment-input-wrapper {
+    animation: comment-input 1.5s ease-in-out;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 50px;
+    align-items: center;
+    width: 100%;
+    padding: 10px;
+
+    form {
+        width: 50%;
+    }
+
+    .input {
+        display: flex;
+        align-items: center;
+        width: 100%;
+    }
+
+    .avatar {
+        user-select: none;
+        width: 50px;
+        height: 50px;
+        margin-right: 10px;
+
+        img {
+            object-fit: cover;
+            height: 100%;
+            width: 100%;
+        }
+    }
+
+    .comment-input {
+        background: black !important;
+        color: white !important;
+        border: 0 none !important;
+
+        &::selection {
+            background: white;
+        }
+    }
+
+    p {
+        display: flex;
+        align-items: center;
+        margin: 0;
+        color: white;
+    }
+
+    button {
+        margin-left: 10px;
+        background: black;
+        border: 1px solid white;
+        color: white;
+        transition: .2s ease-in-out;
+        white-space: nowrap;
+        border-radius: 3px;
+        min-height: 32px;
+
+        &:active {
+            transform: scale(0.8);
+        }
+
+        &:hover {
+            background: white;
+            color: black;
+        }
+    }
+}
+
+@media (max-width: 550px) {
+    .comment-input-wrapper {
+        justify-content: space-between;
+        form {
+            width: 100%;
+        }
+        .input {
+            width: 100%;
+            justify-content: space-between;
+        }
+        .avatar, p {
+            display: none;
+        }
+
+    }
+}
+
+@keyframes comment-input {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

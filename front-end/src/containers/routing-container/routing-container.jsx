@@ -21,6 +21,7 @@ const PurchaseSuccessful = React.lazy(() => import('../../pages/purchase-success
 const PurchaseFailed = React.lazy(() => import('../../pages/purchase-failed'));
 const MainPage = React.lazy(() => import('../../pages/main-page'));
 const PageNotFound = React.lazy(() => import('../../components/page-not-found'));
+const SingleBeatPage = React.lazy(() => import('../../pages/single-beat-page'));
 
 const RoutingContainer = () => {
     const [checking] = useAuth();
@@ -52,7 +53,7 @@ const RoutingContainer = () => {
                         <Route exact path="/contact" component={ContactPage}/>
                         <Route exact path="/checkout" component={CheckoutPage}/>
                         <Route exact path="/beats" component={BeatsPage}/>
-                        <Route exact path="/beats/:id" component={BeatsPage}/>
+                        <Route exact path="/beats/:id" component={SingleBeatPage}/>
                         <Route path="/auth" component={AuthContainer}/>
                         <Route path="/account" component={AccountPage}/>
                         <Route path="/checkout/success" exact component={PurchaseSuccessful}/>

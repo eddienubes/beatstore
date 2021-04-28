@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import BeatstoreService from "../../services";
 import {faPause, faPlay, faShoppingCart} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
@@ -10,15 +10,22 @@ import SpinnerAudio from "../spinner-audio";
 import {audioLoaded, audioPlayed, audioStopped, filterDropped, filterSearchSet} from "../../redux/actions";
 import LicenseTypeModal from "../license-type-modal";
 import {useHistory} from "react-router-dom";
+import ToCartButton from "../to-cart-button";
+import TrackTitle from "../track-title";
 
 const FeaturedTrack = (props) => {
     const [track, setTrack] = useState(null);
     const [error, setError] = useState(null);
     const {id, isPlaying} = useSelector(state => state.audioReducer);
+    const {cart} = useSelector(state => state.userReducer);
     const [loading, setLoading] = useState(false);
     const dispatch = useDispatch();
     const [show, setShow] = useState(false);
     const history = useHistory();
+
+    const isInCart = useMemo(() => cart.items.find(i => {
+        return i.beatId._id.toString() === track?.id?.toString();
+    }), [cart.items]);
 
     useEffect(() => {
         const beatstoreService = new BeatstoreService();
@@ -68,19 +75,9 @@ const FeaturedTrack = (props) => {
             </div>
             <div className={`info`}>
                 <p className={`caption`}>Featured track</p>
-                <p className={`title`}>{track.title}</p>
+                <p className={`title`}><TrackTitle title={track.title} id={track.id}/></p>
                 <div className={`footer`}>
-                    <button className="track__to-cart-button" onClick={(e) => {
-                        e.stopPropagation();
-                        setShow(true);
-                    }}>
-                        <FontAwesomeIcon icon={faShoppingCart}/> ADD
-                    </button>
-                    <LicenseTypeModal key={track.id}
-                                      track={track}
-                                      buttonClass="cart_button"
-                                      show={show}
-                                      setOpen={setShow}/>
+                    <ToCartButton isInCart={isInCart} track={track}/>
                     <div className={`tags-container`}>
                         {track.tags.map((t, index) => {
                             if (index < 3) {
