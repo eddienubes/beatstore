@@ -1,5 +1,6 @@
 const HttpError = require('../models/http-error');
 const {v4: uuid} = require('uuid');
+const {nanoid} = require('nanoid');
 const {validationResult} = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');

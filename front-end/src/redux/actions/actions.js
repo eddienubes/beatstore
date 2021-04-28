@@ -379,6 +379,7 @@ const paymentDeclinedAndRedirected = (err, history) => (dispatch, getState) => {
     dispatch(paymentDeclined(JSON.stringify({...err?.response?.data, statusText: err.message})));
     history.replace('checkout/failed');
 }
+
 const paymentAcceptedAndRedirected = (history) => async (dispatch, getState) => {
     const {loggedIn, id, token} = getState().userReducer;
 

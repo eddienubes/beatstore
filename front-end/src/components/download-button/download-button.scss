@@ -1,0 +1,35 @@
+.download-button__wrapper {
+    margin-left: 11px;
+    height: 32px;
+    width: 100%;
+    min-width: 116px;
+    button {
+        animation: download-button .2s ease-in-out;
+        background: black;
+        border: 1px solid white;
+        color: white;
+        height: 32px;
+        transition: .2s ease-in-out;
+        white-space: nowrap;
+        border-radius: 3px;
+        &:hover {
+            background: white;
+            color: black;
+        }
+        &:active {
+            transform: scale(0.9);
+            border: none;
+        }
+    }
+}
+
+@keyframes download-button {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

@@ -75,32 +75,15 @@ $heightForNotLarge: 50px;
 
 
     .tracks__button-buy {
-        .in-cart-button {
-            background: #606060 !important;
-        }
-        .track__to-cart-button {
-            margin: 0 auto;
-            z-index: 9999999 !important;
-            font-weight: 400;
-            white-space: nowrap;
-            color: white;
-            border: white 1px solid;
-            padding: 7px;
-            background: black;
-            transition: .25s ease-in-out;
-            border-radius: 2px;
 
-            &:hover {
-                border: black 1px solid;
-                color: black;
-                background: white;
-            }
-        }
 
     }
 
     .tracks__title {
         white-space: nowrap;
+
+
+
 
         .track__td-img {
             display: inline-block;

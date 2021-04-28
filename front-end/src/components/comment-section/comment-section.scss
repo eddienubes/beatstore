@@ -1,0 +1,63 @@
+.comment-section__wrapper {
+    width: 100%;
+    animation: comment-section__wrapper 1.2s ease-in-out;
+    .header {
+        border-bottom: 2px solid rgba(255, 255, 255, .15);
+        width: 100%;
+        color: white;
+        font-size: 1.2rem;
+        text-align: center;
+
+        padding-bottom: 5px;
+    }
+
+    .stat-wrapper {
+        text-align: center;
+        padding: 10px;
+
+        .like {
+            color: red;
+            margin-left: 0;
+        }
+
+        span {
+            white-space: nowrap;
+            font-style: italic;
+            margin: 10px 40px;
+            color: white;
+        }
+    }
+
+    .comments-wrapper {
+        display: flex;
+        align-items: start;
+        flex-direction: column;
+        justify-content: left;
+        padding: 20px 25%;
+
+        .tip {
+            width: 100%;
+            color: white;
+            text-align: center;
+        }
+    }
+}
+
+@media (max-width: 550px) {
+    .comment-section__wrapper {
+        .comments-wrapper {
+            padding: 20px 20px;
+        }
+    }
+}
+
+@keyframes comment-section__wrapper {
+    0% {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

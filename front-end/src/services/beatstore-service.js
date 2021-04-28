@@ -57,5 +57,47 @@ export default class BeatstoreService {
         return axios.get(this.baseUrl + `/random`);
     }
 
+    downloadBeat = async (id) => {
+        return axios.get(this.baseUrl + '/download' + '/' + id, {
+            responseType: "blob",
+            headers: {
+                'Content-Type': 'audio/mpeg',
+                'Content-Disposition': 'attachment; filename=' + `${id}` + '.mp3'
+            }
+        });
+    }
 
+    leaveLike = async (commentId, userId, token) => {
+        return axios.post(this.baseUrl + '/like/' + commentId,
+            {
+                userId
+            },
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+    }
+
+    leaveComment = async (text, beatId, userId, token) => {
+        return axios.post(this.baseUrl + '/comment/' + beatId,
+            {
+                text,
+                userId
+            },
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+    }
+
+    removeLike = async (commentId, userId, token) => {
+        return axios.delete(this.baseUrl + '/like/' + commentId + '/' + userId,
+            {
+                headers: {
+                    'Authorization': 'Bearer ' + token
+                }
+            });
+    }
 };
