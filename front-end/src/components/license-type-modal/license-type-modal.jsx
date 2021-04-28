@@ -13,11 +13,11 @@ import {useHistory} from "react-router-dom";
 const ToCartButton = ({trackId, price, licenseType, setOpen, caption, desc, popup, licenseId, isInCart}) => {
     const dispatch = useDispatch();
     const history = useHistory();
-
+    console.log(licenseType);
     return (
         <button onClick={(e) => {
             e.stopPropagation();
-            if (licenseType === 4) {
+            if (licenseType === 5) {
                 history.replace('/contact');
             }
             else {
@@ -168,7 +168,7 @@ const LicenseTypeModal = (props) => {
 
                                 <Col xl={12} md={6} sm={12}>
                                     <ToCartButton
-                                        licenseType={4}
+                                        licenseType={5}
                                         price={'~'}
                                         caption={captions[4]}
                                         desc={desc[4]}
