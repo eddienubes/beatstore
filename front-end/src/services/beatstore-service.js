@@ -57,9 +57,13 @@ export default class BeatstoreService {
         return axios.get(this.baseUrl + `/random`);
     }
 
-    downloadBeat = async (id) => {
+    downloadBeat = async (id, handleProgress) => {
         return axios.get(this.baseUrl + '/download' + '/' + id, {
             responseType: "blob",
+            onDownloadProgress: (progress => {
+                console.log(progress);
+                handleProgress(progress);
+            }),
             headers: {
                 'Content-Type': 'audio/mpeg',
                 'Content-Disposition': 'attachment; filename=' + `${id}` + '.mp3'

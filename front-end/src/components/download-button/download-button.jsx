@@ -7,11 +7,15 @@ import './download-button.scss';
 
 const DownloadButton = ({ id, fileName }) => {
     const [loading, setLoading] = useState(false);
+    const [progress, setProgress] = useState({
+        loaded: 0,
+        total: 0
+    });
 
     const handleClick = () => {
         const beatstoreService = new BeatstoreService();
         setLoading(true);
-        beatstoreService.downloadBeat(id)
+        beatstoreService.downloadBeat(id, setProgress)
             .then(res => {
                 const url = window.URL.createObjectURL(new Blob([res.data]));
                 const link = document.createElement('a');
@@ -37,12 +41,15 @@ const DownloadButton = ({ id, fileName }) => {
         <div className="download-button__wrapper">
             {
                 !loading ? (<button onClick={handleClick}><FontAwesomeIcon icon={faDownload}/>
-                    &nbsp;DOWNLOAD
-                </button>) : <SpinnerAudio/>
+                        &nbsp;DOWNLOAD
+                    </button>) :
+                    <div className="indicator">
+                        <SpinnerAudio/>
+                        {(progress.loaded * Math.pow(10, -6)).toFixed(2)} mb of
+                        &nbsp;{(progress.total * Math.pow(10, -6)).toFixed(2)} mb
+                    </div>
             }
-
         </div>
-
     )
 }
 

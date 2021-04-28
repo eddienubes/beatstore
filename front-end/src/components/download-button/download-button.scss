@@ -2,7 +2,14 @@
     margin-left: 11px;
     height: 32px;
     width: 100%;
-    min-width: 116px;
+    min-width: 125px;
+    .indicator {
+        display: flex;
+        white-space: nowrap;
+        align-items: center;
+        justify-content: center;
+    }
+
     button {
         animation: download-button .2s ease-in-out;
         background: black;
