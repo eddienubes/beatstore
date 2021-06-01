@@ -78,7 +78,7 @@ const PurchasesTable = () => {
                                                             key={link.label + lIndex + item.beatId + item.licenseId + item.orderId}
                                                             icon={<FontAwesomeIcon className={`icon`} icon={faFileDownload}/>}
                                                             text={link.label}
-                                                            onClick={() => history.push(link.url)}
+                                                            onClick={() => window.open(link.url, '_blank')}
                                                         />
                                                     )
                                                 })
