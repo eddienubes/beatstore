@@ -8,9 +8,9 @@ const AUDIO_MIME_TYPE_MAP = {
     'audio/mpeg': 'mp3'
 };
 
-const checkAudio = (mimeType) => !!IMAGE_MIME_TYPE_MAP[mimeType];
+const checkAudio = (mimeType) => !!AUDIO_MIME_TYPE_MAP[mimeType];
 
-const checkImage = (mimeType) => !!AUDIO_MIME_TYPE_MAP[mimeType];
+const checkImage = (mimeType) => !!IMAGE_MIME_TYPE_MAP[mimeType];
 
 const getImageExtension = (mimeType) => IMAGE_MIME_TYPE_MAP[mimeType];
 

@@ -9,7 +9,7 @@ module.exports = class BeatstoreService {
     baseBotsUrl = process.env.currentIP + 'api/bots';
 
     async getAllBeats(skip, limit) {
-        console.log(process.env);
+        // console.log(process.env);
 
         const requestUrl = new url.URL(this.baseBeatsUrl);
         requestUrl.searchParams.append('skip', skip.toString());

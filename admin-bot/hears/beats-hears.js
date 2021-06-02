@@ -11,11 +11,13 @@ const allBeatsMenu = async (ctx, next) => {
     let beats;
     try {
         const response = await beatstoreService.getAllBeats(0, process.env.maxItemsPerPage);
+
         const beatsCountResponse = await beatstoreService.getAllBeats(0, 9999);
+
         beats = response.data.beats;
         beatsCount = beatsCountResponse.data.beats.length;
     } catch (e) {
-        ctx.reply(e.message);
+        await ctx.reply(e.message);
         return next();
     }
 

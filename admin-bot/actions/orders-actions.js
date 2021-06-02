@@ -13,7 +13,7 @@ const sendOrderMessage = async (order, ctx, keyboard) => {
         `📅 <b>Date:</b> <i>${date(order.date)}</i>\n` +
         `📬 <b>Email:</b> <i>${order.email}</i>\n` +
         `💰 <b>Total: </b> <i>${order.total.toFixed(2)}</i>\n` +
-        `🔑 <b>ID: </b> <code>${order.id}</code>\n`,
+        `🔑 <b>ID: </b> <code>${order.id}</code>\n` +
         `💵 <b>Payed: </b> <code>${order.payed}</code>\n`,
         {
             reply_markup: {
@@ -21,7 +21,7 @@ const sendOrderMessage = async (order, ctx, keyboard) => {
                     [Markup.callbackButton('📦 Products', actions.GET_ORDER_PRODUCTS)],
                     [Markup.callbackButton('👱‍♂ Customer', actions.GET_ORDER_CUSTOMER)],
                     [Markup.callbackButton('⬅ Back', actions.BACK_FROM_ORDER_TO_ORDER_MENU)],
-                ]
+                ],
             },
             parse_mode: 'HTML'
         });
