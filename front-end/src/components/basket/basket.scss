@@ -15,6 +15,11 @@
 }
 
 .basket__container {
+    width: 100%;
+    display: flex;
+    align-items: start;
+    margin: 0 auto !important;
+    padding: 10px !important;
 
     .header {
         font-weight: lighter;
@@ -49,12 +54,13 @@
         }
     }
 
-    width: 100%;
-    display: flex;
-    margin: 0 auto !important;
-    padding: 10px !important;
 
     .cart {
+        .table-body {
+            height: auto;
+        }
+        width: 100%;
+        height: auto;
         animation: cart-content .4s ease-in-out;
         border: none !important;
         border-radius: 0 !important;
