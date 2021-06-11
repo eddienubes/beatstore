@@ -24,5 +24,7 @@ Website made out of reactjs, nodejs, mongodb + telegrafjs for sort of admin pane
 * `expressjs` - super convenient web framework
 * `@paypal/checkout-server-sdk` - paypal sdk for handling payment of the website
 
+---
+
 #### Server side | Telegram BOT:
 * `Telegrafjs` - telegram bot framework
