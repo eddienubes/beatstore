@@ -50,7 +50,11 @@ const editTitleScene = new WizardScene(sceneNames.EDIT_BEAT_TITLE_SCENE,
             );
 
             await actions.getBeatById(ctx, next);
-            await ctx.deleteMessage(ctx.wizard.state.message_id);
+            try {
+                await ctx.deleteMessage(ctx.wizard.state.message_id);
+            } catch (e) {
+
+            }
             return await ctx.scene.leave();
         }
 
@@ -84,7 +88,11 @@ const editBPMScene = new WizardScene(sceneNames.EDIT_BEAT_BPM_SCENE,
             );
 
             await actions.getBeatById(ctx, next);
-            await ctx.deleteMessage(ctx.wizard.state.message_id);
+            try {
+                await ctx.deleteMessage(ctx.wizard.state.message_id);
+            } catch (e) {
+
+            }
             return await ctx.scene.leave();
         }
     }
@@ -116,7 +124,11 @@ const editScaleScene = new WizardScene(sceneNames.EDIT_BEAT_SCALE_SCENE,
             );
 
             await actions.getBeatById(ctx, next);
-            await ctx.deleteMessage(ctx.wizard.state.message_id);
+            try {
+                await ctx.deleteMessage(ctx.wizard.state.message_id);
+            } catch (e) {
+
+            }
             return await ctx.scene.leave();
         }
 
@@ -151,7 +163,11 @@ const editTagsScene = new WizardScene(sceneNames.EDIT_BEAT_TAGS_SCENE,
             );
 
             await actions.getBeatById(ctx, next);
-            await ctx.deleteMessage(ctx.wizard.state.message_id);
+            try {
+                await ctx.deleteMessage(ctx.wizard.state.message_id);
+            } catch (e) {
+
+            }
             return await ctx.scene.leave();
         }
 
@@ -215,7 +231,11 @@ const editImageScene = new WizardScene(sceneNames.EDIT_BEAT_IMG_URL_SCENE,
                 },
             );
             await actions.getBeatById(ctx, next);
-            await ctx.deleteMessage(ctx.wizard.state.message_id);
+             try {
+                 await ctx.deleteMessage(ctx.wizard.state.message_id);
+             } catch (e) {
+
+             }
             return await ctx.scene.leave();
         }
 
@@ -286,7 +306,11 @@ const editPreviewAudioScene = new WizardScene(sceneNames.EDIT_BEAT_PREVIEW_AUDIO
             );
 
             await actions.getBeatById(ctx, next);
-            await ctx.deleteMessage(ctx.wizard.state.message_id);
+            try {
+                await ctx.deleteMessage(ctx.wizard.state.message_id);
+            } catch (e) {
+
+            }
             return await ctx.scene.leave();
 
         }
@@ -323,7 +347,11 @@ const editMP3UrlScene = new WizardScene(sceneNames.EDIT_BEAT_MP3_URL_SCENE,
             );
 
             await actions.getBeatById(ctx, next);
-            await ctx.deleteMessage(ctx.wizard.state.message_id);
+            try {
+                await ctx.deleteMessage(ctx.wizard.state.message_id);
+            } catch (e) {
+
+            }
             return await ctx.scene.leave();
         }
 
@@ -360,7 +388,11 @@ const editWavUrlScene = new WizardScene(sceneNames.EDIT_BEAT_WAV_URL_SCENE,
             );
 
             await actions.getBeatById(ctx, next);
-            await ctx.deleteMessage(ctx.wizard.state.message_id);
+            try {
+                await ctx.deleteMessage(ctx.wizard.state.message_id);
+            } catch (e) {
+
+            }
             return await ctx.scene.leave();
         }
 
@@ -396,7 +428,11 @@ const editSTEMSUrlScene = new WizardScene(sceneNames.EDIT_BEAT_STEMS_URL_SCENE,
             );
 
             await actions.getBeatById(ctx, next);
-            await ctx.deleteMessage(ctx.wizard.state.message_id);
+            try {
+                await ctx.deleteMessage(ctx.wizard.state.message_id);
+            } catch (e) {
+
+            }
             return await ctx.scene.leave();
         }
 
@@ -433,7 +469,11 @@ const editGenresScene = new WizardScene(sceneNames.EDIT_BEAT_GENRES_SCENE,
             );
 
             await actions.getBeatById(ctx, next);
-            await ctx.deleteMessage(ctx.wizard.state.message_id);
+            try {
+                await ctx.deleteMessage(ctx.wizard.state.message_id);
+            } catch (e) {
+
+            }
             return await ctx.scene.leave();
         }
 
@@ -469,7 +509,11 @@ const editMoodsScene = new WizardScene(sceneNames.EDIT_BEAT_MOODS_SCENE,
             );
 
             await actions.getBeatById(ctx, next);
-            await ctx.deleteMessage(ctx.wizard.state.message_id);
+            try {
+                await ctx.deleteMessage(ctx.wizard.state.message_id);
+            } catch (e) {
+
+            }
             return await ctx.scene.leave();
         }
 

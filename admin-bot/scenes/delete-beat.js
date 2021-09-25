@@ -35,14 +35,22 @@ beatDeletionConfirmationScene.action('yes', async (ctx, next) => {
     }
 
     await ctx.reply('✅ Beat has been successfully deleted!');
-    await ctx.deleteMessage(ctx.wizard.state.message_id);
+    try {
+        await ctx.deleteMessage(ctx.wizard.state.message_id);
+    }
+    catch (e) {
+    }
     await hears.allBeatsMenu(ctx, next);
     return ctx.scene.leave();
 });
 
 
 beatDeletionConfirmationScene.action('no', async (ctx, next) => {
-    await ctx.deleteMessage(ctx.wizard.state.message_id);
+    try {
+        await ctx.deleteMessage(ctx.wizard.state.message_id);
+    } catch (e) {
+
+    }
     await actions.getBeatById(ctx, next);
     return ctx.scene.leave();
 });

@@ -114,7 +114,10 @@ const getBeatById = async (ctx, next) => {
     await sendBeatMessage(beat, ctx, keyboard);
 
     if (ctx.callbackQuery) {
-        await ctx.deleteMessage(ctx.callbackQuery.message.message_id);
+        try {
+            await ctx.deleteMessage(ctx.callbackQuery.message.message_id);
+        } catch (e) {
+        }
     }
 };
 
@@ -138,7 +141,11 @@ const editBeatMenu = async (ctx, next) => {
 
     await sendBeatMessage(beat, ctx, keyboard);
 
-    await ctx.deleteMessage(ctx.callbackQuery.message.message_id);
+    try {
+        await ctx.deleteMessage(ctx.callbackQuery.message.message_id);
+    }
+    catch (e) {
+    }
 }
 
 const backFromEditingToBeat = async (ctx, next) => {
