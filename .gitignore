@@ -14,8 +14,8 @@ front-end/build
 .pnp.js
 
 # data
-./backend/public/
-./backend/data/
+backend/public
+backend/data
 
 # testing
 /coverage
