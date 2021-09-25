@@ -4,12 +4,15 @@ const date = require('../util/date');
 const actions = require('../constants/action-constants');
 const beatstoreService = new BeatstoreService();
 
+
+
 const allBeatsMenu = async (ctx, next) => {
     ctx.session.currentBeat = null;
 
     let beatsCount;
     let beats;
     try {
+        console.log(process.env.maxItemsPerPage);
         const response = await beatstoreService.getAllBeats(0, process.env.maxItemsPerPage);
 
         const beatsCountResponse = await beatstoreService.getAllBeats(0, 9999);
@@ -17,6 +20,7 @@ const allBeatsMenu = async (ctx, next) => {
         beats = response.data.beats;
         beatsCount = beatsCountResponse.data.beats.length;
     } catch (e) {
+        console.log(e);
         await ctx.reply(e.message);
         return next();
     }

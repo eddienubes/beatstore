@@ -13,6 +13,10 @@ front-end/build
 /.pnp
 .pnp.js
 
+# data
+./backend/public/
+./backend/data/
+
 # testing
 /coverage
 
@@ -30,6 +34,8 @@ front-end/.env
 front-end/.env.production
 backend/.env
 admin-bot/.env
+*/.env.production
+*/.env
 
 npm-debug.log*
 yarn-debug.log*
