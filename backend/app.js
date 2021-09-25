@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-const https = require('https');
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
@@ -9,9 +8,6 @@ const stream = require('stream');
 const {promisify} = require('util');
 const crypto = require('crypto');
 require('dotenv').config();
-const privateKey = fs.readFileSync('../sslcert/privkey.pem', 'utf-8');
-const certificate = fs.readFileSync('../sslcert/fullchain.pem', 'utf-8');
-const credentials = {key: privateKey, cert: certificate};
 
 const beatsRoutes = require('./routes/beats-routes');
 const usersRoutes = require('./routes/users-routes');
@@ -23,7 +19,7 @@ const HttpError = require('./models/http-error');
 
 const app = express();
 
-const server = https.createServer(credentials, app);
+const server = http.createServer(app);
 
 
 // default and supported routes
@@ -138,32 +134,20 @@ app.use((error, req, res, next) => {
     res.json({message: error.message || 'An unknown error occurred!'});
 });
 
-const app2 = express();
-const server2 = http.createServer(app2);
-
-app2.get('*', (req, res) => {
-    res.redirect('https://' + req.headers.host + req.url);
-});
-
-
 // port configuration and connection to database
 mongoose
     .connect(process.env.mongoDBUrl, {useNewUrlParser: true, useUnifiedTopology: true})
     .then(async () => {
         server.listen(process.env.port);
-        server2.listen(process.env.redirectPort);
         console.log('Server is up and running on port ' + process.env.port);
-        console.log('Redirect server is up and running on port ' + process.env.redirectPort);
     })
     .catch(async (err) => {
         console.log(err.message);
         process.on('exit', () => {
             server.close();
-            server2.close();
         });
         process.on('SIGINT', () => {
             server.close();
-            server2.close();
         });
     });
 

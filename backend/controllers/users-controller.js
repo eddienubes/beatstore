@@ -453,6 +453,7 @@ const removeFromUserCart = async (req, res, next) => {
         await user.save({session: sess});
         await sess.commitTransaction();
     } catch (e) {
+
         console.log(e.message);
         return next(new HttpError('Something went wrong while deleting product from cart', 401));
     }
