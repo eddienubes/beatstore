@@ -41,7 +41,7 @@ $heightForNotLarge: 50px;
 .main-row-track {
     cursor: pointer;
     user-select: none;
-
+    //max-height: 50px!important;
     color: white;
     .track__tags {
         .tags-container {

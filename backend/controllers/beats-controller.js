@@ -14,6 +14,7 @@ const Comment = require('../models/comment');
 const Like = require('../models/like');
 
 
+
 const getBeatDuration = (totalSeconds) => {
     const minutesInt = Math.floor(totalSeconds / 60);
     const secondsInt = Math.floor(totalSeconds % 60);

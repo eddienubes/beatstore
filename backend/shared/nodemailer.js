@@ -22,7 +22,7 @@ const sendEmail = async (receiverEmail, subject = 'Beatstore mail', template, co
         extName: '.hbs',
         viewPath: path.join(__dirname, '/../views')
     };
-    
+
     transporter.use('compile', hbs(hbsConfiguration));
 
     await transporter.sendMail(mailOptions);

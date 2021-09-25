@@ -74,7 +74,7 @@ const Basket = () => {
                     </Table.Row>
                 </Table.Header>
 
-                <Table.Body>
+                <Table.Body className="table-body">
                     {
                         cart.items.map(i => {
 
