@@ -136,6 +136,7 @@ mongoose
   .connect(process.env.mongoDBUrl, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(async () => {
     server.listen(process.env.port);
+    console.log('Connected to MongoDB successfully!');
     console.log(`Server is up and running on port ${process.env.port}`);
   })
   .catch(async (err) => {

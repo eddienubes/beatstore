@@ -31,7 +31,7 @@
     "express": "^4.17.1",
     "express-validator": "^6.9.2",
     "form-data": "^4.0.0",
-    "get-audio-duration": "^2.0.3",
+    "get-audio-duration": "^3.1.1",
     "google-auth-library": "^7.0.2",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.11.13",
