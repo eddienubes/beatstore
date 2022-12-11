@@ -1,4 +1,5 @@
 const { Telegraf, session, Stage } = require('telegraf');
+const path = require('path');
 const WizardScene = require('telegraf/scenes/wizard');
 const actions = require('./actions');
 const actionNames = require('./constants/action-constants');
@@ -6,7 +7,8 @@ const commands = require('./commands');
 const hears = require('./hears');
 const scenes = require('./scenes');
 const sceneNames = require('./constants/wizard-scenes-constants');
-require('dotenv').config();
+
+require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
 const bot = new Telegraf(process.env.token);
 

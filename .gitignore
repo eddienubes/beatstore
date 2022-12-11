@@ -5,9 +5,6 @@ front-end/node_modules
 backend/node_modules
 admin-bot/node_modules
 
-backend/nodemon.json
-admin-bot/nodemon.json
-
 front-end/build
 
 /.pnp

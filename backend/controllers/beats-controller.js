@@ -327,6 +327,7 @@ const getAllBeats = async (req, res, next) => {
     console.log(e.message);
     return next(new HttpError('Something went wrong while getting beats', 500));
   }
+
   res.status(200);
   res.json({
     message: 'Beats are fetched successfully',
