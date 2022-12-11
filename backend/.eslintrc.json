@@ -34,6 +34,7 @@
     "no-underscore-dangle": "off",
     "prefer-regex-literals": "off",
     "array-callback-return": "off",
-    "no-use-before-define": "off"
+    "no-use-before-define": "off",
+    "no-return-await": "off"
   }
 }

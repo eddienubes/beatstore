@@ -2,125 +2,129 @@ const axios = require('axios');
 const url = require('url');
 
 module.exports = class BeatstoreService {
-    baseBeatsUrl = process.env.currentIP + 'api/beats';
-    baseLicensesUrl = process.env.currentIP + 'api/licenses';
-    baseOrderUrl = process.env.currentIP + 'api/orders';
-    baseUsersUrl = process.env.currentIP + 'api/users';
-    baseBotsUrl = process.env.currentIP + 'api/bots';
+  baseBeatsUrl = `${process.env.currentIP}api/beats`;
 
-    async getAllBeats(skip, limit) {
-        // console.log(process.env);
+  baseLicensesUrl = `${process.env.currentIP}api/licenses`;
 
-        const requestUrl = new url.URL(this.baseBeatsUrl);
-        requestUrl.searchParams.append('skip', skip.toString());
-        requestUrl.searchParams.append('limit', limit.toString());
+  baseOrderUrl = `${process.env.currentIP}api/orders`;
 
-        return axios.get(requestUrl.href);
-    }
+  baseUsersUrl = `${process.env.currentIP}api/users`;
 
-    async getBeatById(id) {
-        const requestUrl = new url.URL(this.baseBeatsUrl + `/${id}`);
-        return axios.get(requestUrl.href);
-    }
+  baseBotsUrl = `${process.env.currentIP}api/bots`;
 
-    async updateBeatById(id, data, headers) {
-        const requestUrl = new url.URL(this.baseBeatsUrl + `/${id}`);
-        return axios.patch(requestUrl.href, data, {
-            headers: {
-                ...headers,
-                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
-            }
-        });
-    }
+  async getAllBeats(skip, limit) {
+    // console.log(process.env);
 
-    async deleteBeaById(id) {
-        const requestUrl = new url.URL(this.baseBeatsUrl + `/${id}`);
-        return axios.delete(requestUrl.href, {
-            headers: {
-                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
-            }
-        });
-    }
+    const requestUrl = new url.URL(this.baseBeatsUrl);
+    requestUrl.searchParams.append('skip', skip.toString());
+    requestUrl.searchParams.append('limit', limit.toString());
 
-    async createNewBeat(data, headers) {
-        return axios.post(this.baseBeatsUrl, data, {
-            headers: {
-                ...headers,
-                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
-            }
-        });
-    }
+    return axios.get(requestUrl.href);
+  }
 
-    async getAllLicenses() {
-        return axios.get(this.baseLicensesUrl);
-    }
+  async getBeatById(id) {
+    const requestUrl = new url.URL(`${this.baseBeatsUrl}/${id}`);
+    return axios.get(requestUrl.href);
+  }
 
-    async getLicenseById(id) {
-        return axios.get(this.baseLicensesUrl + `/info/${id}`);
-    }
+  async updateBeatById(id, data, headers) {
+    const requestUrl = new url.URL(`${this.baseBeatsUrl}/${id}`);
+    return axios.patch(requestUrl.href, data, {
+      headers: {
+        ...headers,
+        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+      }
+    });
+  }
 
-    async updateLicenseById(id, data) {
-        return axios.patch(this.baseLicensesUrl + `/${id}`, data, {
-            headers: {
-                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
-            }
-        });
-    }
+  async deleteBeaById(id) {
+    const requestUrl = new url.URL(`${this.baseBeatsUrl}/${id}`);
+    return axios.delete(requestUrl.href, {
+      headers: {
+        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+      }
+    });
+  }
 
-    async getAllOrders(skip, limit) {
-        const requestUrl = new url.URL(this.baseOrderUrl);
+  async createNewBeat(data, headers) {
+    return axios.post(this.baseBeatsUrl, data, {
+      headers: {
+        ...headers,
+        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+      }
+    });
+  }
 
-        requestUrl.searchParams.append('skip', skip.toString());
-        requestUrl.searchParams.append('limit', limit.toString());
+  async getAllLicenses() {
+    return axios.get(this.baseLicensesUrl);
+  }
 
-        return axios.get(requestUrl.href, {
-            headers: {
-                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
-            }
-        });
-    }
+  async getLicenseById(id) {
+    return axios.get(`${this.baseLicensesUrl}/info/${id}`);
+  }
 
-    async getOrderById(id) {
-        return axios.get(this.baseOrderUrl + `/${id}`, {
-            headers: {
-                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
-            }
-        });
-    }
+  async updateLicenseById(id, data) {
+    return axios.patch(`${this.baseLicensesUrl}/${id}`, data, {
+      headers: {
+        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+      }
+    });
+  }
 
-    async getAllUsers(skip, limit) {
-        const requestUrl = new url.URL(this.baseUsersUrl);
+  async getAllOrders(skip, limit) {
+    const requestUrl = new url.URL(this.baseOrderUrl);
 
-        requestUrl.searchParams.append('skip', skip.toString());
-        requestUrl.searchParams.append('limit', limit.toString());
+    requestUrl.searchParams.append('skip', skip.toString());
+    requestUrl.searchParams.append('limit', limit.toString());
 
-        return axios.get(requestUrl.href, {
-            headers: {
-                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
-            }
-        });
-    }
+    return axios.get(requestUrl.href, {
+      headers: {
+        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+      }
+    });
+  }
 
-    async getUserById(id) {
-        return axios.get(this.baseUsersUrl + `/${id}`, {
-            headers: {
-                'Authorization': 'Bearer ' + process.env.token + ' ID: ' + process.env.botId
-            }
-        });
-    }
+  async getOrderById(id) {
+    return axios.get(`${this.baseOrderUrl}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+      }
+    });
+  }
 
-    async register() {
-        return axios.post(this.baseBotsUrl, {
-            botId: process.env.botId,
-            token: process.env.token
-        })
-    }
+  async getAllUsers(skip, limit) {
+    const requestUrl = new url.URL(this.baseUsersUrl);
 
-    async updateToken(token) {
-        return axios.patch(this.baseBotsUrl, {
-            botId: process.env.botId,
-            newToken: process.env.token,
-            token: token
-        });
-    }
-}
+    requestUrl.searchParams.append('skip', skip.toString());
+    requestUrl.searchParams.append('limit', limit.toString());
+
+    return axios.get(requestUrl.href, {
+      headers: {
+        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+      }
+    });
+  }
+
+  async getUserById(id) {
+    return axios.get(`${this.baseUsersUrl}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+      }
+    });
+  }
+
+  async register() {
+    return axios.post(this.baseBotsUrl, {
+      botId: process.env.botId,
+      token: process.env.token
+    });
+  }
+
+  async updateToken(token) {
+    return axios.patch(this.baseBotsUrl, {
+      botId: process.env.botId,
+      newToken: process.env.token,
+      token
+    });
+  }
+};

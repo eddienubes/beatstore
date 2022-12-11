@@ -4,8 +4,10 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js",
-    "dev": "nodemon main.js"
+    "start": "node app.js",
+    "start:dev": "nodemon app.js",
+    "lint:check": "eslint . --max-warnings 27",
+    "lint:fix": "eslint . --fix --max-warnings 27"
   },
   "author": "",
   "license": "ISC",
@@ -17,5 +19,13 @@
     "nodemon": "^2.0.7",
     "telegraf": "^3.38.0",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "eslint": "^7.32.0 || ^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-prettier": "^4.2.1",
+    "prettier": "^2.8.1"
   }
 }

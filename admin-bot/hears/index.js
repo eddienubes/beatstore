@@ -1,22 +1,14 @@
-const {
-    allBeatsMenu
-} = require('./beats-hears');
+const { allBeatsMenu } = require('./beats-hears');
 
-const {
-    allLicensesMenu
-} = require('./licenses-hears');
+const { allLicensesMenu } = require('./licenses-hears');
 
-const {
-    allOrdersMenu
-} = require('./orders-hears');
+const { allOrdersMenu } = require('./orders-hears');
 
-const {
-    allUsersMenu
-} = require('./users-hears');
+const { allUsersMenu } = require('./users-hears');
 
 module.exports = {
-    allBeatsMenu,
-    allLicensesMenu,
-    allOrdersMenu,
-    allUsersMenu
-}
+  allBeatsMenu,
+  allLicensesMenu,
+  allOrdersMenu,
+  allUsersMenu
+};
