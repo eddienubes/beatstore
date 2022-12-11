@@ -5,12 +5,21 @@
   "main": "index.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "start:dev": "nodemon app.js",
+    "lint:check": "eslint . --max-warnings 7",
+    "lint:fix": "eslint . --fix --max-warnings 7"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "nodemon": "^2.0.7"
+    "eslint": "^7.32.0 || ^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "nodemon": "^2.0.7",
+    "prettier": "^2.8.1"
   },
   "dependencies": {
     "@paypal/checkout-server-sdk": "^1.0.2",

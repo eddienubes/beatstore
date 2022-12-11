@@ -1,0 +1,5 @@
+# Ignore artifacts:
+docker
+.run
+node_modules
+public

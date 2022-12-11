@@ -1,5 +1,6 @@
-const {Router} = require('express');
+const { Router } = require('express');
 const licensesController = require('../controllers/licenses-controller');
+
 const router = Router();
 const checkBot = require('../middleware/check-bot-token');
 
@@ -11,6 +12,6 @@ router.patch('/:lid', checkBot, licensesController.updateLicense);
 
 router.post('/', checkBot, licensesController.creatLicense);
 
-router.get('/:type', licensesController.getLicenseDescriptionByType)
+router.get('/:type', licensesController.getLicenseDescriptionByType);
 
 module.exports = router;
