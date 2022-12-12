@@ -17,7 +17,6 @@
         "connected-react-router": "^6.8.0",
         "fast-average-color": "^6.4.0",
         "history": "4.10.1",
-        "node-sass": "^4.14.1",
         "react": "^16.13.1",
         "react-async-script-loader": "^0.3.0",
         "react-bootstrap": "^1.3.0",
@@ -43,12 +42,6 @@
         "test": "react-scripts test",
         "eject": "react-scripts eject"
     },
-    "eslintConfig": {
-        "extends": [
-            "react-app",
-            "react-app/jest"
-        ]
-    },
     "browserslist": {
         "production": [
             ">0.2%",
@@ -60,5 +53,15 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "devDependencies": {
+        "eslint": "^7.32.0 || ^8.2.0",
+        "eslint-config-airbnb": "^19.0.4",
+        "eslint-plugin-import": "^2.25.3",
+        "eslint-plugin-jsx-a11y": "^6.5.1",
+        "eslint-plugin-react": "^7.28.0",
+        "eslint-plugin-react-hooks": "^4.3.0",
+        "prettier": "^2.8.1",
+        "sass": "^1.56.2"
     }
 }
