@@ -1,3 +1,3 @@
-import PriceCardsList from "./price-cards-list";
+import PriceCardsList from './price-cards-list';
 
 export default PriceCardsList;

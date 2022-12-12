@@ -1,3 +1,3 @@
-import BeatsPage from "./beats-page";
+import BeatsPage from './beats-page';
 
 export default BeatsPage;

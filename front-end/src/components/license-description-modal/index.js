@@ -1,3 +1,3 @@
-import LicenseDescriptionModal from "./license-description-modal";
+import LicenseDescriptionModal from './license-description-modal';
 
 export default LicenseDescriptionModal;

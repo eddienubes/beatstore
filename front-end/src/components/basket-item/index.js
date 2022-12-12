@@ -1,3 +1,3 @@
-import BasketItem from "./basket-item";
+import BasketItem from './basket-item';
 
 export default BasketItem;

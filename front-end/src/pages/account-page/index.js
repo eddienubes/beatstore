@@ -1,3 +1,3 @@
-import AccountPage from "./account-page";
+import AccountPage from './account-page';
 
 export default AccountPage;

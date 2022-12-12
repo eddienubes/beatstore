@@ -1,3 +1,3 @@
-import PurchasesTable from "./purchases-table";
+import PurchasesTable from './purchases-table';
 
 export default PurchasesTable;

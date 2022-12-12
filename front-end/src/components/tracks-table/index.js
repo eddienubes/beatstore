@@ -1,3 +1,3 @@
-import TracksTable from "./tracks-table";
+import TracksTable from './tracks-table';
 
 export default TracksTable;

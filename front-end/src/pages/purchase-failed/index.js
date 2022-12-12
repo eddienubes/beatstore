@@ -1,3 +1,3 @@
-import PurchaseFailed from "./purchase-failed";
+import PurchaseFailed from './purchase-failed';
 
 export default PurchaseFailed;

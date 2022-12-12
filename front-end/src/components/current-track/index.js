@@ -1,3 +1,3 @@
-import CurrentTrack from "./current-track";
+import CurrentTrack from './current-track';
 
 export default CurrentTrack;

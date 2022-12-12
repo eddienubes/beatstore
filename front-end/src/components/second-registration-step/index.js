@@ -1,3 +1,3 @@
-import SecondRegistrationStep from "./second-registration-step";
+import SecondRegistrationStep from './second-registration-step';
 
 export default SecondRegistrationStep;

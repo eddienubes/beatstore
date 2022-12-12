@@ -1,3 +1,3 @@
-import SingleBeatPage from "./single-beat-page";
+import SingleBeatPage from './single-beat-page';
 
 export default SingleBeatPage;

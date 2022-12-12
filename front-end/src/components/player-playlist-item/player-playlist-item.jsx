@@ -1,13 +1,7 @@
 import React from 'react';
 
-const PlayerPlaylistItem = (props) => {
-
-    return (
-        <div>
-            ]
-        </div>
-    )
-
+function PlayerPlaylistItem(props) {
+  return <div>]</div>;
 }
 
 export default PlayerPlaylistItem;

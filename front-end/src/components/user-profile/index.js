@@ -1,3 +1,3 @@
-import UserProfile from "./user-profile";
+import UserProfile from './user-profile';
 
 export default UserProfile;

@@ -1,3 +1,3 @@
-import LicenseTypeModal from "./license-type-modal";
+import LicenseTypeModal from './license-type-modal';
 
 export default LicenseTypeModal;

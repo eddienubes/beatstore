@@ -1,3 +1,3 @@
-import TrackTitle from "./track-title";
+import TrackTitle from './track-title';
 
 export default TrackTitle;

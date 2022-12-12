@@ -1,3 +1,3 @@
-import FeaturedTrack from "./featured-track";
+import FeaturedTrack from './featured-track';
 
 export default FeaturedTrack;

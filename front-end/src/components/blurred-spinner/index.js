@@ -1,3 +1,3 @@
-import BlurredSpinner from "./blurred-spinner";
+import BlurredSpinner from './blurred-spinner';
 
 export default BlurredSpinner;
