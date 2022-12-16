@@ -1,6 +1,6 @@
 name: Admin Bot CI
 
-on: push
+on: [push, workflow_dispatch]
 
 defaults:
   run:
