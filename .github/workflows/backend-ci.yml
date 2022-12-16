@@ -1,4 +1,4 @@
-name: Admin Bot CI
+name: Backend CI
 
 on: push
 
