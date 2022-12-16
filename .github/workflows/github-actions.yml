@@ -17,7 +17,7 @@ jobs:
           node-version: 16
 
       - name: CD to frontend folder
-        run: ls -l
+        run: cd front-end/
 
       - name: Install dependencies
         run: yarn ci
