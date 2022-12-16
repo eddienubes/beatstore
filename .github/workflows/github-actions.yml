@@ -3,10 +3,10 @@ name: Continuous Integration
 on: workflow_dispatch
 
 jobs:
-  admin-bot-job:
+  frontend-job:
     runs-on: ubuntu-latest
     steps:
-      - name: Print greeting
-        run: echo "Hello world"
-      - name: Print goodbye
-        run: echo "Done. Bye!"
+      - name: Linting
+        run: yarn lint:check
+      - name: Testing
+        run: yarn test
