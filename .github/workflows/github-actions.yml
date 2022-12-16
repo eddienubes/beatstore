@@ -16,16 +16,20 @@ jobs:
         with:
           node-version: 16
 
-      - name: CD to frontend folder
-        run: | 
-          cd front-end/
-          ls -l
-
       - name: Install dependencies
-        run: yarn ci
+        run: |
+          cd front-end/
+          yarn ci
 
       - name: Linting
-        run: yarn lint:check
+        run: | 
+          cd front-end/
+          yarn lint:check
 
       - name: Testing
-        run: yarn test
+        run: |
+          cd front-end/
+          yarn test
+        
+        
+        
