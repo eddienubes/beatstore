@@ -2,6 +2,10 @@ name: Continuous Integration
 
 on: push
 
+defaults:
+  run:
+    working-directory: ./front-end
+
 jobs:
   frontend-job:
     runs-on: ubuntu-latest
@@ -17,19 +21,10 @@ jobs:
           node-version: 16
 
       - name: Install dependencies
-        run: |
-          cd front-end/
-          yarn ci
+        run: yarn ci
 
       - name: Linting
-        run: | 
-          cd front-end/
-          yarn lint:check
+        run: yarn lint:check
 
       - name: Testing
-        run: |
-          cd front-end/
-          yarn test
-        
-        
-        
+        run: yarn test
