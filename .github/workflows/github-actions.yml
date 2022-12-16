@@ -17,10 +17,10 @@ jobs:
           node-version: 16
 
       - name: CD to frontend folder
-        runs: cd frontend/
+        run: cd frontend/
 
       - name: Install dependencies
-        runs: yarn ci
+        run: yarn ci
 
       - name: Linting
         run: yarn lint:check
