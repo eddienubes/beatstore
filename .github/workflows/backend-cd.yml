@@ -1,3 +1,16 @@
 name: Backend CD
 
 on: push
+
+defaults:
+  run:
+    working-directory: ./backend
+
+jobs:
+  backend-cd-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        # configure action, pass parameters
+        # with:

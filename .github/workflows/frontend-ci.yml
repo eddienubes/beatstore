@@ -7,7 +7,7 @@ defaults:
     working-directory: ./front-end
 
 jobs:
-  frontend-job:
+  frontend-ci-job:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

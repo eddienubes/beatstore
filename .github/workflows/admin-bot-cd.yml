@@ -1,3 +1,16 @@
 name: Admin Bot CD
 
 on: push
+
+defaults:
+  run:
+    working-directory: ./admin-bot
+
+jobs:
+  admin-bot-cd-job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        # configure action, pass parameters
+        # with:
