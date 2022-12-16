@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: yarn ci
         env:
-          SKIP_PREFLIGHT_CHECK=true
+          SKIP_PREFLIGHT_CHECK: true
 
       - name: Linting
         run: yarn lint:check
