@@ -18,6 +18,12 @@ jobs:
         # configure action, pass parameters
         # with:
 
+      - name: Cache dependencies
+        uses: actions/setup-cache@v3
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+
       - name: Install NodeJS
         uses: actions/setup-node@v3
         with:

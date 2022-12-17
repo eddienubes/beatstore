@@ -23,6 +23,12 @@ jobs:
         with:
           node-version: 16
 
+      - name: Cache dependencies
+        uses: actions/setup-cache@v3
+        with:
+          path: ~/.npm
+          key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
+
       - name: Install dependencies
         run: yarn ci
         env:
