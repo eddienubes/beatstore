@@ -21,7 +21,7 @@ jobs:
 
       - name: Show environment secrets
         run: | 
-          echo "${{ secrets }}" > .env
+          echo ${{ secrets }} > .env
           cat .env
 
       - name: Install NodeJS
