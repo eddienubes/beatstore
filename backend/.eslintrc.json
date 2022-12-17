@@ -14,6 +14,23 @@
   "plugins": [
     "prettier"
   ],
+  "overrides": [
+    {
+      "files": [
+        "**/*.ts",
+        "**/*.tsx"
+      ],
+      "plugins": [
+        "@typescript-eslint"
+      ],
+      "parser": "@typescript-eslint/parser",
+      "parserOptions": {
+        "project": [
+          "./tsconfig.json"
+        ]
+      }
+    }
+  ],
   "rules": {
     "prettier/prettier": "error",
     "no-unused-vars": "warn",
@@ -35,6 +52,7 @@
     "prefer-regex-literals": "off",
     "array-callback-return": "off",
     "no-use-before-define": "off",
-    "no-return-await": "off"
+    "no-return-await": "off",
+    "import/no-extraneous-dependencies": "off"
   }
 }
