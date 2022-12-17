@@ -14,8 +14,8 @@ jobs:
     environment: production
     runs-on: ubuntu-latest
     steps:
-      - name: Show environment secrets
-        run: echo "${{ secrets.ENV_FILE }}"
+#      - name: Show environment secrets
+#        run: echo "${{ secrets.ENV_FILE }}"
 
       - name: Checkout repository
         uses: actions/checkout@v3
