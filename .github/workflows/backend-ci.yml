@@ -19,7 +19,7 @@ jobs:
         # with:
 
       - name: Cache dependencies
-        uses: actions/setup-cache@v3
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: deps-node-modules-${{ hashFiles('**/package-lock.json') }}
