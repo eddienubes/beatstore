@@ -8,7 +8,8 @@
     "start:dev": "nodemon app.js",
     "lint:check": "eslint . --max-warnings 27",
     "lint:fix": "eslint . --fix --max-warnings 27",
-    "test": "npx jest --runInBand --forceExit"
+    "test": "npx jest --runInBand --forceExit",
+    "ci": "rm -rf node_modules && yarn install --frozen-lockfile"
   },
   "author": "",
   "license": "ISC",
