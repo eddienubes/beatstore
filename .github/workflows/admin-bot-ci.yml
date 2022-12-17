@@ -2,7 +2,7 @@ name: Admin Bot CI
 
 on:
   push:
-    paths: ['admin-bot/**']
+    paths: [ 'admin-bot/**' ]
   workflow_dispatch:
 
 defaults:
@@ -17,3 +17,17 @@ jobs:
         uses: actions/checkout@v3
         # configure action, pass parameters
         # with:
+
+      - name: Install NodeJS
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: yarn ci
+
+      - name: Linting
+        run: yarn lint:check
+
+      - name: Testing
+        run: yarn test
