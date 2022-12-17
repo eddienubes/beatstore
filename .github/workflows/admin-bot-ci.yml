@@ -1,6 +1,9 @@
 name: Admin Bot CI
 
-on: [push, workflow_dispatch]
+on:
+  push:
+    paths: ['admin-bot/**']
+  workflow_dispatch:
 
 defaults:
   run:

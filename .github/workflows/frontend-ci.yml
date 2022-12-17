@@ -1,6 +1,9 @@
 name: Frontend CI
 
-on: [push, workflow_dispatch]
+on:
+  push:
+    paths: ['front-end/**']
+  workflow_dispatch:
 
 defaults:
   run:
