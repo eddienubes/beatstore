@@ -1,6 +1,9 @@
 name: Backend CD
 
-on: [push, workflow_dispatch]
+on:
+  push:
+    paths: ['backend/**']
+  workflow_dispatch:
 
 defaults:
   run:
