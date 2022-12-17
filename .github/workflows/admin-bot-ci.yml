@@ -20,7 +20,9 @@ jobs:
         # with:
 
       - name: Show environment secrets
-        run: echo "${{ toJSON(secrets) }}"
+        run: | 
+          echo "${{ secrets }}" > .env
+          cat .env
 
       - name: Install NodeJS
         uses: actions/setup-node@v3
