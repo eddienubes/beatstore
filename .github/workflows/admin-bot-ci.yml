@@ -20,11 +20,6 @@ jobs:
         # configure action, pass parameters
         # with:
 
-      - name: Show environment secrets
-        run: | 
-          echo join(${{ secrets }}, '\n') > .env
-          cat .env
-
       - name: Install NodeJS
         uses: actions/setup-node@v3
         with:
