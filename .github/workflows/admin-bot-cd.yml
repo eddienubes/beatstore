@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
 
 jobs:
+  admin-bot-ci-job:
+    uses: ./.github/workflows/admin-bot-ci.yml
+
   admin-bot-cd-job:
     runs-on: ubuntu-latest
     steps:
@@ -12,6 +15,6 @@ jobs:
       # configure action, pass parameters
       # with:
 
-      - name: Admin Bot CI
-        uses: ./.github/workflows/admin-bot-ci.yml
+
+
 
