@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  admin-bot-ci-job:
+  CI:
     uses: ./.github/workflows/admin-bot-ci.yml
 
-  admin-bot-cd-job:
-    needs: [ admin-bot-ci-job ]
+  CD:
+    needs: [ CI ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

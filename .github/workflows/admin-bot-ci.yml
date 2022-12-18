@@ -11,7 +11,7 @@ defaults:
     working-directory: ./admin-bot
 
 jobs:
-  admin-bot-ci-job:
+  CI:
     environment: production
     runs-on: ubuntu-latest
     steps:

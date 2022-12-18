@@ -11,7 +11,7 @@ defaults:
     working-directory: ./backend
 
 jobs:
-  backend-ci-job:
+  CI:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

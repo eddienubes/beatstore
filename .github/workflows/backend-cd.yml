@@ -4,13 +4,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  backend-cd-job:
+  CI:
+    uses: ./.github/workflows/backend-ci.yml
+  CD:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
         # configure action, pass parameters
         # with:
-
-      - name: Backend CI
-        uses: ./.github/workflows/backend-ci.yml
