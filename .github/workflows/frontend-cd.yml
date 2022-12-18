@@ -3,10 +3,6 @@ name: Frontend CD
 on:
   workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: ./front-end
-
 jobs:
   frontend-cd-job:
     runs-on: ubuntu-latest

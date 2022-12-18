@@ -3,10 +3,6 @@ name: Backend CD
 on:
   workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: ./backend
-
 jobs:
   backend-cd-job:
     runs-on: ubuntu-latest

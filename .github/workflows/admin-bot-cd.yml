@@ -3,10 +3,6 @@ name: Admin Bot CD
 on:
   workflow_dispatch:
 
-defaults:
-  run:
-    working-directory: ./admin-bot
-
 jobs:
   admin-bot-cd-job:
     runs-on: ubuntu-latest
