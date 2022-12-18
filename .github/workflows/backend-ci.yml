@@ -3,7 +3,8 @@ name: Backend CI
 on:
   push:
     paths: ['backend/**']
-  workflow_dispatch:
+  workflow_dispatch: # callable manually
+  workflow_call: # callable by other workflows
 
 defaults:
   run:

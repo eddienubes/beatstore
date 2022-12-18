@@ -3,7 +3,8 @@ name: Admin Bot CI
 on:
   push:
     paths: [ 'admin-bot/**' ]
-  workflow_dispatch:
+  workflow_dispatch: # callable manually
+  workflow_call: # callable by other workflows
 
 defaults:
   run:

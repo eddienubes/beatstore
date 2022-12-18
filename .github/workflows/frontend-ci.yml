@@ -3,7 +3,8 @@ name: Frontend CI
 on:
   push:
     paths: ['front-end/**']
-  workflow_dispatch:
+  workflow_dispatch: # callable manually
+  workflow_call: # callable by other workflows
 
 defaults:
   run:
