@@ -32,11 +32,11 @@ jobs:
 
       - name: Install dependencies
         run: yarn ci
-        env:
-          SKIP_PREFLIGHT_CHECK: true
 
       - name: Linting
         run: yarn lint:check
 
       - name: Testing
         run: yarn test
+        env:
+          SKIP_PREFLIGHT_CHECK: true
