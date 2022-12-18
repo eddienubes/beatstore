@@ -1,8 +1,6 @@
 name: Admin Bot CD
 
 on:
-  push:
-    paths: ['admin-bot/**']
   workflow_dispatch:
 
 defaults:
@@ -13,7 +11,10 @@ jobs:
   admin-bot-cd-job:
     runs-on: ubuntu-latest
     steps:
+      - name: Admin Bot CI
+        uses: ./github/workflows/admin-bot-ci.yml
+
       - name: Checkout repository
         uses: actions/checkout@v3
-        # configure action, pass parameters
-        # with:
+      # configure action, pass parameters
+      # with:

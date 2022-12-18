@@ -1,8 +1,6 @@
 name: Backend CD
 
 on:
-  push:
-    paths: ['backend/**']
   workflow_dispatch:
 
 defaults:
@@ -13,6 +11,9 @@ jobs:
   backend-cd-job:
     runs-on: ubuntu-latest
     steps:
+      - name: Backend CI
+        uses: ./github/workflows/backend-ci.yml
+
       - name: Checkout repository
         uses: actions/checkout@v3
         # configure action, pass parameters
