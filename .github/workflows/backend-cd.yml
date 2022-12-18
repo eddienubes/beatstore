@@ -13,4 +13,4 @@ jobs:
         # with:
 
       - name: Backend CI
-        uses: ./github/workflows/backend-ci.yml
+        uses: ./.github/workflows/backend-ci.yml

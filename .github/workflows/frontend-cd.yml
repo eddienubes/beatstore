@@ -13,4 +13,4 @@ jobs:
         # with:
 
       - name: Frontend CI
-        uses: ./github/workflows/frontend-ci.yml
+        uses: ./.github/workflows/frontend-ci.yml

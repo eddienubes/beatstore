@@ -13,5 +13,5 @@ jobs:
       # with:
 
       - name: Admin Bot CI
-        uses: ./github/workflows/admin-bot-ci.yml
+        uses: ./.github/workflows/admin-bot-ci.yml
 
