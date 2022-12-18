@@ -11,10 +11,10 @@ jobs:
   frontend-cd-job:
     runs-on: ubuntu-latest
     steps:
-      - name: Frontend CI
-        uses: ./github/workflows/frontend-ci.yml
-
       - name: Checkout repository
         uses: actions/checkout@v3
         # configure action, pass parameters
         # with:
+
+      - name: Frontend CI
+        uses: ./github/workflows/frontend-ci.yml
