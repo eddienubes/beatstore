@@ -8,6 +8,7 @@ jobs:
     uses: ./.github/workflows/admin-bot-ci.yml
 
   admin-bot-cd-job:
+    needs: [ admin-bot-ci-job ]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
