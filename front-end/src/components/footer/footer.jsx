@@ -4,13 +4,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faYoutube, faInstagram } from '@fortawesome/free-brands-svg-icons';
 import { faCircle } from '@fortawesome/free-solid-svg-icons';
 import Modal from 'react-bootstrap/Modal';
+import { PRODUCER_NAME } from '../../constants/content';
 
 function Footer() {
   return (
     <footer>
       <div className="footer__wrapper">
         <div className="footer__copyright">
-          <span>Cherries By</span>
+          <span>{PRODUCER_NAME}</span>
           <span>
             Copyright 2020
             <FontAwesomeIcon className="footer__circle" icon={faCircle} /> <a href="#">Terms of use</a>

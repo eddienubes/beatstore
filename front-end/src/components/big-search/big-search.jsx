@@ -5,6 +5,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { filter, filterSearchSet } from '../../redux/actions/actions';
+import { PRODUCER_NAME } from '../../constants/content';
 
 function BigSearch({ isMain = false }) {
   const [search, setSearch] = useState('');
@@ -14,11 +15,11 @@ function BigSearch({ isMain = false }) {
 
   return (
     <div className="big-search">
-      <h1 className="glitch" data-text="Cherries By">
-        Cherries By
+      <h1 className="glitch" data-text={PRODUCER_NAME}>
+        ${PRODUCER_NAME}
       </h1>
       <span className="sub">BEATSTORE</span>
-      {/* <h1 className="logo">Cherries By</h1> */}
+      {/* <h1 className="logo">{PRODUCER NAME}</h1> */}
       <div className="search">
         <input
           placeholder="What type of track are you looking for?"

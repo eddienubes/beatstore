@@ -15,6 +15,7 @@ import { audioLoaded, audioPlayed, audioStopped } from '../../redux/actions';
 
 import './music-player.scss';
 import SpinnerAudio from '../spinner-audio';
+import { PRODUCER_NAME } from '../../constants/content';
 
 const PrettoSlider = withStyles({
   root: {
@@ -331,7 +332,7 @@ function MusicPlayer() {
             </div>
             <div className="title-container">
               <div className="title">{playerState.title}</div>
-              <div className="author">Cherries By</div>
+              <div className="author">${PRODUCER_NAME}</div>
             </div>
           </div>
           {playerState.loading ? (

@@ -8,6 +8,7 @@ import { audioLoaded, audioPlayed, audioStopped, filterSearchSet } from '../../r
 import ToCartButton from '../to-cart-button';
 import DownloadButton from '../download-button';
 import { filter } from '../../redux/actions/actions';
+import { PRODUCER_NAME } from '../../constants/content';
 
 function CurrentTrack({ track, color }) {
   const { id, isPlaying } = useSelector((state) => state.audioReducer);
@@ -50,7 +51,7 @@ function CurrentTrack({ track, color }) {
         </div>
         <div className="info">
           <p className="title">{track.title}</p>
-          <p className="author">✍ Cherries By</p>
+          <p className="author">✍ ${PRODUCER_NAME}</p>
           <p className="date">
             🕒
             {date}
