@@ -16,7 +16,7 @@ function BigSearch({ isMain = false }) {
   return (
     <div className="big-search">
       <h1 className="glitch" data-text={PRODUCER_NAME}>
-        ${PRODUCER_NAME}
+        {PRODUCER_NAME}
       </h1>
       <span className="sub">BEATSTORE</span>
       {/* <h1 className="logo">{PRODUCER NAME}</h1> */}
