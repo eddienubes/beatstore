@@ -31,9 +31,8 @@ jobs:
           # cat .env
           cd ..
           ls -l -a
-          cat .env.example
-          cat .env
-          cat .env
+          cat .env >> text.txt
+          cat text.txt
 
       - name: Building image
         run: |
