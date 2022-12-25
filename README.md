@@ -45,6 +45,6 @@ Website made out of reactjs, nodejs, mongodb + telegrafjs for sort of admin pane
 
 3. #### admin-bot
     - build image
-        - `docker build . -f docker/Dockerfile -t daughter-mia`
+      - `docker build . -f docker/Dockerfile -t daughter-mia`
     - run container
-        - `docker run -p 3001:3001 papa-mia` 
+      - `docker run -p 3001:3001 daughter-mia` 
