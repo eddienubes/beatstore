@@ -28,10 +28,7 @@ jobs:
 
       - name: Check file existence
         run: |
-          ls -l -a
-          # cat .env
           cd ..
-          ls -l -a
           cat haha.txt
 
       - name: Building image
