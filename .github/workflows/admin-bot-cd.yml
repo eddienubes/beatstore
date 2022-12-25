@@ -28,7 +28,7 @@ jobs:
       - name: Check file existence
         run: |
           ls -l -a
-#          cat .env
+          # cat .env
           cd ..
           ls -l -a
 
