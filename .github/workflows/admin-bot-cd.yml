@@ -9,13 +9,25 @@ jobs:
 
   CD:
     needs: [ CI ]
+    environment: production
+    working-directory: ./admin-bot
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      # configure action, pass parameters
-      # with:
 
+      - name: Create proper .env
+        uses: shine1594/secrets-to-env-action@v1.6.1
+        with:
+          secrets_env: production
+          secrets: ${{ toJSON(secrets) }}
+          run: |
+            ls -l -a
+            cat .env
+
+      - name: Building image
+        run:
+          - docker build . -f docker/Dockerfile -t $REGISTRY_URL:/beatstore-admin-bot:latest
 
 
 
