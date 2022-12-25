@@ -3,14 +3,14 @@ FROM node:16-alpine
 
 WORKDIR /app
 
-# Install Deps
+# Copy all required fules
 COPY package.json /app/package.json
 COPY yarn.lock /app/yarn.lock
-RUN yarn
-
-
-# Squeeze out build folder
 COPY . /app
+
+# Install Deps
+RUN yarn
+# Squeeze out build folder
 RUN yarn build
 
 # Last FROM statement is our output base image
