@@ -24,6 +24,8 @@ jobs:
         with:
           secrets_env: production
           secrets: ${{ toJSON(secrets) }}
+
+      - name: Check file existance
         run: |
           ls -l -a
           cat .env
