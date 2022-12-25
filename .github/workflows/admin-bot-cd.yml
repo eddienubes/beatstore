@@ -29,6 +29,7 @@ jobs:
         run: |
           docker build . -f docker/Dockerfile -t beatstore-admin-bot:latest
           docker tag beatstore-admin-bot:latest ${{ secrets.REGISTRY_URL }}/beatstore-admin-bot:latest
+          docker push ${{ secrets.REGISTRY_URL }}/beatstore-admin-bot:latest
 
 
 
