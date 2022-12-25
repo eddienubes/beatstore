@@ -332,7 +332,7 @@ function MusicPlayer() {
             </div>
             <div className="title-container">
               <div className="title">{playerState.title}</div>
-              <div className="author">${PRODUCER_NAME}</div>
+              <div className="author">{PRODUCER_NAME}</div>
             </div>
           </div>
           {playerState.loading ? (

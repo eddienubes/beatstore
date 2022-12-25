@@ -51,7 +51,7 @@ function CurrentTrack({ track, color }) {
         </div>
         <div className="info">
           <p className="title">{track.title}</p>
-          <p className="author">✍ ${PRODUCER_NAME}</p>
+          <p className="author">✍ {PRODUCER_NAME}</p>
           <p className="date">
             🕒
             {date}
