@@ -38,7 +38,13 @@ Website made out of reactjs, nodejs, mongodb + telegrafjs for sort of admin pane
      - `docker run -p 80:80 mama-mia`
 
 2. #### backend
-   - asd
+   - build image
+     - `docker build . -f docker/Dockerfile -t papa-mia`
+   - run container
+     - `docker run -p 3000:3000 papa-mia`
 
 3. #### admin-bot
-   - asd
+    - build image
+        - `docker build . -f docker/Dockerfile -t daughter-mia`
+    - run container
+        - `docker run -p 3001:3001 papa-mia` 
