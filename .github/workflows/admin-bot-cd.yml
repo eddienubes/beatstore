@@ -24,13 +24,13 @@ jobs:
         with:
           secrets_env: production
           secrets: ${{ toJSON(secrets) }}
-          run: |
-            ls -l -a
-            cat .env
+        run: |
+          ls -l -a
+          cat .env
 
       - name: Building image
-        run:
-          - docker build . -f docker/Dockerfile -t $REGISTRY_URL:/beatstore-admin-bot:latest
+        run: |
+          docker build . -f docker/Dockerfile -t $REGISTRY_URL:/beatstore-admin-bot:latest
 
 
 
