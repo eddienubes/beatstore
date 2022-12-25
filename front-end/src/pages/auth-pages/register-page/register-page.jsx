@@ -140,7 +140,7 @@ function RegisterPage({ authService }) {
               />
               <span className="labeled-text">
                 {/* todo Ссылки на Terms of service и на Privacy policy */}I have read and agree to the <a>Terms of service</a>{' '}
-                and<a>Privacy policy</a>
+                and <a>Privacy policy</a>
               </span>
             </label>
             <button className={canSignup ? 'sign-up-button' : 'unchecked-button'} type="submit">
