@@ -25,6 +25,10 @@ jobs:
           secrets_env: production
           secrets: ${{ toJSON(secrets) }}
 
+      - name: Output daemon.json
+        run: |
+          cat /etc/docker/daemon.json
+
       - name: Building image
         run: |
           docker build . -f docker/Dockerfile -t beatstore-admin-bot:latest
