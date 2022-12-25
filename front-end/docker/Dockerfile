@@ -3,13 +3,14 @@ FROM node:16-alpine
 
 WORKDIR /app
 
-# Copy all required fules
+# Install Deps
 COPY package.json /app/package.json
 COPY yarn.lock /app/yarn.lock
+RUN yarn
+
+# Copy all required fules
 COPY . /app
 
-# Install Deps
-RUN yarn
 # Squeeze out build folder
 RUN yarn build
 
