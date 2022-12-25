@@ -24,18 +24,10 @@ jobs:
         with:
           secrets_env: production
           secrets: ${{ toJSON(secrets) }}
-          file_name_prod: haha.txt
-
-      - name: Check file existence
-        run: |
-          cd ..
-          echo "Hello world" > .env
-          cat haha.txt
-          cat .env
 
       - name: Building image
         run: |
-          docker build . -f docker/Dockerfile -t $REGISTRY_URL:/beatstore-admin-bot:latest
+          docker build . -f docker/Dockerfile -t ${{ secrets.REGISTRY_URL }}:/beatstore-admin-bot:latest
 
 
 
