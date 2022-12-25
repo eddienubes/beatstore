@@ -8,7 +8,7 @@ COPY package.json /app/package.json
 COPY yarn.lock /app/yarn.lock
 RUN yarn
 
-# Copy all required fules
+# Copy all required files including .env
 COPY . /app
 
 # Squeeze out build folder
