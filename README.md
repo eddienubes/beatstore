@@ -28,3 +28,17 @@ Website made out of reactjs, nodejs, mongodb + telegrafjs for sort of admin pane
 
 #### Server side | Telegram BOT:
 * `Telegrafjs` - telegram bot framework
+
+### Docker
+
+1. #### frontend
+   - build image
+     - `docker build . -f docker/Dockerfile -t mama-mia`
+   - run container
+     - `docker run -p 80:80 mama-mia`
+
+2. #### backend
+   - asd
+
+3. #### admin-bot
+   - asd
