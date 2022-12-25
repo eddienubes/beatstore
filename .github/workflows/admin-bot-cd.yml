@@ -31,6 +31,7 @@ jobs:
           # cat .env
           cd ..
           ls -l -a
+          cat .env
 
       - name: Building image
         run: |
