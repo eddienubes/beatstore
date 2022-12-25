@@ -31,6 +31,10 @@ Website made out of reactjs, nodejs, mongodb + telegrafjs for sort of admin pane
 
 ### Docker
 
+Deploy Stack Locally
+
+`docker stack deploy -c docker-compose.yml --with-registry-auth beatstore`
+
 1. #### frontend
    - build image
      - `docker build . -f docker/Dockerfile -t mama-mia`

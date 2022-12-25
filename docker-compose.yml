@@ -1,0 +1,85 @@
+version: "3.8"
+
+services:
+  frontend:
+#    container_name: frontend
+    build:
+      context: ./front-end
+      dockerfile: ./docker/Dockerfile
+    image: beatstore-frontend:latest
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    deploy:
+      replicas: 2
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+    networks:
+      - beatstore
+  backend:
+#    container_name: backend
+    build:
+      context: ./backend
+      dockerfile: ./docker/Dockerfile
+    image: beatstore-backend:latest
+    ports:
+      - "3000:3000"
+    deploy:
+      replicas: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+    networks:
+      - beatstore
+    volumes:
+      - beatstore-uploaded-beats:/app/data
+  admin-bot:
+#    container_name: admin-bot
+    build:
+      context: ./admin-bot
+      dockerfile: ./docker/Dockerfile
+    image: beatstore-admin-bot:latest
+    depends_on:
+      - backend
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+        max_attempts: 10
+    networks:
+      - beatstore
+  visualiser:
+    image: bretfisher/visualizer
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    ports:
+      - "8080:8080"
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+    depends_on:
+      - backend
+      - admin-bot
+      - frontend
+    networks:
+      - beatstore
+networks:
+  beatstore:
+    name: beatstore
+    driver: overlay
+
+volumes:
+  beatstore-uploaded-beats:
+    name: beatstore-uploaded-beats
