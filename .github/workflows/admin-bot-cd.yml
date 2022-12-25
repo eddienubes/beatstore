@@ -29,7 +29,9 @@ jobs:
       - name: Check file existence
         run: |
           cd ..
+          echo "Hello world" > .env
           cat haha.txt
+          cat .env
 
       - name: Building image
         run: |
