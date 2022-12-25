@@ -22,7 +22,7 @@ jobs:
       - name: Create proper .env
         uses: shine1594/secrets-to-env-action@v1.6.1
         with:
-          secrets_env: production
+          secrets_env: all
           secrets: ${{ toJSON(secrets) }}
 
       - name: Check file existence
