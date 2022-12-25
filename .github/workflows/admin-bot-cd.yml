@@ -22,8 +22,9 @@ jobs:
       - name: Create proper .env
         uses: shine1594/secrets-to-env-action@v1.6.1
         with:
-          secrets_env: all
+          secrets_env: production
           secrets: ${{ toJSON(secrets) }}
+          file_name_prod: haha.txt
 
       - name: Check file existence
         run: |
@@ -31,8 +32,7 @@ jobs:
           # cat .env
           cd ..
           ls -l -a
-          cat .env >> text.txt
-          cat text.txt
+          cat haha.txt
 
       - name: Building image
         run: |
