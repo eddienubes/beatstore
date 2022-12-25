@@ -81,6 +81,17 @@ services:
       - frontend
     networks:
       - beatstore
+#  portainer:
+#    image: portainer/portainer-ce:latest
+#    restart: unless-stopped
+#    ports:
+#      - "9000:9000"
+#    security_opt:
+#      - no-new-privileges:true
+#    volumes:
+#      - /etc/localtime:/etc/localtime:ro
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
+#      - portainer-data:/data
 networks:
   beatstore:
     name: beatstore
@@ -89,3 +100,5 @@ networks:
 volumes:
   beatstore-uploaded-beats:
     name: beatstore-uploaded-beats
+  portainer-data:
+    name: portainer-data
