@@ -8,8 +8,8 @@ defaults:
     working-directory: ./admin-bot
 
 jobs:
-  CI:
-    uses: ./.github/workflows/admin-bot-ci.yml
+#  CI:
+#    uses: ./.github/workflows/admin-bot-ci.yml
 
   CD:
     needs: [ CI ]
