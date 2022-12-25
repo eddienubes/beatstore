@@ -3,6 +3,10 @@ name: Admin Bot CD
 on:
   workflow_dispatch:
 
+defaults:
+  run:
+    working-directory: ./admin-bot
+
 jobs:
   CI:
     uses: ./.github/workflows/admin-bot-ci.yml
@@ -10,7 +14,6 @@ jobs:
   CD:
     needs: [ CI ]
     environment: production
-    working-directory: ./admin-bot
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
