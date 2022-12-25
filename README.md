@@ -88,4 +88,13 @@ docker service create \
 ```
 
 #### Add insecure registry in the daemon.json to be able to push there w/o TSL certificate (https)
-![img.png](README/img.png)
+![img.png](misc/img.png)
+
+### Add label to the non-ci nodes
+``docker node update --label-add type=instance <node-name>``
+
+``docker node inspect <node-name>``
+
+![img.png](misc/img2.png)
+
+We will be deploying via GitHub Actions, so we have to avoid accidental creation of a service on the CI node, which will be destroyed immediately afterwards. 
