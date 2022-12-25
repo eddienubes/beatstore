@@ -7,9 +7,11 @@ defaults:
   run:
     working-directory: ./admin-bot
 
-jobs:
 #  CI:
-#    uses: ./.github/workflows/admin-bot-ci.yml
+#  uses: ./.github/workflows/admin-bot-ci.yml
+
+jobs:
+
 
   CD:
     needs: [ CI ]
