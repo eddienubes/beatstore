@@ -12,7 +12,7 @@ defaults:
 
 jobs:
   CD:
-    needs: [ CI ]
+#    needs: [ CI ]
     environment: admin-bot-production
     runs-on: ubuntu-latest
     steps:
