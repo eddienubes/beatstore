@@ -1,0 +1,1 @@
+This app is used for manual certbot authentication to receive SSL certificate.
