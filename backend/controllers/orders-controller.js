@@ -12,7 +12,7 @@ const HttpError = require('../models/http-error');
 const { paypalClient, paypalEnvironment } = require('../shared/paypal');
 const mailer = require('../shared/nodemailer');
 const { populateOrder, populateOrderProductsToSendEmail } = require('../shared/products');
-const { CONTENT } = require("../shared/constants");
+const { CONTENT } = require('../shared/constants');
 
 // i hate js so really really really much. I'm monstrous! and bossy.. btw, test is complete
 
@@ -59,8 +59,7 @@ const createOrderWithPaypal = async (req, res, next) => {
             }
           }
         },
-        description:
-          `Thanks for choosing my beats. In case you have any problems with purchasing, contact me via email. ${CONTENT.PRODUCER_NAME}`,
+        description: `Thanks for choosing my beats. In case you have any problems with purchasing, contact me via email. ${CONTENT.PRODUCER_NAME}`,
         items: licenses.map((l, i) => ({
           name: `${beats[i].title} ${l.label}`,
           unit_amount: {
