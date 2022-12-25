@@ -9,6 +9,7 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons/faCheck';
 import { useHistory } from 'react-router-dom';
 import SpinnerAudio from '../spinner-audio';
 import { appendToCart } from '../../redux/actions';
+import { PRODUCER_NAME } from '../../constants/content';
 
 function ToCartButton({ trackId, price, licenseType, setOpen, caption, desc, popup, licenseId, isInCart }) {
   const dispatch = useDispatch();
@@ -103,7 +104,7 @@ function LicenseTypeModal(props) {
                   <span className="license__green">Track name:</span> {props.track.title}
                 </div>
                 <div className="license__author-name">
-                  <span className="license__green">Producer:</span> Cherries
+                  <span className="license__green">Producer:</span> {PRODUCER_NAME}
                 </div>
                 <div className="license__tags-container">
                   <span>Tags:</span>{' '}

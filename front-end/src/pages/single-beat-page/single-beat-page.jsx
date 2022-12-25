@@ -35,6 +35,7 @@ function SingleBeatPage() {
             setLoading(false);
           })
           .catch((error) => {
+            console.log(error);
             setError(error);
             setLoading(false);
           });
@@ -59,6 +60,7 @@ function SingleBeatPage() {
         }));
       })
       .catch((error) => {
+        console.log(error);
         setLoading(false);
         setError(error);
       });

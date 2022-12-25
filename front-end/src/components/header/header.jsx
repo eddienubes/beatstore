@@ -24,6 +24,7 @@ import { ClickAwayListener, MenuItem, MenuList } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { Overlay, Popover } from 'react-bootstrap';
 import { logOut, notificationClosed } from '../../redux/actions';
+import { PRODUCER_NAME } from '../../constants/content';
 
 function Header() {
   const [isOpenedBurger, setOpenBurger] = useState(false);
@@ -154,7 +155,7 @@ function Header() {
       <Popover.Content className="popover-content">
         You have successfully added <strong>1 beat</strong> to your cart.
         <p>
-          Total price:
+          Total price: &nbsp;
           <strong>${cart.total.toFixed(2)}</strong>
         </p>
       </Popover.Content>
@@ -176,7 +177,7 @@ function Header() {
       </Overlay>
       <Navbar className={navbarStyles} variant="dark" expand="sm">
         <Navbar.Brand className="nav__main-caption" to="/" as={Link}>
-          Cherries
+          {PRODUCER_NAME}
         </Navbar.Brand>
         <Navbar.Toggle id="baton" aria-controls="nav-bar" as={ToggleMenu} />
         <Navbar.Collapse id="nav-bar">

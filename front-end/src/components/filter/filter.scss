@@ -104,3 +104,9 @@
         transform: translateY(0%);
     }
 }
+
+@media (max-width: 760px) {
+    .filter {
+        padding: 10px;
+    }
+}

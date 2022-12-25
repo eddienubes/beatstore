@@ -1,22 +1,16 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import './track.scss';
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Table } from 'semantic-ui-react';
 import { useDispatch } from 'react-redux';
-import { useHistory, Link } from 'react-router-dom';
-import LicenseTypeModal from '../license-type-modal';
+import { useHistory } from 'react-router-dom';
 import { audioLoaded, audioPlayed, audioStopped, filterSearchSet } from '../../redux/actions';
-import AudioInstanceContext from '../audio-instance-context';
 import { filter } from '../../redux/actions/actions';
 import ToCartButton from '../to-cart-button';
-import useTraceUpdate from '../../hooks/trace-updates-hook';
 import TrackTitle from '../track-title';
 
 function Track({ track, onSelected, index, id, previousId, isPlaying, cartItems }) {
   const [isActive, setActive] = useState(false);
   const dispatch = useDispatch();
-  const { audioInstance } = useContext(AudioInstanceContext).state;
   const history = useHistory();
 
   useEffect(() => {

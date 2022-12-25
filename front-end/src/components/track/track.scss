@@ -22,104 +22,110 @@ $heightForNotLarge: 50px;
 //
 
 .selected_tr {
-    transition: .25s ease-in-out;
-    color: #ffffff;
-    cursor: pointer;
-    animation: gradient 4.45s ease-in-out infinite alternate!important;
+  transition: .25s ease-in-out;
+  color: #ffffff;
+  cursor: pointer;
+  animation: gradient 4.45s ease-in-out infinite alternate !important;
 }
 
 @keyframes gradient {
-    0% {
-        background: linear-gradient(90deg, var(--c1, #000000) 51%, var(--c2, #ff00c1), var(--c1, #00fff9)) 0%/ 200%;;
-    }
-    100% {
-        background: linear-gradient(90deg, var(--c1, #000000) 51%, var(--c2, #ff00c1), var(--c1, #00fff9)) 100%/ 200%;;
+  0% {
+    background: linear-gradient(90deg, var(--c1, #000000) 51%, var(--c2, #ff00c1), var(--c1, #00fff9)) 0%/ 200%;;
+  }
+  100% {
+    background: linear-gradient(90deg, var(--c1, #000000) 51%, var(--c2, #ff00c1), var(--c1, #00fff9)) 100%/ 200%;;
 
-    }
+  }
 }
 
 .main-row-track {
-    cursor: pointer;
-    user-select: none;
-    //max-height: 50px!important;
-    color: white;
-    .track__tags {
-        .tags-container {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            overflow: hidden;
-            align-items: center !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            vertical-align: middle;
-            height: 25px;
+  cursor: pointer;
+  user-select: none;
+  //max-height: 50px!important;
+  color: white;
 
-            .track__tag {
-                font-size: 10px;
-                font-weight: 600;
-                border: 1px solid #CCCCCC;
-                padding: 0 4px;
-                margin: 2px;
-                letter-spacing: 2px !important;
+  .track__tags {
+    .tags-container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      overflow: hidden;
+      align-items: center !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+      height: 25px;
 
-                &:hover {
-                    text-decoration: underline;
-                    cursor: pointer;
-                }
-            }
+      .track__tag {
+        font-size: 10px;
+        font-weight: 600;
+        border: 1px solid #CCCCCC;
+        padding: 0 4px;
+        margin: 2px;
+        letter-spacing: 2px !important;
+
+        &:hover {
+          text-decoration: underline;
+          cursor: pointer;
         }
+      }
     }
+  }
 
 
-    .tracks__button-buy {
+  .tracks__button-buy {
 
 
+  }
+
+  .tracks__title {
+    white-space: nowrap;
+
+
+    .track__td-img {
+      display: inline-block;
+      height: $heightForNotLarge;
+      min-height: $heightForNotLarge;
+      width: 50px;
+      margin-right: 10px;
+
+      .td-img-main {
+        border-radius: 2px;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+      }
     }
+  }
 
-    .tracks__title {
-        white-space: nowrap;
-
-
-
-
-        .track__td-img {
-            display: inline-block;
-            height: $heightForNotLarge;
-            min-height: $heightForNotLarge;
-            width: 50px;
-            margin-right: 10px;
-
-            .td-img-main {
-                border-radius: 2px;
-                height: 100%;
-                width: 100%;
-                object-fit: cover;
-            }
-        }
-    }
-
-    .tracks__title {
-        max-width: 100px !important;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-    }
+  .tracks__title {
+    max-width: 100px !important;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
 }
 
 
 @media screen and (max-width: 400px) {
-    .tracks__scale {
-        display: none;
-    }
+  .tracks__scale {
+    display: none;
+  }
 }
+
+@media screen and (max-width: 530px) {
+  .track__tags {
+    display: none;
+  }
+}
+
 @keyframes track-on-mount {
-    0% {
-        opacity: 0;
-    }
-    100% {
-        opacity: 1;
-    }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

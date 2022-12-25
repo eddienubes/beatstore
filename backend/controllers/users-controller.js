@@ -12,6 +12,7 @@ const RefreshToken = require('../models/refresh-token');
 const Beat = require('../models/beat');
 const { populateUserCart, populateUserPurchases } = require('../shared/products');
 const mailer = require('../shared/nodemailer');
+const { CONTENT } = require('../shared/constants');
 
 const getUserById = async (req, res, next) => {
   const userId = req.params.uid;
@@ -127,7 +128,7 @@ const signup = async (req, res, next) => {
         username,
         confirmationUrl: `${clientIP}/${confirmationToken}`
       },
-      'Cherries By Beatstore purchase'
+      `${CONTENT.PRODUCER_NAME} Beatstore purchase`
     );
   } catch (e) {
     return next(new HttpError('Something went wrong while sending email', 500));

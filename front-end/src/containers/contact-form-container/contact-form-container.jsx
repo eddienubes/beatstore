@@ -4,6 +4,7 @@ import './contact-form-container.scss';
 import Input from '../../pages/auth-pages/input';
 import AuthService from '../../services/auth-service';
 import ContactMessageSent from '../../components/contact-message-sent';
+import { PRODUCER_NAME } from '../../constants/content';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -75,7 +76,7 @@ function ContactFormContainer() {
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1200px-YouTube_full-color_icon_%282017%29.svg.png"
             alt="asd"
           />
-          &nbsp; /cherriesby
+          &nbsp; /{PRODUCER_NAME}
         </a>
         <a href="instagram" className="instagram">
           <img
@@ -83,15 +84,15 @@ function ContactFormContainer() {
             src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/1024px-Instagram_icon.png"
             alt="asd"
           />
-          &nbsp; /cherriesby
+          &nbsp; /{PRODUCER_NAME}
         </a>
         <a href="instagram" className="instagram">
           <img width="30" src="https://img.icons8.com/color/48/000000/twitter--v1.png" alt="twitter" />
-          &nbsp; /cherriesby
+          &nbsp; /{PRODUCER_NAME}
         </a>
         <a href="instagram" className="instagram">
           <img width="30" src="https://img.icons8.com/fluent/48/000000/facebook-new.png" alt="twitter" />
-          &nbsp; /cherriesby
+          &nbsp; /{PRODUCER_NAME}
         </a>
       </div>
       {isSent ? (

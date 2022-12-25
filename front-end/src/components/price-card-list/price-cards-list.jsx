@@ -10,6 +10,7 @@ import LicenseDescriptionButton from '../license-description-button';
 import AccordionButton from '../accordion-button';
 import { fetchLicenses } from '../../redux/actions';
 import Spinner from '../spinner';
+import { PRODUCER_NAME } from '../../constants/content';
 
 function PriceCardsList() {
   const [activeKey, setActiveKey] = useState(null);
@@ -36,7 +37,7 @@ function PriceCardsList() {
               <li>Sell up to 10000 units</li>
               <li>Commercial Use</li>
               <li>Able to put song on all platforms (Spotify, Apple Music etc.)</li>
-              <li>Must Credit (prod. eddienubes)</li>
+              <li>Must Credit (prod. {PRODUCER_NAME})</li>
             </ul>
             <div className="license-button-container">
               <LicenseDescriptionButton className="license-button-popular" text="Read License" type={1} />
@@ -77,7 +78,7 @@ function PriceCardsList() {
               <li>Sell up to 5000 units</li>
               <li>Commercial Use</li>
               <li>Able to put song on all platforms (Spotify, Apple Music etc.)</li>
-              <li>Must Credit (prod. cherriesby)</li>
+              <li>Must Credit (prod. {PRODUCER_NAME})</li>
             </ul>
             <div className="license-button-container">
               <LicenseDescriptionButton className="license-button" text="Read License" type={2} />
@@ -119,7 +120,7 @@ function PriceCardsList() {
               <li>Sell up to 20000 units</li>
               <li>Commercial Use</li>
               <li>Able to put song on all platforms (Spotify, Apple Music etc.)</li>
-              <li>Must Credit (prod. cherriesby)</li>
+              <li>Must Credit (prod. {PRODUCER_NAME})</li>
             </ul>
             <div className="license-button-container">
               <LicenseDescriptionButton className="license-button" text="Read License" type={3} />
@@ -161,7 +162,7 @@ function PriceCardsList() {
               <li>Unlimited Distribution</li>
               <li>Unlimited Commercial Use</li>
               <li>Able to put song on all platforms (Spotify, Apple Music etc.)</li>
-              <li>Must Credit (prod. eddienubes)</li>
+              <li>Must Credit (prod. {PRODUCER_NAME})</li>
             </ul>
             <div className="license-button-container">
               <LicenseDescriptionButton className="license-button" text="Read License" type={4} />
@@ -203,7 +204,7 @@ function PriceCardsList() {
               <li>Unlimited Distribution</li>
               <li>Unlimited Commercial Use</li>
               <li>Able to put song on all platforms (Spotify, Apple Music etc.)</li>
-              <li>Must Credit (prod. eddienubes)</li>
+              <li>Must Credit (prod. {PRODUCER_NAME})</li>
             </ul>
             {/* <div className="license-button-container"> */}
             {/*    <LicenseDescriptionButton className="license-button" text="Read License"/> */}

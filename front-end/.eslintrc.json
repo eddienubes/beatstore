@@ -70,6 +70,7 @@
         "jsx-a11y/no-noninteractive-element-interactions": "warn",
         "react/no-unused-class-component-methods": "warn",
         "no-nested-ternary": "warn",
-        "jsx-a11y/role-supports-aria-props": "warn"
+        "jsx-a11y/role-supports-aria-props": "warn",
+        "react/prop-types": "off"
     }
 }

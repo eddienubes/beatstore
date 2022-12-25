@@ -12,6 +12,7 @@ const HttpError = require('../models/http-error');
 const { paypalClient, paypalEnvironment } = require('../shared/paypal');
 const mailer = require('../shared/nodemailer');
 const { populateOrder, populateOrderProductsToSendEmail } = require('../shared/products');
+const { CONTENT } = require("../shared/constants");
 
 // i hate js so really really really much. I'm monstrous! and bossy.. btw, test is complete
 
@@ -44,7 +45,7 @@ const createOrderWithPaypal = async (req, res, next) => {
   request.requestBody({
     intent: 'CAPTURE',
     application_context: {
-      brand_name: 'Cherries By'
+      brand_name: CONTENT.PRODUCER_NAME
     },
     purchase_units: [
       {
@@ -59,7 +60,7 @@ const createOrderWithPaypal = async (req, res, next) => {
           }
         },
         description:
-          'Thanks for choosing my beats. In case you have any problems with purchasing, contact me via email. Cherries By',
+          `Thanks for choosing my beats. In case you have any problems with purchasing, contact me via email. ${CONTENT.PRODUCER_NAME}`,
         items: licenses.map((l, i) => ({
           name: `${beats[i].title} ${l.label}`,
           unit_amount: {
@@ -199,7 +200,7 @@ const captureOrderWithPaypal = async (req, res, next) => {
         identifier: order._id.toString(),
         products: populatedProducts
       },
-      'Cherries By Beatstore purchase'
+      `${CONTENT.PRODUCER_NAME} Beatstore purchase`
     );
   } catch (e) {
     console.log(e.message);
@@ -447,7 +448,7 @@ const captureOrderWithWayforpay = async (req, res, next) => {
         identifier: orderReference,
         products: populatedProducts
       },
-      'Cherries By Beatstore purchase'
+      `${CONTENT.PRODUCER_NAME} Beatstore purchase`
     );
   } catch (e) {
     console.log(e.message);

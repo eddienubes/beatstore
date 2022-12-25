@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const hbs = require('nodemailer-express-handlebars');
 const path = require('path');
+const { CONTENT } = require('./constants');
 
 const sendEmail = async (receiverEmail, template, contextObject = {}, subject = 'Beatstore mail') => {
   const transporter = createTransporter();
@@ -10,7 +11,7 @@ const sendEmail = async (receiverEmail, template, contextObject = {}, subject = 
     to: receiverEmail,
     subject,
     template,
-    context: contextObject
+    context: { producerName: CONTENT.PRODUCER_NAME, ...contextObject }
   };
 
   const hbsConfiguration = {
