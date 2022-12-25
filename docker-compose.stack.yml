@@ -6,7 +6,7 @@ services:
     build:
       context: ./front-end
       dockerfile: ./docker/Dockerfile
-    image: localhost:5001/beatstore-frontend:latest
+    image: ${REGISTRY_URL}/beatstore-frontend:latest
     ports:
       - "80:80"
     depends_on:
@@ -26,7 +26,7 @@ services:
     build:
       context: ./backend
       dockerfile: ./docker/Dockerfile
-    image: localhost:5001/beatstore-backend:latest
+    image: ${REGISTRY_URL}/beatstore-backend:latest
     ports:
       - "3000:3000"
     deploy:
@@ -46,7 +46,7 @@ services:
     build:
       context: ./admin-bot
       dockerfile: ./docker/Dockerfile
-    image: localhost:5001/beatstore-admin-bot:latest
+    image: ${REGISTRY_URL}/beatstore-admin-bot:latest
     depends_on:
       - backend
     deploy:
