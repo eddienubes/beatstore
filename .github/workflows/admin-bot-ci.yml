@@ -12,7 +12,7 @@ defaults:
 
 jobs:
   CI:
-    environment: production
+    environment: admin-bot-production
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
