@@ -41,21 +41,21 @@ Deploy Stack Locally
 
 1. #### frontend
     - build image
-        - `docker build . -f docker/Dockerfile -t mama-mia`
+        - `docker build . -f docker/Dockerfile -t beatstore-frontend`
     - run container
-        - `docker run -p 80:80 mama-mia`
+        - `docker run -p 80:80 beatstore-frontend`
 
 2. #### backend
     - build image
-        - `docker build . -f docker/Dockerfile -t papa-mia`
+        - `docker build . -f docker/Dockerfile -t beatstore-backend`
     - run container
-        - `docker run -p 3000:3000 papa-mia`
+        - `docker run -p 3000:3000 beatstore-backend`
 
 3. #### admin-bot
     - build image
-        - `docker build . -f docker/Dockerfile -t daughter-mia`
+        - `docker build . -f docker/Dockerfile -t beatstore-admin-bot`
     - run container
-        - `docker run -p 3001:3001 daughter-mia`
+        - `docker run -p 3001:3001 beatstore-admin-bot`
 
 #### Generate password via `htpasswd` and save to the _credentials_ file:
 
