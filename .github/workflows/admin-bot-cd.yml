@@ -41,7 +41,7 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
           image_name: beatstore-admin-bot
           context: ./
-          dockerfile: ./docker/Dockerfile
+          dockerfile: docker/Dockerfile
 
       - name: Docker swarm deploy
         env:
