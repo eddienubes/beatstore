@@ -43,9 +43,17 @@ jobs:
       - name: Docker swarm deploy
         env:
           DOCKER_HOST: ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_ADDRESS }}
-        run: |
-          mkdir $HOME/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
-          echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
-          
-          docker stack deploy -c docker-compose.stack.yml beatstore
+        uses: appleboy/ssh-action@v0
+        with:
+          host: ${{ secrets.SSH_ADDRESS }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            ls -l -a
+#        run: |
+#          mkdir $HOME/.ssh
+#          echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
+#          echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
+#
+#          docker stack deploy -c docker-compose.stack.yml beatstore
