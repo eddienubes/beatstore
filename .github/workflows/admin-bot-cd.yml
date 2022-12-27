@@ -59,6 +59,8 @@ jobs:
 
 #        env:
 #          DOCKER_HOST:
+        #          sudo docker swarm init
+
         run: |
           mkdir $HOME/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > $HOME/.ssh/id_rsa
@@ -68,6 +70,5 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa.pub
           
-#          sudo docker swarm init
           export DOCKER_HOST=ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
           sudo docker stack deploy -c docker-compose.stack.yml beatstore
