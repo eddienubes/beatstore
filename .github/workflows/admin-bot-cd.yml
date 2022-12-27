@@ -87,9 +87,8 @@ jobs:
       - name: Check
         run: |
           ls $HOME/.ssh -l -a
-          sudo chmod +x /dev/tty
           ls /dev -l -a
 
       - name: Verify SSH
         run: |
-          ssh -v ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+          sudo ssh -v ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
