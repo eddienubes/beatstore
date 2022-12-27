@@ -86,8 +86,8 @@ jobs:
 
       - name: Check
         run: |
-          cat /etc/ssh/sshd_config
+          ls $HOME/.ssh -l -a
 
       - name: Verify SSH
         run: |
-          ssh -v ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+          ssh -vT ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
