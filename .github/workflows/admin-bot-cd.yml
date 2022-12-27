@@ -48,8 +48,8 @@ jobs:
           DOCKER_HOST: ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_ADDRESS }}
         run: |
           mkdir $HOME/.ssh
-          echo ${{ secrets.SSH_PRIVATE_KEY }} > id_rsa
-          echo ${{ secrets.SSH_PUBLIC_KEY }} > id_rsa.pub
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
+          echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
           
           docker swarm deploy -c docker-compose.stack.yml beatstore
 
