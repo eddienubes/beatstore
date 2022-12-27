@@ -56,6 +56,8 @@ jobs:
         # -nN - stdin into the void (dev/null)
         # -T - avoid terminal request
         #
+        env:
+          DOCKER_HOST: ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
         run: |
           mkdir $HOME/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
@@ -64,5 +66,4 @@ jobs:
           
           ssh -nNT -L $(pwd)/docker.sock:/var/run/docker.sock ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
           
-          export DOCKER_HOST=$(pwd)/docker.sock
           docker stack deploy -c docker-compose.stack.yml beatstore
