@@ -57,10 +57,10 @@ const sendCurrentBeatState = async (beat, ctx, cursor) => {
     }\n` +
     `🖼️ <b>Image:</b> ${beat?.imgUrl ? '<b>Specified</b>' : 'Empty'}\n` +
     `🎧 <b>Preview Audio:</b> ${beat?.previewAudioUrl ? '<b>Specified</b>' : 'Empty'}\n` +
-    `💽 <b>MP3 Url:</b> <a href="${`${process.env.currentIP}api/${beat?.mp3Url}`.replace(/\\/g, '/') || 'Empty'}">link</a>\n` +
-    `💽 <b>Wav Url</b> <a href="${`${process.env.currentIP}api/${beat?.wavUrl}`.replace(/\\/g, '/') || 'Empty'}">link</a>\n` +
+    `💽 <b>MP3 Url:</b> <a href="${`${process.env.BACKEND_URL}/api/${beat?.mp3Url}`.replace(/\\/g, '/') || 'Empty'}">link</a>\n` +
+    `💽 <b>Wav Url</b> <a href="${`${process.env.BACKEND_URL}/api/${beat?.wavUrl}`.replace(/\\/g, '/') || 'Empty'}">link</a>\n` +
     `💽 <b>STEMS Url:</b> <a href="${
-      `${process.env.currentIP}api/${beat?.stemsUrl}`.replace(/\\/g, '/') || 'Empty'
+      `${process.env.BACKEND_URL}/api/${beat?.stemsUrl}`.replace(/\\/g, '/') || 'Empty'
     }">link</a>\n\n\n` +
     `${phrases[cursor] || ''}`;
 

@@ -2,15 +2,15 @@ const axios = require('axios');
 const url = require('url');
 
 module.exports = class BeatstoreService {
-  baseBeatsUrl = `${process.env.currentIP}api/beats`;
+  baseBeatsUrl = `${process.env.BACKEND_URL}/api/beats`;
 
-  baseLicensesUrl = `${process.env.currentIP}api/licenses`;
+  baseLicensesUrl = `${process.env.BACKEND_URL}/api/licenses`;
 
-  baseOrderUrl = `${process.env.currentIP}api/orders`;
+  baseOrderUrl = `${process.env.BACKEND_URL}/api/orders`;
 
-  baseUsersUrl = `${process.env.currentIP}api/users`;
+  baseUsersUrl = `${process.env.BACKEND_URL}/api/users`;
 
-  baseBotsUrl = `${process.env.currentIP}api/bots`;
+  baseBotsUrl = `${process.env.BACKEND_URL}/api/bots`;
 
   async getAllBeats(skip, limit) {
     const requestUrl = new url.URL(this.baseBeatsUrl);
@@ -30,7 +30,7 @@ module.exports = class BeatstoreService {
     return axios.patch(requestUrl.href, data, {
       headers: {
         ...headers,
-        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+        Authorization: `Bearer ${process.env.TOKEN} ID: ${process.env.BOT_ID}`
       }
     });
   }
@@ -39,7 +39,7 @@ module.exports = class BeatstoreService {
     const requestUrl = new url.URL(`${this.baseBeatsUrl}/${id}`);
     return axios.delete(requestUrl.href, {
       headers: {
-        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+        Authorization: `Bearer ${process.env.TOKEN} ID: ${process.env.BOT_ID}`
       }
     });
   }
@@ -48,7 +48,7 @@ module.exports = class BeatstoreService {
     return axios.post(this.baseBeatsUrl, data, {
       headers: {
         ...headers,
-        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+        Authorization: `Bearer ${process.env.TOKEN} ID: ${process.env.BOT_ID}`
       }
     });
   }
@@ -64,7 +64,7 @@ module.exports = class BeatstoreService {
   async updateLicenseById(id, data) {
     return axios.patch(`${this.baseLicensesUrl}/${id}`, data, {
       headers: {
-        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+        Authorization: `Bearer ${process.env.TOKEN} ID: ${process.env.BOT_ID}`
       }
     });
   }
@@ -77,7 +77,7 @@ module.exports = class BeatstoreService {
 
     return axios.get(requestUrl.href, {
       headers: {
-        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+        Authorization: `Bearer ${process.env.TOKEN} ID: ${process.env.BOT_ID}`
       }
     });
   }
@@ -85,7 +85,7 @@ module.exports = class BeatstoreService {
   async getOrderById(id) {
     return axios.get(`${this.baseOrderUrl}/${id}`, {
       headers: {
-        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+        Authorization: `Bearer ${process.env.TOKEN} ID: ${process.env.BOT_ID}`
       }
     });
   }
@@ -98,7 +98,7 @@ module.exports = class BeatstoreService {
 
     return axios.get(requestUrl.href, {
       headers: {
-        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+        Authorization: `Bearer ${process.env.TOKEN} ID: ${process.env.BOT_ID}`
       }
     });
   }
@@ -106,22 +106,22 @@ module.exports = class BeatstoreService {
   async getUserById(id) {
     return axios.get(`${this.baseUsersUrl}/${id}`, {
       headers: {
-        Authorization: `Bearer ${process.env.token} ID: ${process.env.botId}`
+        Authorization: `Bearer ${process.env.TOKEN} ID: ${process.env.BOT_ID}`
       }
     });
   }
 
   async register() {
     return axios.post(this.baseBotsUrl, {
-      botId: process.env.botId,
-      token: process.env.token
+      botId: process.env.BOT_ID,
+      token: process.env.TOKEN
     });
   }
 
   async updateToken(token) {
     return axios.patch(this.baseBotsUrl, {
-      botId: process.env.botId,
-      newToken: process.env.token,
+      botId: process.env.BOT_ID,
+      newToken: process.env.TOKEN,
       token
     });
   }

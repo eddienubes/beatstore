@@ -11,8 +11,8 @@ const allBeatsMenu = async (ctx, next) => {
   let beatsCount;
   let beats;
   try {
-    console.log(process.env.maxItemsPerPage);
-    const response = await beatstoreService.getAllBeats(0, process.env.maxItemsPerPage);
+    console.log(process.env.MAX_ITEMS_PER_PAGE);
+    const response = await beatstoreService.getAllBeats(0, process.env.MAX_ITEMS_PER_PAGE);
 
     const beatsCountResponse = await beatstoreService.getAllBeats(0, 9999);
 
@@ -24,7 +24,7 @@ const allBeatsMenu = async (ctx, next) => {
     return next();
   }
 
-  const pagesAmount = Math.ceil(beatsCount / process.env.maxItemsPerPage);
+  const pagesAmount = Math.ceil(beatsCount / process.env.MAX_ITEMS_PER_PAGE);
 
   await ctx.reply(`🎸 <b>Beats list: </b> \n\n<b>🌵 Total amount of uploaded beats: ${beatsCount} </b>`, {
     reply_markup: {

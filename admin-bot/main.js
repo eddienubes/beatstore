@@ -10,10 +10,10 @@ const sceneNames = require('./constants/wizard-scenes-constants');
 
 require('dotenv').config({ path: path.resolve(__dirname, '.env') });
 
-const bot = new Telegraf(process.env.token);
+const bot = new Telegraf(process.env.TOKEN);
 
 bot.on(['message'], async (ctx, next) => {
-  if (ctx.message.from.id.toString() !== process.env.adminId) {
+  if (ctx.message.from.id.toString() !== process.env.ADMIN_ID) {
     return await ctx.reply('Your not allowed to use this bot!');
   }
   return await next();
@@ -107,7 +107,7 @@ bot.telegram
     if (offset) return bot.telegram.callApi('getUpdates', { offset });
   })
   .then(() => bot.launch())
-  .then(() => console.info(`Bot is up and running on port ${process.env.port}`))
+  .then(() => console.info(`Bot is up and running on port ${process.env.PORT}`))
   .catch((err) => console.error(`${err} by BOT`));
 
 process.once('SIGINT', async () => await bot.stop());

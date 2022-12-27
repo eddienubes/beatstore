@@ -53,8 +53,8 @@ const controlOrdersButtons = async (ctx, next) => {
   let newOrders;
   try {
     const response = await beatstoreService.getAllOrders(
-      (nextPage - 1) * process.env.maxItemsPerPage,
-      process.env.maxItemsPerPage
+      (nextPage - 1) * process.env.MAX_ITEMS_PER_PAGE,
+      process.env.MAX_ITEMS_PER_PAGE
     );
     newOrders = response.data.orders;
   } catch (e) {
@@ -132,9 +132,9 @@ const getOrderProducts = async (ctx, next) => {
   }
   const allProducts = ctx.session.currentOrder.products;
 
-  const limitedProducts = allProducts.slice(0, process.env.maxItemsPerPage);
+  const limitedProducts = allProducts.slice(0, process.env.MAX_ITEMS_PER_PAGE);
 
-  const pagesAmount = Math.ceil(allProducts.length / process.env.maxItemsPerPage);
+  const pagesAmount = Math.ceil(allProducts.length / process.env.MAX_ITEMS_PER_PAGE);
   await ctx.reply('📦 <b>Products list: </b> \n\n', {
     reply_markup: {
       inline_keyboard: [
@@ -181,8 +181,8 @@ const controlOrderProductsButtons = async (ctx, next) => {
   }
 
   const newProducts = ctx.session.currentOrder.products.slice(
-    (nextPage - 1) * process.env.maxItemsPerPage,
-    (nextPage - 1) * process.env.maxItemsPerPage + process.env.maxItemsPerPage
+    (nextPage - 1) * process.env.MAX_ITEMS_PER_PAGE,
+    (nextPage - 1) * process.env.MAX_ITEMS_PER_PAGE + process.env.MAX_ITEMS_PER_PAGE
   );
 
   try {

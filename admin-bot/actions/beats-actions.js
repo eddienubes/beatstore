@@ -9,7 +9,7 @@ const beatstoreService = new BeatstoreService();
 
 const sendBeatMessage = async (beat, ctx, keyboard) => {
   if (!beat) return;
-  await ctx.replyWithPhoto(`${process.env.currentIP}api/${beat.imgUrl.replace(/\\/g, '/')}`, {
+  await ctx.replyWithPhoto(`${process.env.BACKEND_URL}/api/${beat.imgUrl.replace(/\\/g, '/')}`, {
     caption:
       `📋 <b>${beat.title}</b>\n\n` +
       `🎹 <b>BPM:</b> ${beat.bpm}\n` +
@@ -17,9 +17,9 @@ const sendBeatMessage = async (beat, ctx, keyboard) => {
       `🏷️ <b>Tags:</b> ${beat.tags.map((t) => `#${t}`).join(' ')}\n` +
       `🪕 <b>Genres:</b> ${beat.genres.map((t) => `#${t}`).join(' ')}\n` +
       `🎨 <b>Moods:</b> ${beat.moods.map((t) => `#${t}`).join(' ')}\n` +
-      `💽 <b>MP3 Url:</b> <a href='${`${process.env.currentIP}api/${beat.mp3Url}`.replace(/\\/g, '/')}'>link</a>\n` +
-      `💽 <b>Wav Url</b> <a href='${`${process.env.currentIP}api/${beat.wavUrl}`.replace(/\\/g, '/')}'>link</a>\n` +
-      `💽 <b>STEMS Url:</b> <a href='${`${process.env.currentIP}api/${beat.stemsUrl}`.replace(/\\/g, '/')}'>link</a>\n` +
+      `💽 <b>MP3 Url:</b> <a href='${`${process.env.BACKEND_URL}/api/${beat.mp3Url}`.replace(/\\/g, '/')}'>link</a>\n` +
+      `💽 <b>Wav Url</b> <a href='${`${process.env.BACKEND_URL}/api/${beat.wavUrl}`.replace(/\\/g, '/')}'>link</a>\n` +
+      `💽 <b>STEMS Url:</b> <a href='${`${process.env.BACKEND_URL}/api/${beat.stemsUrl}`.replace(/\\/g, '/')}'>link</a>\n` +
       `⏱️<b>Load time:</b> ${date(beat.loadTime)}\n` +
       `⌛️<b>Duration:</b> ${beat.duration}\n`,
     reply_markup: {
@@ -53,8 +53,8 @@ const controlButtons = async (ctx, next) => {
   let newBeats;
   try {
     const response = await beatstoreService.getAllBeats(
-      (nextPage - 1) * process.env.maxItemsPerPage,
-      process.env.maxItemsPerPage
+      (nextPage - 1) * process.env.MAX_ITEMS_PER_PAGE,
+      process.env.MAX_ITEMS_PER_PAGE
     );
     newBeats = response.data.beats;
   } catch (e) {
@@ -205,7 +205,7 @@ const listenToCurrentBeat = async (ctx, next) => {
     await ctx.reply(e.message);
     return next();
   }
-  const audioUrl = new url.URL(beat.previewAudioUrl, `${process.env.currentIP}api/`);
+  const audioUrl = new url.URL(beat.previewAudioUrl, `${process.env.BACKEND_URL}/api/`);
 
   await ctx.replyWithAudio(audioUrl.href, {
     caption: `📋 <b>${beat.title}</b> 📋\n\n`,

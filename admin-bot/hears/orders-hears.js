@@ -11,7 +11,7 @@ const allOrdersMenu = async (ctx, next) => {
   let ordersCount;
   let orders;
   try {
-    const response = await beatstoreService.getAllOrders(0, process.env.maxItemsPerPage);
+    const response = await beatstoreService.getAllOrders(0, process.env.MAX_ITEMS_PER_PAGE);
     const beatsCountResponse = await beatstoreService.getAllOrders(0, 9999);
     orders = response.data.orders;
     ordersCount = beatsCountResponse.data.orders.length;
@@ -20,7 +20,7 @@ const allOrdersMenu = async (ctx, next) => {
     return next();
   }
 
-  const pagesAmount = Math.ceil(ordersCount / process.env.maxItemsPerPage);
+  const pagesAmount = Math.ceil(ordersCount / process.env.MAX_ITEMS_PER_PAGE);
 
   await ctx.reply('🤑 <b>Orders list: </b> \n\n', {
     reply_markup: {
