@@ -50,8 +50,6 @@ jobs:
           echo "${{ secrets.SSH_PUBLIC_KEY }}" >> $HOME/.ssh/id_rsa.pub
 
           chmod 0600 $HOME/.ssh/*
-          chmod 644 $HOME/.ssh/id_rsa.pub
-          chmod 0700 $HOME/.ssh/
 
           ssh -vvv -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
 
