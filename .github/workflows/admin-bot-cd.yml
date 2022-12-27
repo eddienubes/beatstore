@@ -73,16 +73,16 @@ jobs:
       #          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
       #
       #          DOCKER_HOST=ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }} sudo docker stack deploy -c docker-compose.stack.yml beatstore
-      - name: Install SSH
-        uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          known_hosts: placeholder
-          if_key_exists: replace
-
-      - name: Append SSH known_hosts
-        run: |
-          ssh-keyscan -t rsa -H ${{ secrets.SSH_URL }} > $HOME/.ssh/known_hosts
+#      - name: Install SSH
+#        uses: shimataro/ssh-key-action@v2
+#        with:
+#          key: ${{ secrets.SSH_PRIVATE_KEY }}
+#          known_hosts: placeholder
+#          if_key_exists: replace
+#
+#      - name: Append SSH known_hosts
+#        run: |
+#          ssh-keyscan -t rsa -H ${{ secrets.SSH_URL }} > $HOME/.ssh/known_hosts
 
       - name: Check
         run: |
