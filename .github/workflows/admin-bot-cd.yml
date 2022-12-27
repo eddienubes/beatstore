@@ -72,4 +72,4 @@ jobs:
           cat $HOME/.ssh/known_hosts
           
           
-          docker stack deploy -c docker-compose.stack.yml beatstore
+          sudo docker stack deploy -c docker-compose.stack.yml beatstore
