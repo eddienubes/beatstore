@@ -86,9 +86,19 @@ jobs:
 
       - name: Check
         run: |
+          
           ls $HOME/.ssh -l -a
           ls /dev -l -a
 
-      - name: Verify SSH
-        run: |
-          ssh -v ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+      #      - name: Verify SSH
+      #        run: |
+      #          ssh -v ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+
+      - name: executing remote ssh commands using password
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_URL }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: whoami
