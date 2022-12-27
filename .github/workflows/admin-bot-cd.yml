@@ -84,11 +84,11 @@ jobs:
 #        run: |
 #          ssh-keyscan -t rsa -H ${{ secrets.SSH_URL }} > $HOME/.ssh/known_hosts
 
-      - name: Check
-        run: |
-          
-          ls $HOME/.ssh -l -a
-          ls /dev -l -a
+#      - name: Check
+      #        run: |
+      #
+      #          ls $HOME/.ssh -l -a
+      #          ls /dev -l -a
 
       #      - name: Verify SSH
       #        run: |
