@@ -12,7 +12,7 @@ defaults:
 
 jobs:
   CD:
-#    needs: [ CI ]
+    #    needs: [ CI ]
     environment: admin-bot-production
     runs-on: ubuntu-latest
     steps:
@@ -38,9 +38,10 @@ jobs:
           docker push ${{ secrets.REGISTRY_URL }}/beatstore-admin-bot:latest
 
       - name: Docker swarm deploy
-        uses: sagebind/docker-swarm-deploy-action@v2
-        with:
-          remote_host: ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_ADDRESS }}
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
-          args: stack deploy -c docker-compose.stack.yml beatstore # Incorrect
+        env:
+          DOCKER_HOST: ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_ADDRESS }}
+        run: |
+          ls $HOME -l -a
+#          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+#          ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
+
