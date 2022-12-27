@@ -64,8 +64,9 @@ jobs:
           mkdir $HOME/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > $HOME/.ssh/id_rsa
           echo "${{ secrets.SSH_PUBLIC_KEY }}" > $HOME/.ssh/id_rsa.pub
-          ls -l $HOME/.ssh
           ssh-keyscan -t rsa ${{ secrets.SSH_URL }} > /dev/null
+          ls -l $HOME/.ssh
+          cat $HOME/.ssh/known_hosts
           
           
           docker stack deploy -c docker-compose.stack.yml beatstore
