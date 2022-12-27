@@ -40,7 +40,7 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
           image_name: beatstore-admin-bot
-          context: ./
+          context: ./admin-bot
           dockerfile: docker/Dockerfile
 
       - name: Docker swarm deploy
