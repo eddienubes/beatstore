@@ -33,9 +33,13 @@ jobs:
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
       - name: Build and push the image
-        run: |
-          docker build . -f docker/Dockerfile -t ${{ secrets.REGISTRY_URL }}/beatstore-admin-bot:latest
-          docker push ${{ secrets.REGISTRY_URL }}/beatstore-admin-bot:latest
+        uses: whoan/docker-build-with-cache-action@v6
+        with:
+          image_tag: latest
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+          image_name: beatstore-admin-bot
 
       - name: Docker swarm deploy
         env:
