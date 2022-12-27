@@ -19,15 +19,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Create proper .env
+      - name: Create proper .env # Incorrect
         uses: shine1594/secrets-to-env-action@v1.6.1
         with:
           secrets_env: production
           secrets: ${{ toJSON(secrets) }}
 
-      - name: Building image
+      - name: Login to private registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and push the image
         run: |
-          docker login -u {{ secrets.REGISTRY_USERNAME }} -p {{ secrets.REGISTRY_PASSWORD }}
           docker build . -f docker/Dockerfile -t ${{ secrets.REGISTRY_URL }}/beatstore-admin-bot:latest
           docker push ${{ secrets.REGISTRY_URL }}/beatstore-admin-bot:latest
 
+      - name: Docker swarm deploy
+        uses: sagebind/docker-swarm-deploy-action@v2
+        with:
+          remote_host: ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_ADDRESS }}
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh_public_key: ${{ secrets.SSH_PUBLIC_KEY }}
+          args: stack deploy -c docker-compose.stack.yml beatstore # Incorrect

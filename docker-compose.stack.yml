@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   frontend:
-#    container_name: frontend
+    #    container_name: frontend
     build:
       context: ./front-end
       dockerfile: ./docker/Dockerfile
@@ -20,11 +20,11 @@ services:
         condition: on-failure
         max_attempts: 10
       placement:
-        constraints: [node.labels.type == instance] # all non-ci machines are marked with type=instance label
+        constraints: [ node.labels.type == instance ] # all non-ci machines are marked with type=instance label
     networks:
       - beatstore
   backend:
-#    container_name: backend
+    #    container_name: backend
     build:
       context: ./backend
       dockerfile: ./docker/Dockerfile
@@ -46,7 +46,7 @@ services:
     volumes:
       - beatstore-uploaded-beats:/app/data
   admin-bot:
-#    container_name: admin-bot
+    #    container_name: admin-bot
     build:
       context: ./admin-bot
       dockerfile: ./docker/Dockerfile
