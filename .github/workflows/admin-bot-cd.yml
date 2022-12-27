@@ -41,17 +41,26 @@ jobs:
           dockerfile: docker/Dockerfile
 
       - name: Docker swarm deploy
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.SSH_ADDRESS }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            ls -l -a
-#        run: |
-#          mkdir $HOME/.ssh
-#          echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
-#          echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
-#
-#          docker stack deploy -c docker-compose.stack.yml beatstore
+        #        uses: appleboy/ssh-action@v0.1.6
+        #        with:
+        #          host: ${{ secrets.SSH_ADDRESS }}
+        #          username: ${{ secrets.SSH_USERNAME }}
+        #          key: ${{ secrets.SSH_PRIVATE_KEY }}
+        #          port: 22
+        #          script: |
+        #            ls -l -a
+
+        # Pass ssh credentials to avoid password prompt
+        # Open socket through a dedicated .sock file
+        # -nN - stdin into the void (dev/null)
+        # -T - avoid terminal request
+        #
+        run: |
+          mkdir $HOME/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
+          echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
+          
+          ssh -nNT -L $(pwd)/docker.sock:/var/run/docker.sock ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_PASSWORD }}
+          export DOCKER_HOST=$(pwd)/docker.sock
+
+          docker stack deploy -c docker-compose.stack.yml beatstore
