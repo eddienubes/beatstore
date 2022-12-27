@@ -65,7 +65,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > $HOME/.ssh/id_rsa
           echo "${{ secrets.SSH_PUBLIC_KEY }}" > $HOME/.ssh/id_rsa.pub
           ssh-keyscan -t rsa ${{ secrets.SSH_URL }} > /dev/null
-          ls -l $HOME/.ssh
+          ls -l -a $HOME/.ssh
           cat $HOME/.ssh/known_hosts
           
           
