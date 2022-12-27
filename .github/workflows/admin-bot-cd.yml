@@ -44,6 +44,7 @@ jobs:
 
       - name: Deploy to the remote Docker Swarm
         env:
+          REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
           DOCKER_HOST: ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
         run: |
           mkdir -p $HOME/.ssh
