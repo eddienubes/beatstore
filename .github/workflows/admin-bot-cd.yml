@@ -84,6 +84,10 @@ jobs:
         run: |
           ssh-keyscan -t rsa -H ${{ secrets.SSH_URL }} >> $HOME/.ssh/known_hosts
 
+      - name: Check
+        run: |
+          cat /etc/ssh/sshd_config
+
       - name: Verify SSH
         run: |
           ssh -v ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
