@@ -40,65 +40,16 @@ jobs:
         #          image_name: beatstore-admin-bot
         #          context: ./admin-bot
         #          dockerfile: docker/Dockerfile
+      #            DOCKER_HOST=ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }} sudo docker stack deploy -c docker-compose.stack.yml beatstore
 
-      - name: Docker swarm deploy
-        uses: appleboy/ssh-action@v0.1.6
-        with:
-          host: ${{ secrets.SSH_URL }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: |
-            ls -l -a
+      - name: SSH
+        run: |
+          mkdir -p $HOME/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" >> $HOME/.ssh/id_rsa
+          echo "${{ secrets.SSH_PUBLIC_KEY }}" >> $HOME/.ssh/id_rsa.pub
+          ssh-keyscan -t rsa ${{ secrets.SSH_URL }} >> $HOME/.ssh/known_hosts
 
-        # Pass ssh credentials to avoid password prompt
-        # IMPORTANT: Add known host
-        # Open socket through a dedicated .sock file
-        # -nN - stdin into the void (dev/null)
-        # -T - avoid terminal request
-        # Set permissions, otherwise SSH does not work
+          chmod 600 ~/.ssh
 
-        #        env:
-        #          DOCKER_HOST:
-        #          sudo docker swarm init
+          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
 
-      #        run: |
-      #          mkdir -p $HOME/.ssh
-      #          echo "${{ secrets.SSH_PRIVATE_KEY }}" >> $HOME/.ssh/id_rsa
-      #          echo "${{ secrets.SSH_PUBLIC_KEY }}" >> $HOME/.ssh/id_rsa.pub
-      #          ssh-keyscan -t rsa ${{ secrets.SSH_URL }} >> $HOME/.ssh/known_hosts
-      #
-      #          chmod 600 ~/.ssh
-      #
-      #          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
-      #
-      #          DOCKER_HOST=ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }} sudo docker stack deploy -c docker-compose.stack.yml beatstore
-      #      - name: Install SSH
-      #        uses: shimataro/ssh-key-action@v2
-      #        with:
-      #          key: ${{ secrets.SSH_PRIVATE_KEY }}
-      #          known_hosts: placeholder
-      #          if_key_exists: replace
-      #
-      #      - name: Append SSH known_hosts
-      #        run: |
-      #          ssh-keyscan -t rsa -H ${{ secrets.SSH_URL }} > $HOME/.ssh/known_hosts
-
-      #      - name: Check
-      #        run: |
-      #
-      #          ls $HOME/.ssh -l -a
-      #          ls /dev -l -a
-
-      #      - name: Verify SSH
-      #        run: |
-      #          ssh -v ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
-
-#      - name: adadasdasdasdasd
-#        uses: fifsky/ssh-action@master
-#        with:
-#          command: |
-#            ls -a -l
-#          host: ${{ secrets.SSH_URL }}
-#          user: ${{ secrets.SSH_USERNAME }}
-#          key: ${{ secrets.SSH_PRIVATE_KEY}}
