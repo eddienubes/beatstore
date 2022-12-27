@@ -86,4 +86,4 @@ jobs:
 
       - name: Verify SSH
         run: |
-          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+          ssh -v ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
