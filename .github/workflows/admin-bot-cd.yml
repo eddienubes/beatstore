@@ -23,6 +23,10 @@ jobs:
           secrets: ${{ toJSON(secrets) }}
           file_name_prod: ./admin-bot/.env
 
+      - name: Verify secrets
+        run: |
+          echo: "${{ toJSON(secrets) }}"
+
       - name: Login to private registry
         uses: docker/login-action@v2
         with:
