@@ -71,5 +71,5 @@ jobs:
           ls -l -a $HOME/.ssh
           cat $HOME/.ssh/known_hosts
           
-          
+          sudo docker swarm init
           sudo docker stack deploy -c docker-compose.stack.yml beatstore
