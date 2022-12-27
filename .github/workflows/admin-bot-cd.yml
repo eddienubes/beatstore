@@ -77,6 +77,7 @@ jobs:
         uses: shimataro/ssh-key-action@v2
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: placeholder
           if_key_exists: replace
 
       - name: Append SSH known_hosts
