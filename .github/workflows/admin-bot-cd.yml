@@ -41,15 +41,15 @@ jobs:
         #          context: ./admin-bot
         #          dockerfile: docker/Dockerfile
 
-        #      - name: Docker swarm deploy
-        #        uses: appleboy/ssh-action@v0.1.6
-        #        with:
-        #          host: ${{ secrets.SSH_ADDRESS }}
-        #          username: ${{ secrets.SSH_USERNAME }}
-        #          key: ${{ secrets.SSH_PRIVATE_KEY }}
-        #          port: 22
-        #          script: |
-        #            ls -l -a
+      - name: Docker swarm deploy
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SSH_ADDRESS }}
+          username: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            ls -l -a
 
         # Pass ssh credentials to avoid password prompt
         # IMPORTANT: Add known host
@@ -73,18 +73,18 @@ jobs:
       #          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
       #
       #          DOCKER_HOST=ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }} sudo docker stack deploy -c docker-compose.stack.yml beatstore
-#      - name: Install SSH
-#        uses: shimataro/ssh-key-action@v2
-#        with:
-#          key: ${{ secrets.SSH_PRIVATE_KEY }}
-#          known_hosts: placeholder
-#          if_key_exists: replace
-#
-#      - name: Append SSH known_hosts
-#        run: |
-#          ssh-keyscan -t rsa -H ${{ secrets.SSH_URL }} > $HOME/.ssh/known_hosts
+      #      - name: Install SSH
+      #        uses: shimataro/ssh-key-action@v2
+      #        with:
+      #          key: ${{ secrets.SSH_PRIVATE_KEY }}
+      #          known_hosts: placeholder
+      #          if_key_exists: replace
+      #
+      #      - name: Append SSH known_hosts
+      #        run: |
+      #          ssh-keyscan -t rsa -H ${{ secrets.SSH_URL }} > $HOME/.ssh/known_hosts
 
-#      - name: Check
+      #      - name: Check
       #        run: |
       #
       #          ls $HOME/.ssh -l -a
@@ -94,11 +94,11 @@ jobs:
       #        run: |
       #          ssh -v ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
 
-      - name: adadasdasdasdasd
-        uses: fifsky/ssh-action@master
-        with:
-          command: |
-            ls -a -l
-          host: ${{ secrets.SSH_URL }}
-          user: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY}}
+#      - name: adadasdasdasdasd
+#        uses: fifsky/ssh-action@master
+#        with:
+#          command: |
+#            ls -a -l
+#          host: ${{ secrets.SSH_URL }}
+#          user: ${{ secrets.SSH_USERNAME }}
+#          key: ${{ secrets.SSH_PRIVATE_KEY}}
