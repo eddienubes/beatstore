@@ -60,7 +60,7 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
           echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
           
-          ssh -nNT -L $(pwd)/docker.sock:/var/run/docker.sock ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_PASSWORD }}
+          ssh -nNT -L $(pwd)/docker.sock:/var/run/docker.sock ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+          
           export DOCKER_HOST=$(pwd)/docker.sock
-
           docker stack deploy -c docker-compose.stack.yml beatstore
