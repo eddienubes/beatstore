@@ -42,7 +42,7 @@ jobs:
         #          dockerfile: docker/Dockerfile
       #            DOCKER_HOST=ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }} sudo docker stack deploy -c docker-compose.stack.yml beatstore
 
-      - name: SSH
+      - name: Deploy to the remote Docker Swarm
         env:
           DOCKER_HOST: ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
         run: |
@@ -53,4 +53,4 @@ jobs:
 
           chmod 0600 $HOME/.ssh/*
 
-          docker stack deploy -c docker-compose.stack.yml beatstore
+          docker stack deploy -c admin-bot/docker/docker-compose.stack.yml beatstore
