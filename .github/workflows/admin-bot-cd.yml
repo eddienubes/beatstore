@@ -30,17 +30,16 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
-        #      - name: Build and push the image
-        #        uses: whoan/docker-build-with-cache-action@v6
-        #        with:
-        #          image_tag: latest
-        #          registry: ${{ secrets.REGISTRY_URL }}
-        #          username: ${{ secrets.REGISTRY_USERNAME }}
-        #          password: ${{ secrets.REGISTRY_PASSWORD }}
-        #          image_name: beatstore-admin-bot
-        #          context: ./admin-bot
-        #          dockerfile: docker/Dockerfile
-      #            DOCKER_HOST=ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }} sudo docker stack deploy -c docker-compose.stack.yml beatstore
+      - name: Build and push the image
+        uses: whoan/docker-build-with-cache-action@v6
+        with:
+          image_tag: latest
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+          image_name: beatstore-admin-bot
+          context: ./admin-bot
+          dockerfile: docker/Dockerfile
 
       - name: Deploy to the remote Docker Swarm
         env:
