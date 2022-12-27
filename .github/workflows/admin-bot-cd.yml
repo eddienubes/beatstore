@@ -94,11 +94,11 @@ jobs:
       #        run: |
       #          ssh -v ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
 
-      - name: executing remote ssh commands using password
-        uses: appleboy/ssh-action@v0.1.6
+      - name: adadasdasdasdasd
+        uses: fifsky/ssh-action@master
         with:
+          command: |
+            ls -a -l
           host: ${{ secrets.SSH_URL }}
-          username: ${{ secrets.SSH_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          port: 22
-          script: whoami
+          user: ${{ secrets.SSH_USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY}}
