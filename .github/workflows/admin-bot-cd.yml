@@ -51,5 +51,5 @@ jobs:
 
           chmod 600 ~/.ssh/*
 
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+          ssh -vvv -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
 
