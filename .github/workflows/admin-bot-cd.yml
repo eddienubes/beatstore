@@ -82,7 +82,7 @@ jobs:
 
       - name: Append SSH known_hosts
         run: |
-          ssh-keyscan -H ${{ secrets.SSH_URL }} >> $HOME/.ssh/known_hosts
+          ssh-keyscan -t rsa -H ${{ secrets.SSH_URL }} >> $HOME/.ssh/known_hosts
 
       - name: Verify SSH
         run: |
