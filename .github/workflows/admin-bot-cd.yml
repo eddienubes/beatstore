@@ -55,8 +55,7 @@ jobs:
         # Open socket through a dedicated .sock file
         # -nN - stdin into the void (dev/null)
         # -T - avoid terminal request
-        #
-        #          ssh -nNT -L $(pwd)/docker.sock:/var/run/docker.sock ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+        # Set permissions, otherwise SSH does not work
 
         env:
           DOCKER_HOST: ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
@@ -65,6 +64,10 @@ jobs:
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > $HOME/.ssh/id_rsa
           echo "${{ secrets.SSH_PUBLIC_KEY }}" > $HOME/.ssh/id_rsa.pub
           ssh-keyscan -t rsa ${{ secrets.SSH_URL }} > $HOME/.ssh/known_hosts
+          
+          chmod 600 ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa.pub
+          
           ls -l -a $HOME/.ssh
           cat $HOME/.ssh/known_hosts
           
