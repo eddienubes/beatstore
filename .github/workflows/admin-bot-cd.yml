@@ -30,18 +30,18 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
-#      - name: Build and push the image
-#        uses: whoan/docker-build-with-cache-action@v6
-#        with:
-#          image_tag: latest
-#          registry: ${{ secrets.REGISTRY_URL }}
-#          username: ${{ secrets.REGISTRY_USERNAME }}
-#          password: ${{ secrets.REGISTRY_PASSWORD }}
-#          image_name: beatstore-admin-bot
-#          context: ./admin-bot
-#          dockerfile: docker/Dockerfile
+        #      - name: Build and push the image
+        #        uses: whoan/docker-build-with-cache-action@v6
+        #        with:
+        #          image_tag: latest
+        #          registry: ${{ secrets.REGISTRY_URL }}
+        #          username: ${{ secrets.REGISTRY_USERNAME }}
+        #          password: ${{ secrets.REGISTRY_PASSWORD }}
+        #          image_name: beatstore-admin-bot
+        #          context: ./admin-bot
+        #          dockerfile: docker/Dockerfile
 
-      - name: Docker swarm deploy
+        #      - name: Docker swarm deploy
         #        uses: appleboy/ssh-action@v0.1.6
         #        with:
         #          host: ${{ secrets.SSH_ADDRESS }}
@@ -58,18 +58,31 @@ jobs:
         # -T - avoid terminal request
         # Set permissions, otherwise SSH does not work
 
-#        env:
-#          DOCKER_HOST:
+        #        env:
+        #          DOCKER_HOST:
         #          sudo docker swarm init
 
+      #        run: |
+      #          mkdir -p $HOME/.ssh
+      #          echo "${{ secrets.SSH_PRIVATE_KEY }}" >> $HOME/.ssh/id_rsa
+      #          echo "${{ secrets.SSH_PUBLIC_KEY }}" >> $HOME/.ssh/id_rsa.pub
+      #          ssh-keyscan -t rsa ${{ secrets.SSH_URL }} >> $HOME/.ssh/known_hosts
+      #
+      #          chmod 600 ~/.ssh
+      #
+      #          ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+      #
+      #          DOCKER_HOST=ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }} sudo docker stack deploy -c docker-compose.stack.yml beatstore
+      - name: Install SSH
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          if_key_exists: replace
+
+      - name: Append SSH known_hosts
         run: |
-          mkdir -p $HOME/.ssh
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" >> $HOME/.ssh/id_rsa
-          echo "${{ secrets.SSH_PUBLIC_KEY }}" >> $HOME/.ssh/id_rsa.pub
-          ssh-keyscan -t rsa ${{ secrets.SSH_URL }} >> $HOME/.ssh/known_hosts
-          
-          chmod 600 ~/.ssh
-          
+          ssh-keyscan -H IP_ADDRESS_OF_HOST >> $HOME/.ssh/known_hosts
+
+      - name: Verify SSH
+        run: |
           ssh ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
-          
-          DOCKER_HOST=ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }} sudo docker stack deploy -c docker-compose.stack.yml beatstore
