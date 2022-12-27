@@ -87,7 +87,7 @@ jobs:
       - name: Check
         run: |
           ls $HOME/.ssh -l -a
-          chmod +x /dev/tty
+          sudo chmod +x /dev/tty
           ls /dev -l -a
 
       - name: Verify SSH
