@@ -25,7 +25,8 @@ jobs:
 
       - name: Verify secrets
         run: |
-          echo "${{ toJSON(secrets) }}"
+          cd ./admin-bot
+          ls -l -a
 
       - name: Login to private registry
         uses: docker/login-action@v2
