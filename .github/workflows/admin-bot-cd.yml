@@ -82,7 +82,7 @@ jobs:
 
       - name: Append SSH known_hosts
         run: |
-          sudo ssh-keyscan -t rsa -H ${{ secrets.SSH_URL }} >> /root/.ssh/known_hosts
+          sudo ssh-keyscan -t rsa -H ${{ secrets.SSH_URL }} > /root/.ssh/known_hosts
 
       - name: Check
         run: |
