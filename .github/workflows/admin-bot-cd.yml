@@ -44,7 +44,7 @@ jobs:
       - name: Docker swarm deploy
         uses: appleboy/ssh-action@v0.1.6
         with:
-          host: ${{ secrets.SSH_ADDRESS }}
+          host: ${{ secrets.SSH_URL }}
           username: ${{ secrets.SSH_USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22
