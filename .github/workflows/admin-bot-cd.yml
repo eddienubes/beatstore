@@ -41,8 +41,6 @@ jobs:
           dockerfile: docker/Dockerfile
 
       - name: Docker swarm deploy
-        env:
-          DOCKER_HOST: ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_ADDRESS }}
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.SSH_ADDRESS }}
