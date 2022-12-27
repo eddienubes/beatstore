@@ -51,6 +51,7 @@ jobs:
         #            ls -l -a
 
         # Pass ssh credentials to avoid password prompt
+        # IMPORTANT: Add known host
         # Open socket through a dedicated .sock file
         # -nN - stdin into the void (dev/null)
         # -T - avoid terminal request
@@ -59,6 +60,7 @@ jobs:
           mkdir $HOME/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > id_rsa
           echo "${{ secrets.SSH_PUBLIC_KEY }}" > id_rsa.pub
+          ssh-keyscan -t rsa ${{ secrets.SSH_URL }}
           
           ssh -nNT -L $(pwd)/docker.sock:/var/run/docker.sock ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
           
