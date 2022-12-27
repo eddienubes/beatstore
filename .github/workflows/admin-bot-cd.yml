@@ -57,8 +57,8 @@ jobs:
         # -T - avoid terminal request
         # Set permissions, otherwise SSH does not work
 
-        env:
-          DOCKER_HOST: ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+#        env:
+#          DOCKER_HOST:
         run: |
           mkdir $HOME/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > $HOME/.ssh/id_rsa
@@ -68,8 +68,6 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa.pub
           
-          ls -l -a $HOME/.ssh
-          cat $HOME/.ssh/known_hosts
-          
-          sudo docker swarm init
+#          sudo docker swarm init
+          export DOCKER_HOST=ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
           sudo docker stack deploy -c docker-compose.stack.yml beatstore
