@@ -47,9 +47,9 @@ jobs:
           mkdir -p $HOME/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY }}" >> $HOME/.ssh/id_rsa
           echo "${{ secrets.SSH_PUBLIC_KEY }}" >> $HOME/.ssh/id_rsa.pub
-          ssh-keyscan -t rsa ${{ secrets.SSH_URL }} >> $HOME/.ssh/known_hosts
+#          ssh-keyscan -t rsa ${{ secrets.SSH_URL }} >> $HOME/.ssh/known_hosts
 
           chmod 600 ~/.ssh/*
 
-          ssh -v ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+          ssh -v -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
 
