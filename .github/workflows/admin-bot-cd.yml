@@ -54,4 +54,4 @@ jobs:
 
           chmod 0600 $HOME/.ssh/*
 
-          docker stack deploy -c admin-bot/docker/docker-compose.stack.yml beatstore
+          docker stack deploy --with-registry-auth -c admin-bot/docker/docker-compose.stack.yml beatstore
