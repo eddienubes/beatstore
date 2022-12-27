@@ -90,4 +90,4 @@ jobs:
 
       - name: Verify SSH
         run: |
-          ssh -vT ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+          ssh -o StrictHostKeyChecking=no -v ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
