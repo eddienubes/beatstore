@@ -11,8 +11,9 @@ RUN yarn
 COPY .env /app/.env
 COPY . /app
 
-RUN ls -l ./app
-RUN cat ./app/.env
+RUN ls -l -a
+RUN ls -l -a /app
+RUN cd /app && cat .env
 
 
 # Run application on port 3000
