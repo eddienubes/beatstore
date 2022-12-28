@@ -19,11 +19,7 @@ services:
     networks:
       - beatstore
     volumes:
-      - beatstore-uploaded-beats:/app/data
-
-volumes:
-  beatstore-uploaded-beats:
-    name: beatstore-uploaded-beats
+      - /root/beatstore/data:/app/data
 
 networks:
   beatstore:
