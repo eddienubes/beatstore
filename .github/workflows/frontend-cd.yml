@@ -3,12 +3,14 @@ name: Frontend CD
 on:
   workflow_dispatch:
 
-#  CI:
-#  uses: ./.github/workflows/frontend-ci.yml
+
 
 jobs:
+  CI:
+    uses: ./.github/workflows/frontend-ci.yml
+
   CD:
-    #    needs: [ CI ]
+    needs: [ CI ]
     environment: frontend-production
     runs-on: ubuntu-latest
     steps:

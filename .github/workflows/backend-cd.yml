@@ -3,12 +3,13 @@ name: Backend CD
 on:
   workflow_dispatch:
 
-#  CI:
-#  uses: ./.github/workflows/backend-ci.yml
 
 jobs:
+  CI:
+    uses: ./.github/workflows/backend-ci.yml
+
   CD:
-    #    needs: [ CI ]
+    needs: [ CI ]
     environment: backend-production
     runs-on: ubuntu-latest
     steps:
