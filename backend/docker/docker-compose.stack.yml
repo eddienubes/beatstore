@@ -24,3 +24,8 @@ services:
 volumes:
   beatstore-uploaded-beats:
     name: beatstore-uploaded-beats
+
+networks:
+  beatstore:
+    name: beatstore
+    driver: overlay
