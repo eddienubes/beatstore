@@ -9,6 +9,7 @@ RUN yarn
 
 # Copy all required files including .env
 COPY . /app
+COPY ./public /app/public
 COPY .env /app/.env
 
 
