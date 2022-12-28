@@ -23,7 +23,7 @@ jobs:
           secrets: ${{ toJSON(secrets) }}
           file_name_prod: .env
 
-      - name: Move .env file to /admin-boy
+      - name: Copy .env file to /admin-bot
         run: |
           cp .env ./admin-bot/.env
 
