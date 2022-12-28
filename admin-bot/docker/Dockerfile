@@ -8,12 +8,11 @@ COPY yarn.lock /app/yarn.lock
 RUN yarn
 
 # Copy all required files including .env
-COPY .env /app/.env
 COPY . /app
+COPY .env /app/.env
 
 RUN ls -l -a
-RUN ls -l -a /app
-RUN cd /app && cat .env
+RUN cat .env
 
 
 # Run application on port 3000
