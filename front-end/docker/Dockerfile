@@ -2,8 +2,6 @@
 FROM node:16-alpine
 
 WORKDIR /app
-ARG PORT
-
 
 # Install Deps
 COPY package.json /app/package.json
@@ -22,8 +20,7 @@ FROM nginx:alpine
 # Copy build artifact from the first stage
 COPY --from=0 /app/build /usr/share/nginx/html
 # Run the container on port 80 (nginx's default port)
-EXPOSE $PORT
-ENV NGINX_PORT=$PORT
+EXPOSE 80
 # Start the nginx webserver automatically once the container runs.
 # Set daemon off to run in the foreground
 CMD ["nginx", "-g", "daemon off;"]

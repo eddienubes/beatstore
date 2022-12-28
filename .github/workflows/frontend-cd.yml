@@ -43,7 +43,6 @@ jobs:
           image_name: beatstore-frontend
           context: ./front-end
           dockerfile: docker/Dockerfile
-          build_extra_args: "--build-arg=PORT=${{ secrets.PORT }}"
 
       - name: Deploy to the remote Docker Swarm
         env:
