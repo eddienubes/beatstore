@@ -44,7 +44,7 @@ function PurchasesTable() {
 
           const date = `${year}/${month}/${day}`;
 
-          const imageUrl = process.env.REACT_APP_BACKEND_ASSET_URL + item.imgUrl;
+          const imageUrl = `${process.env.REACT_APP_BACKEND_ASSET_URL}/${item.imgUrl}`;
 
           return (
             <Table.Row key={item.beatId + item.licenseId + item.orderId + index} className="purchased-item">

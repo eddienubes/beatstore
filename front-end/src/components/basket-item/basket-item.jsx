@@ -25,7 +25,7 @@ function BasketItem({
 }) {
   const dispatch = useDispatch();
 
-  const imageUrl = useMemo(() => process.env.REACT_APP_BACKEND_ASSET_URL + imgUrl, [imgUrl]);
+  const imageUrl = useMemo(() => `${process.env.REACT_APP_BACKEND_ASSET_URL}/${imgUrl}`, [imgUrl]);
 
   const onClick = (e) => {
     e.stopPropagation();

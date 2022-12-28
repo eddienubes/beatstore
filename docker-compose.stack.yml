@@ -1,104 +1,23 @@
 version: "3.8"
 
 services:
-  frontend:
-    #    container_name: frontend
-    build:
-      context: ./front-end
-      dockerfile: ./docker/Dockerfile
-    image: ${REGISTRY_URL}/beatstore-frontend:latest
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-    deploy:
-      replicas: 2
-      update_config:
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: on-failure
-        max_attempts: 10
-      placement:
-        constraints: [ node.labels.type == instance ] # all non-ci machines are marked with type=instance label
-    networks:
-      - beatstore
-  backend:
-    #    container_name: backend
-    build:
-      context: ./backend
-      dockerfile: ./docker/Dockerfile
-    image: ${REGISTRY_URL}/beatstore-backend:latest
-    ports:
-      - "3000:3000"
-    deploy:
-      replicas: 3
-      update_config:
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: on-failure
-        max_attempts: 10
-      placement:
-        constraints: [ node.labels.type == instance ] # all non-ci machines are marked with type=instance label
-    networks:
-      - beatstore
-    volumes:
-      - beatstore-uploaded-beats:/app/data
-  admin-bot:
-    #    container_name: admin-bot
-    build:
-      context: ./admin-bot
-      dockerfile: ./docker/Dockerfile
-    image: ${REGISTRY_URL}/beatstore-admin-bot:latest
-    depends_on:
-      - backend
-    deploy:
-      replicas: 1
-      update_config:
-        parallelism: 1
-        delay: 10s
-      restart_policy:
-        condition: on-failure
-        max_attempts: 10
-      placement:
-        constraints: [ node.labels.type == instance ] # all non-ci machines are marked with type=instance label
-    networks:
-      - beatstore
   visualiser:
     image: bretfisher/visualizer
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
     ports:
       - "8080:8080"
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
-    depends_on:
-      - backend
-      - admin-bot
-      - frontend
     networks:
       - beatstore
-#  portainer:
-#    image: portainer/portainer-ce:latest
-#    restart: unless-stopped
-#    ports:
-#      - "9000:9000"
-#    security_opt:
-#      - no-new-privileges:true
-#    volumes:
-#      - /etc/localtime:/etc/localtime:ro
-#      - /var/run/docker.sock:/var/run/docker.sock:ro
-#      - portainer-data:/data
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - beatstore
 networks:
   beatstore:
     name: beatstore
     driver: overlay
-
-volumes:
-  beatstore-uploaded-beats:
-    name: beatstore-uploaded-beats
-  portainer-data:
-    name: portainer-data

@@ -29,7 +29,7 @@ function SingleBeatPage() {
         const fac = new FastAverageColor();
 
         fac
-          .getColorAsync(process.env.REACT_APP_BACKEND_ASSET_URL + data.beat.imgUrl)
+          .getColorAsync(`${process.env.REACT_APP_BACKEND_ASSET_URL}/${data.beat.imgUrl}`)
           .then((color) => {
             setColor(color.hex);
             setLoading(false);

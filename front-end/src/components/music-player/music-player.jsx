@@ -251,7 +251,7 @@ function MusicPlayer() {
   };
 
   useEffect(() => {
-    const baseUrl = process.env.REACT_APP_BACKEND_ASSET_URL;
+    const baseUrl = `${process.env.REACT_APP_BACKEND_ASSET_URL}/`;
     const beatstoreService = new BeatstoreService();
 
     if (beatList.length > 0 && id) {
@@ -273,7 +273,7 @@ function MusicPlayer() {
         .getBeatById(id)
         .then(({ data }) => {
           const itsUrl = baseUrl + data.beat.previewAudioUrl.replaceAll('\\', '/');
-          const imageUrl = process.env.REACT_APP_BACKEND_ASSET_URL + data.beat.imgUrl;
+          const imageUrl = `${process.env.REACT_APP_BACKEND_ASSET_URL}/${data.beat.imgUrl}`;
 
           setPlayerState((playerState) => ({
             ...playerState,

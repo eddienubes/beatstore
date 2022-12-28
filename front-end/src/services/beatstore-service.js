@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export default class BeatstoreService {
-  baseUrl = `${process.env.REACT_APP_BACKEND_ASSET_URL}beats`;
+  baseUrl = `${process.env.REACT_APP_BACKEND_ASSET_URL}/beats`;
 
   // getBeats = () => {
   //     return [{

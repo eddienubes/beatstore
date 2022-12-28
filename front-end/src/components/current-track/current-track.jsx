@@ -30,7 +30,7 @@ function CurrentTrack({ track, color }) {
     }
   };
 
-  const imageUrl = process.env.REACT_APP_BACKEND_ASSET_URL + track.imgUrl;
+  const imageUrl = `${process.env.REACT_APP_BACKEND_ASSET_URL}/${track.imgUrl}`;
 
   const dateObj = new Date(track.loadTime);
   const month = dateObj.getUTCMonth() + 1; // months from 1-12

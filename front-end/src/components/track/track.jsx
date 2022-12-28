@@ -37,7 +37,7 @@ function Track({ track, onSelected, index, id, previousId, isPlaying, cartItems 
     }
   };
 
-  const imageUrl = useMemo(() => process.env.REACT_APP_BACKEND_ASSET_URL + track.imgUrl, [track]);
+  const imageUrl = useMemo(() => `${process.env.REACT_APP_BACKEND_ASSET_URL}/${track.imgUrl}`, [track]);
 
   return (
     <Table.Row className={`main-row-track ${isActive ? 'selected_tr' : null}`} onClick={onClick}>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 class AuthService {
-  baseUrl = `${process.env.REACT_APP_BACKEND_ASSET_URL}users`;
+  baseUrl = `${process.env.REACT_APP_BACKEND_ASSET_URL}/users`;
 
   async signup(data) {
     return axios.post(`${this.baseUrl}/signup`, data, {
