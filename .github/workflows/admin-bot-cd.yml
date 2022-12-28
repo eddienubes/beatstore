@@ -25,7 +25,7 @@ jobs:
 
       - name: Move .env file to /admin-boy
         run: |
-          cp .env /admin-bot/.env
+          cp .env ./admin-bot/.env
 
       - name: Login to private registry
         uses: docker/login-action@v2
