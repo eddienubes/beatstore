@@ -11,10 +11,6 @@ RUN yarn
 COPY . /app
 COPY .env /app/.env
 
-RUN ls -l -a
-RUN cat .env
-
-
 # Run application on port 3000
 EXPOSE 3001
 
