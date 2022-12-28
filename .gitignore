@@ -10,9 +10,6 @@ front-end/build
 /.pnp
 .pnp.js
 
-# data
-backend/public
-
 # testing
 /coverage
 
