@@ -27,10 +27,6 @@ jobs:
           envkey_ADMIN_ID: ${{ secrets.ADMIN_ID }}
           envkey_BOT_ID: ${{ secrets.BOT_ID }}
 
-      - name: Copy .env file to /admin-bot
-        run: |
-          cp .env ./admin-bot/.env
-
       - name: Login to private registry
         uses: docker/login-action@v2
         with:
