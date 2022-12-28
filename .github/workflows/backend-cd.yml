@@ -56,8 +56,8 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
           image_name: beatstore-backend
-          context: .
-          dockerfile: docker/nginx.Dockerfile
+          context: ./backend
+          dockerfile: docker/Dockerfile
 
       - name: Deploy to the remote Docker Swarm
         env:
