@@ -20,9 +20,11 @@ jobs:
         with:
           directory: front-end
           envkey_PORT: ${{ secrets.PORT }}
+          envkey_SKIP_PREFLIGHT_CHECK: true
           envkey_REACT_APP_BACKEND_ASSET_URL: ${{ secrets.REACT_APP_BACKEND_ASSET_URL }}
           envkey_REACT_APP_GOOGLE_CLIENT_ID: ${{ secrets.REACT_APP_GOOGLE_CLIENT_ID }}
           envkey_REACT_APP_PAYPAL_CLIENT_ID: ${{ secrets.REACT_APP_PAYPAL_CLIENT_ID }}
+
 
       - name: Login to private registry
         uses: docker/login-action@v2
