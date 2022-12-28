@@ -2,14 +2,74 @@ name: Backend CD
 
 on:
   workflow_dispatch:
+  push:
+
+#  CI:
+#  uses: ./.github/workflows/backend-ci.yml
 
 jobs:
-  CI:
-    uses: ./.github/workflows/backend-ci.yml
   CD:
+    #    needs: [ CI ]
+    environment: backend-production
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-        # configure action, pass parameters
-        # with:
+
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v1.3.0
+        with:
+          directory: backend
+          envkey_PORT: ${{ secrets.PORT }}
+          envkey_BACKEND_URL: ${{ secrets.BACKEND_URL }}
+
+          envkey_GMAIL: ${{ secrets.GMAIL }}
+          envkey_GMAIL_OWNER: ${{ secrets.GMAIL_OWNER }}
+          envkey_GMAIL_APP_PASS: ${{ secrets.GMAIL_APP_PASS }}
+
+          envkey_MONGO_DB_URL: ${{ secrets.MONGO_DB_URL }}
+
+          envkey_SECRET: ${{ secrets.SECRET }}
+          envkey_TOKEN_EXPIRE_TIME: ${{ secrets.TOKEN_EXPIRE_TIME }}
+          envkey_REFRESH_TOKEN_SECRET: ${{ secrets.REFRESH_TOKEN_SECRET }}
+          envkey_REFRESH_TOKEN_EXPIRE_TIME: ${{ secrets.REFRESH_TOKEN_EXPIRE_TIME }}
+
+          envkey_PAYPAL_CLIENT_ID: ${{ secrets.PAYPAL_CLIENT_ID }}
+          envkey_PAYPAL_CLIENT_SECRET: ${{ secrets.PAYPAL_CLIENT_SECRET }}
+          envkey_PAYPAL_TOKEN_SECRET: ${{ secrets.PAYPAL_TOKEN_SECRET }}
+
+          envkey_WAYFORPAY_MERCHANT_ACCOUNT: ${{ secrets.WAYFORPAY_MERCHANT_ACCOUNT }}
+          envkey_WAYFORPAY_MERCHANT_DOMAIN_NAME: ${{ secrets.WAYFORPAY_MERCHANT_DOMAIN_NAME }}
+          envkey_WAYFORPAY_MERCHANT_SECRET_KEY: ${{ secrets.WAYFORPAY_MERCHANT_SECRET_KEY }}
+
+      - name: Login to private registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+
+      - name: Build and push the image
+        uses: whoan/docker-build-with-cache-action@v6
+        with:
+          image_tag: latest
+          registry: ${{ secrets.REGISTRY_URL }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+          image_name: beatstore-backend
+          context: ./backend
+          dockerfile: docker/Dockerfile
+
+      - name: Deploy to the remote Docker Swarm
+        env:
+          REGISTRY_URL: ${{ secrets.REGISTRY_URL }}
+          DOCKER_HOST: ssh://${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_URL }}
+        run: |
+          mkdir -p $HOME/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" >> $HOME/.ssh/id_rsa
+          echo "${{ secrets.SSH_PUBLIC_KEY }}" >> $HOME/.ssh/id_rsa.pub
+          ssh-keyscan -t rsa ${{ secrets.SSH_URL }} >> $HOME/.ssh/known_hosts
+
+          chmod 0600 $HOME/.ssh/*
+
+          docker stack deploy --with-registry-auth -c backend/docker/docker-compose.stack.yml beatstore

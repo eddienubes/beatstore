@@ -91,7 +91,7 @@ const createOrderWithPaypal = async (req, res, next) => {
 
   const paypalDataToken = jwt.sign(
     { email, products: orderProducts, date: new Date(), total, orderId: order.result.id },
-    process.env.paypalTokenSecret,
+    process.env.PAYPAL_TOKEN_SECRET,
     { expiresIn: '1h' }
   );
 
@@ -106,7 +106,7 @@ const captureOrderWithPaypal = async (req, res, next) => {
   let tokenPayload;
 
   try {
-    tokenPayload = jwt.verify(token, process.env.paypalTokenSecret);
+    tokenPayload = jwt.verify(token, process.env.PAYPAL_TOKEN_SECRET);
   } catch (e) {
     console.log(e.message);
     return next(new HttpError('Capturing order has failed, please try again', 500));
@@ -256,9 +256,9 @@ const createOrderWithWayforpay = async (req, res, next) => {
   const productPrice = licenses.map((l) => l.price.toFixed(2));
 
   const purchaseObj = {
-    merchantAccount: process.env.wayforpayMerchantAccount,
+    merchantAccount: process.env.WAYFORPAY_MERCHANT_ACCOUNT,
     merchantAuthType: 'SimpleSignature',
-    merchantDomainName: process.env.wayforpayMerchantDomainName,
+    merchantDomainName: process.env.WAYFORPAY_MERCHANT_DOMAIN_NAME,
     merchantTransactionSecureType: 'AUTO',
     language: 'AUTO',
     serviceUrl: `${process.env.BACKEND_URL}/api/orders/wayforpay-capture`,
@@ -277,7 +277,7 @@ const createOrderWithWayforpay = async (req, res, next) => {
     ';'
   )};${purchaseObj.productPrice.join(';')}`;
 
-  const md5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+  const md5Hasher = crypto.createHmac('md5', process.env.WAYFORPAY_MERCHANT_SECRET_KEY);
 
   purchaseObj.merchantSignature = md5Hasher.update(baseSignature).digest('hex');
 
@@ -318,7 +318,7 @@ const captureOrderWithWayforpay = async (req, res, next) => {
   if (!order) {
     const declinedBaseSignature = `${orderReference};decline;${responseTime}`;
 
-    const declinedMd5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+    const declinedMd5Hasher = crypto.createHmac('md5', process.env.WAYFORPAY_MERCHANT_SECRET_KEY);
 
     const declinedMerchantSignature = declinedMd5Hasher.update(declinedBaseSignature).digest('hex');
 
@@ -330,11 +330,11 @@ const captureOrderWithWayforpay = async (req, res, next) => {
       signature: declinedMerchantSignature
     });
   }
-  const baseSignature = `${process.env.wayforpayMerchantAccount};${orderReference};${amount};${currency};${authCode};${cardPan};${transactionStatus};${reasonCode}`;
+  const baseSignature = `${process.env.WAYFORPAY_MERCHANT_ACCOUNT};${orderReference};${amount};${currency};${authCode};${cardPan};${transactionStatus};${reasonCode}`;
 
   console.log(baseSignature);
 
-  const existingMd5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+  const existingMd5Hasher = crypto.createHmac('md5', process.env.WAYFORPAY_MERCHANT_SECRET_KEY);
   const existingMerchantSignature = existingMd5Hasher.update(baseSignature).digest('hex');
 
   if (existingMerchantSignature !== merchantSignature) {
@@ -351,7 +351,7 @@ const captureOrderWithWayforpay = async (req, res, next) => {
 
     const declinedBaseSignature = `${orderReference};decline;${responseTime}`;
 
-    const declinedMd5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+    const declinedMd5Hasher = crypto.createHmac('md5', process.env.WAYFORPAY_MERCHANT_SECRET_KEY);
 
     const declinedMerchantSignature = declinedMd5Hasher.update(declinedBaseSignature).digest('hex');
 
@@ -373,7 +373,7 @@ const captureOrderWithWayforpay = async (req, res, next) => {
     }
     const refundedBaseSignature = `${orderReference};refund;${responseTime}`;
 
-    const refundMd5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+    const refundMd5Hasher = crypto.createHmac('md5', process.env.WAYFORPAY_MERCHANT_SECRET_KEY);
 
     const refundMerchantSignature = refundMd5Hasher.update(refundedBaseSignature).digest('hex');
 
@@ -456,7 +456,7 @@ const captureOrderWithWayforpay = async (req, res, next) => {
 
   const approvedBaseSignature = `${orderReference};approve;${responseTime}`;
 
-  const approvedMd5Hasher = crypto.createHmac('md5', process.env.wayforpayMerchantSecretKey);
+  const approvedMd5Hasher = crypto.createHmac('md5', process.env.WAYFORPAY_MERCHANT_SECRET_KEY);
 
   const approveMerchantSignature = approvedMd5Hasher.update(approvedBaseSignature).digest('hex');
 

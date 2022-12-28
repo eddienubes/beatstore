@@ -71,11 +71,11 @@ app.use((error, req, res, next) => {
 
 // port configuration and connection to database
 mongoose
-  .connect(process.env.mongoDBUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+  .connect(process.env.MONGO_DB_URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(async () => {
-    server.listen(process.env.port);
+    server.listen(process.env.PORT);
     console.log('Connected to MongoDB successfully!');
-    console.log(`Server is up and running on port ${process.env.port}`);
+    console.log(`Server is up and running on port ${process.env.PORT}`);
   })
   .catch(async (err) => {
     console.log(err.message);

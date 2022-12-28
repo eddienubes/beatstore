@@ -7,7 +7,7 @@ const sendEmail = async (receiverEmail, template, contextObject = {}, subject = 
   const transporter = createTransporter();
 
   const mailOptions = {
-    from: process.env.gmail,
+    from: process.env.GMAIL,
     to: receiverEmail,
     subject,
     template,
@@ -33,8 +33,8 @@ const createTransporter = () =>
   nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: process.env.gmail,
-      pass: process.env.gmailAppPass
+      user: process.env.GMAIL,
+      pass: process.env.GMAIL_APP_PASS
     }
   });
 

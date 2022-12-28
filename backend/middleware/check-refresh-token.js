@@ -13,7 +13,7 @@ module.exports = async (req, res, next) => {
       return next(new HttpError('Refresh token was not specified!', 403));
     }
 
-    const decodedTokenData = jwt.verify(refreshToken, process.env.refreshTokenSecret);
+    const decodedTokenData = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
     const existingToken = await RefreshToken.findOne({ email: decodedTokenData.email });
 
     if (!existingToken) {

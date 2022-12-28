@@ -110,7 +110,7 @@ const signup = async (req, res, next) => {
     purchased: [...orders]
   });
 
-  const confirmationToken = jwt.sign({ email, username }, process.env.confirmationTokenSecret + newUser._id.toString());
+  const confirmationToken = jwt.sign({ email, username }, process.env.CONFIRMATION_TOKEN_SECRET + newUser._id.toString());
 
   newUser.confirmationCode = confirmationToken;
 
@@ -175,16 +175,16 @@ const login = async (req, res, next) => {
   let refreshToken;
   let refreshTokenExpirationDate;
   try {
-    token = jwt.sign({ userId: existingUser._id.toString(), email: existingUser.email }, process.env.secret, {
-      expiresIn: process.env.tokenExpireTime
+    token = jwt.sign({ userId: existingUser._id.toString(), email: existingUser.email }, process.env.SECRET, {
+      expiresIn: process.env.TOKEN_EXPIRE_TIME
     });
     const existingRefreshToken = await RefreshToken.findOne({ email: existingUser.email });
 
     if (!existingRefreshToken || existingRefreshToken?.expirationDate.getTime() <= new Date().getTime()) {
       refreshToken = jwt.sign(
         { userId: existingUser._id.toString(), email: existingUser.email },
-        process.env.refreshTokenSecret,
-        { expiresIn: process.env.refreshTokenExpireTime }
+        process.env.REFRESH_TOKEN_SECRET,
+        { expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME }
       );
 
       // 1k milliseconds => 1 second => 1 minute => 1 hour => 1 day => 1 month (30 days)
@@ -477,17 +477,17 @@ const googleContinue = async (req, res, next) => {
     let refreshToken;
     let refreshTokenExpirationDate;
     try {
-      token = jwt.sign({ userId: newUser._id.toString(), email: newUser.email }, process.env.secret, {
-        expiresIn: process.env.tokenExpireTime
+      token = jwt.sign({ userId: newUser._id.toString(), email: newUser.email }, process.env.SECRET, {
+        expiresIn: process.env.TOKEN_EXPIRE_TIME
       });
       refreshToken = jwt.sign(
         {
           userId: newUser._id.toString(),
           email: userData.email
         },
-        process.env.refreshTokenSecret,
+        process.env.REFRESH_TOKEN_SECRET,
         {
-          expiresIn: process.env.refreshTokenExpireTime
+          expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME
         }
       );
       const newRefreshToken = new RefreshToken({
@@ -545,14 +545,14 @@ const googleContinue = async (req, res, next) => {
   let refreshToken;
   let refreshTokenExpirationDate;
   try {
-    token = jwt.sign({ userId: user._id.toString(), email: user.email }, process.env.secret, {
-      expiresIn: process.env.tokenExpireTime
+    token = jwt.sign({ userId: user._id.toString(), email: user.email }, process.env.SECRET, {
+      expiresIn: process.env.TOKEN_EXPIRE_TIME
     });
     const existingRefreshToken = await RefreshToken.findOne({ email: userData.email });
 
     if (!existingRefreshToken || existingRefreshToken?.expirationDate.getTime() <= new Date().getTime()) {
-      refreshToken = jwt.sign({ userId: user._id.toString(), email: userData.email }, process.env.refreshTokenSecret, {
-        expiresIn: process.env.refreshTokenExpireTime
+      refreshToken = jwt.sign({ userId: user._id.toString(), email: userData.email }, process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME
       });
 
       // 1k milliseconds => 1 second => 1 minute => 1 hour => 1 day => 1 month (30 days)
@@ -606,8 +606,8 @@ const token = async (req, res, next) => {
   const { userData } = req;
   let jwtToken;
   try {
-    jwtToken = jwt.sign({ userId: userData.userId, email: userData.email }, process.env.secret, {
-      expiresIn: process.env.tokenExpireTime
+    jwtToken = jwt.sign({ userId: userData.userId, email: userData.email }, process.env.SECRET, {
+      expiresIn: process.env.TOKEN_EXPIRE_TIME
     });
   } catch (e) {
     console.log(e.message);
@@ -741,11 +741,11 @@ const verifyUser = async (req, res, next) => {
   let refreshTokenExpirationDate;
 
   try {
-    jwtToken = jwt.sign({ userId: user.id.toString(), email: user.email }, process.env.secret, {
-      expiresIn: process.env.tokenExpireTime
+    jwtToken = jwt.sign({ userId: user.id.toString(), email: user.email }, process.env.SECRET, {
+      expiresIn: process.env.TOKEN_EXPIRE_TIME
     });
-    refreshToken = jwt.sign({ userId: user._id.toString(), email: user.email }, process.env.refreshTokenSecret, {
-      expiresIn: process.env.refreshTokenExpireTime
+    refreshToken = jwt.sign({ userId: user._id.toString(), email: user.email }, process.env.REFRESH_TOKEN_SECRET, {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME
     });
     const newRefreshToken = new RefreshToken({
       refreshToken,
@@ -790,7 +790,7 @@ const contact = async (req, res, next) => {
 
   try {
     await mailer.sendEmail(
-      process.env.gmailOwner,
+      process.env.GMAIL_OWNER,
       'contact',
       {
         name,

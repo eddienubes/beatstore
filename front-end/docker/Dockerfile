@@ -10,6 +10,7 @@ RUN yarn
 
 # Copy all required files including .env
 COPY . /app
+COPY .env /app/.env
 
 # Squeeze out build folder
 RUN yarn build

@@ -9,6 +9,7 @@ RUN yarn
 
 # Copy all required files including .env
 COPY . /app
+COPY .env /app/.env
 
 
 # Run application on port 3000
