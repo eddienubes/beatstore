@@ -16,12 +16,16 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Create proper .env # Incorrect
-        uses: shine1594/secrets-to-env-action@v1.6.1
+      - name: Create .env file
+        uses: SpicyPizza/create-envfile@v1.3.0
         with:
-          secrets_env: production
-          secrets: ${{ toJSON(secrets) }}
-          file_name_prod: .env
+          directory: admin-bot
+          envkey_BACKEND_URL: ${{ secrets.BACKEND_URL }}
+          envkey_PORT: ${{ secrets.PORT }}
+          envkey_MAX_ITEMS_PER_PAGE: ${{ secrets.MAX_ITEMS_PER_PAGE }}
+          envkey_TOKEN: ${{ secrets.TOKEN }}
+          envkey_ADMIN_ID: ${{ secrets.ADMIN_ID }}
+          envkey_BOT_ID: ${{ secrets.BOT_ID }}
 
       - name: Copy .env file to /admin-bot
         run: |
