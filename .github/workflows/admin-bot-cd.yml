@@ -2,7 +2,6 @@ name: Admin Bot CD
 
 on:
   workflow_dispatch:
-  push:
 
 #  CI:
 #  uses: ./.github/workflows/admin-bot-ci.yml

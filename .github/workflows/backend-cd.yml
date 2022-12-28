@@ -2,7 +2,6 @@ name: Backend CD
 
 on:
   workflow_dispatch:
-  push:
 
 #  CI:
 #  uses: ./.github/workflows/backend-ci.yml
