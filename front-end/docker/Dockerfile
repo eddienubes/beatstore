@@ -19,6 +19,7 @@ RUN yarn build
 FROM nginx:alpine
 # Copy build artifact from the first stage
 COPY --from=0 /app/build /usr/share/nginx/html
+COPY --from=0 /app/docker/nginx.conf /etc/nginx/nginx.conf
 # Run the container on port 80 (nginx's default port)
 EXPOSE 80
 # Start the nginx webserver automatically once the container runs.
